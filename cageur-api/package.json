@@ -1,0 +1,25 @@
+{
+  "name": "cageur-api",
+  "version": "0.2.5",
+  "description": "Cageur API sample",
+  "engines": {
+    "node": "6.6.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "4.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/girikuncoro/cageur"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
+}

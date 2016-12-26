@@ -1,0 +1,7 @@
+language: node_js
+node_js:
+  - "6"
+install:
+  - npm install --prefix ./cageur-api
+script:
+  - cd cageur-api && npm run test

@@ -1,4 +1,5 @@
-# Cageur
+# Cageur  
+[![Build Status](https://travis-ci.com/girikuncoro/cageur.svg?token=Gf3F5tTzSpvHCJfUKXpu&branch=master)](https://travis-ci.com/girikuncoro/cageur)  
 Cageur codebase. We aim to be the largest intelligent healthcare system in Indonesia by 2019.
 
 ## Requirement

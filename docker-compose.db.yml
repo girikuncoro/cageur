@@ -1,0 +1,7 @@
+version: '2'
+services:
+  cageur_db:
+    build: ./cageur-db
+    container_name: cageur_db
+    ports:
+      - "5432:5432"

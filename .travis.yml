@@ -4,4 +4,4 @@ node_js:
 install:
   - npm install --prefix ./cageur-api
 script:
-  - cd cageur-api && npm run test
+  - cd cageur-api && npm run test && npm run lint

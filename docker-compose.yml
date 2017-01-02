@@ -1,0 +1,15 @@
+version: '2'
+services:
+  cageur_api:
+    build: ./cageur-api
+    container_name: cageur_api
+    ports:
+      - "5000:5000"
+    links:
+      - cageur_db
+      
+  cageur_db:
+    build: ./cageur-db
+    container_name: cageur_db
+    ports:
+      - "5432:5432"

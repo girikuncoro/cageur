@@ -24,6 +24,19 @@ $ npm install
 $ brew install heroku-toolbelt
 ```
 
+/* 
+brew install heroku-toolbelt 
+this one is not working for me.
+i use this link, https://devcenter.heroku.com/articles/heroku-cli
+just download the package of osx to install heroku CLI.
+
+to verify your installation, please type this command on your terminal
+
+heroku --version
+
+you will got something like heroku-cli/x.y.z 
+*/
+
 ## Common Development Task
 - Run the mocha test scripts
 ```

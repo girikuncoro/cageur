@@ -24,18 +24,15 @@ $ npm install
 $ brew install heroku-toolbelt
 ```
 
-/* 
-brew install heroku-toolbelt 
-this one is not working for me.
-i use this link, https://devcenter.heroku.com/articles/heroku-cli
-just download the package of osx to install heroku CLI.
+## other option to install heroku-toolbet
+go to this link, https://devcenter.heroku.com/articles/heroku-cli
+download the package of osx to install heroku CLI.
 
-to verify your installation, please type this command on your terminal
+- Verify your installation, type this command on your terminal
+$ heroku --version
 
-heroku --version
+``` you will got something like heroku-cli/x.y.z 
 
-you will got something like heroku-cli/x.y.z 
-*/
 
 ## Common Development Task
 - Run the mocha test scripts
@@ -50,3 +47,23 @@ $ npm run lint
 ```
 $ npm run server:dev
 ```
+
+## How to use cageur-api
+
+- Clinic API : Get Data
+GET : http://localhost:5000/api/clinic
+
+- Clinic API : Detail Data
+GET : http://localhost:5000/api/clinic/1
+
+- Clinic API : Insert Data
+POST : http://localhost:5000/api/clinic
+
+- Clinic API : Update Data
+PUT : http://localhost:5000/api/clinic/1
+
+- Clinic API : Delete Data
+DELETE : http://localhost:5000/api/clinic/1
+
+- Notes :
+`db installation`, please running the query that i push to this branch. named `clinic.sql` and `patient.sql`.

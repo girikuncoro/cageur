@@ -13,13 +13,16 @@ router.get('/', (req, res) => {
   res.send('Hello world from Cageur! inside of API folder');
 });
 
-// routing url
+// routing url for clinic
 router.get('/api/clinic', db.getAllClinic);
 router.get('/api/clinic/:id', db.getSingleClinic);
 router.post('/api/clinic', db.createClinic);
 router.put('/api/clinic/:id', db.updateClinic);
 router.delete('/api/clinic/:id', db.removeClinic);
 
+// routing url for disease category - test commit git new branch
+
+// router url for patient
 router.get('/api/patient', db.getAllPatient);
 router.get('/api/patient/:id', db.getSinglePatient);
 router.post('/api/patient', db.createPatient);

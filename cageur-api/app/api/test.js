@@ -20,4 +20,12 @@ router.post('/api/clinic', db.createClinic);
 router.put('/api/clinic/:id', db.updateClinic);
 router.delete('/api/clinic/:id', db.removeClinic);
 
+router.get('/api/patient', db.getAllPatient);
+router.get('/api/patient/:id', db.getSinglePatient);
+router.post('/api/patient', db.createPatient);
+router.put('/api/patient/:id', db.updatePatient);
+router.delete('/api/patient/:id', db.removePatient);
+
+
+
 module.exports = router;

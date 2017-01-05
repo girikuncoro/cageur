@@ -14,21 +14,24 @@ router.get('/', (req, res) => {
 });
 
 // routing url for clinic
-router.get('/api/clinic', db.getAllClinic);
-router.get('/api/clinic/:id', db.getSingleClinic);
-router.post('/api/clinic', db.createClinic);
-router.put('/api/clinic/:id', db.updateClinic);
-router.delete('/api/clinic/:id', db.removeClinic);
-
-// routing url for disease category - test commit git new branch
+router.get('/api/v1/clinic', db.getAllClinic);
+router.get('/api/v1/clinic/:id', db.getSingleClinic);
+router.post('/api/v1/clinic', db.createClinic);
+router.put('/api/v1/clinic/:id', db.updateClinic);
+router.delete('/api/v1/clinic/:id', db.removeClinic);
 
 // router url for patient
-router.get('/api/patient', db.getAllPatient);
-router.get('/api/patient/:id', db.getSinglePatient);
-router.post('/api/patient', db.createPatient);
-router.put('/api/patient/:id', db.updatePatient);
-router.delete('/api/patient/:id', db.removePatient);
+router.get('/api/v1/patient', db.getAllPatient);
+router.get('/api/v1/patient/:id', db.getSinglePatient);
+router.post('/api/v1/patient', db.createPatient);
+router.put('/api/v1/patient/:id', db.updatePatient);
+router.delete('/api/v1/patient/:id', db.removePatient);
 
-
+// router url for disease_group
+router.get('/api/v1/disease_group', db.getAllDiseaseGroup);
+router.get('/api/v1/disease_group/:id', db.getSingleDiseaseGroup);
+router.post('/api/v1/disease_group', db.createDiseaseGroup);
+router.put('/api/v1/disease_group/:id', db.updateDiseaseGroup);
+router.delete('/api/v1/disease_group/:id', db.removeDiseaseGroup);
 
 module.exports = router;

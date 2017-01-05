@@ -24,7 +24,6 @@ VALUES ('{}');
 
 for disease_group in data_disease_group['disease_group']:
     disease_group_name = disease_group['name']
-    print disease_group_name
 
     # insert to the database
     try:

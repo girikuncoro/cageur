@@ -4,7 +4,7 @@
 DROP TABLE IF EXISTS disease_group;
 CREATE TABLE disease_group (
   id SERIAL NOT NULL,
-  name CHAR(255) NOT NULL,
+  name CHAR(255) UNIQUE NOT NULL,
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id)
@@ -24,12 +24,12 @@ CREATE TABLE clinic (
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient (
   id SERIAL NOT NULL,
-  disease_group_id INT UNIQUE NOT NULL,
-  clinic_id INT UNIQUE NOT NULL,
-  phone_number CHAR(32) NOT NULL,
+  disease_group_id INT NOT NULL,
+  clinic_id INT NOT NULL,
+  phone_number CHAR(32) UNIQUE NOT NULL,
   first_name CHAR(255) NOT NULL,
   last_name CHAR(255),
-  line_user_id CHAR(255),
+  line_user_id CHAR(255) UNIQUE,
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id),

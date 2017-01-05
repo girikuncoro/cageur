@@ -1,0 +1,24 @@
+{
+    "clinic": [
+    {
+        "name": "klinik satu",
+        "address": "jalan soekarno",
+        "phone_number": "111"
+    },
+    {
+        "name": "klinik dua",
+        "address": "jalan soeharto",
+        "phone_number": "222"
+    },
+    {
+        "name": "klinik tiga",
+        "address": "jalan megawati",
+        "phone_number": "333"
+    },
+    {
+        "name": "klinik empat",
+        "address": "jalan gus doer",
+        "phone_number": "444"
+    }
+    ]
+}

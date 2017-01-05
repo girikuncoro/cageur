@@ -1,8 +1,6 @@
 import psycopg2 as psql
-# from faker import Factory
 import os
 import json
-# import sys
 
 CAGEUR_DB_HOST = os.getenv('CAGEUR_DB_HOST', '127.0.0.1')
 CAGEUR_DB_PORT = os.getenv('CAGEUR_DB_PORT', 5432)
@@ -13,7 +11,6 @@ CAGEUR_DB_NAME = os.getenv('CAGEUR_DB_NAME', 'cageur_db')
 # Open database connection
 db = psql.connect(database=CAGEUR_DB_NAME, user=CAGEUR_DB_USER,
     password=CAGEUR_DB_PASS, host=CAGEUR_DB_HOST, port=CAGEUR_DB_PORT)
-
 
 # Create new db cursor
 cursor = db.cursor()

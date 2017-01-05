@@ -1,0 +1,34 @@
+{
+    "disease_group": [
+    {
+        "name": "diabetes"
+    },
+    {
+        "name": "asam urat"
+    },
+    {
+        "name": "flu"
+    },
+    {
+        "name": "batuk"
+    },
+    {
+        "name": "pilek"
+    },
+    {
+        "name": "jantungan"
+    },
+    {
+        "name": "kolestrol"
+    },
+    {
+        "name": "sakit hati"
+    },
+    {
+        "name": "kanker"
+    },
+    {
+        "name": "depresi"
+    }
+    ]
+}

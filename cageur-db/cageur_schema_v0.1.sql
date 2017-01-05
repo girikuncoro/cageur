@@ -24,7 +24,6 @@ CREATE TABLE clinic (
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient (
   id SERIAL NOT NULL,
-  disease_group_id INT NOT NULL,
   clinic_id INT NOT NULL,
   phone_number CHAR(32) UNIQUE NOT NULL,
   first_name CHAR(255) NOT NULL,
@@ -33,8 +32,18 @@ CREATE TABLE patient (
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id),
-  FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE,
   FOREIGN KEY (clinic_id) REFERENCES clinic(id) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS patient_disease_group;
+CREATE TABLE patient_disease_group (
+  patient_id INT NOT NULL,
+  disease_group_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  PRIMARY KEY (patient_id, disease_group_id),
+  FOREIGN KEY (patient_id) REFERENCES patient(id) ON DELETE CASCADE,
+  FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
 );
 
 -- In Postgres, updated timestamp
@@ -60,4 +69,9 @@ CREATE TRIGGER update_updated_at BEFORE UPDATE
 DROP TRIGGER IF EXISTS update_updated_at ON patient;
 CREATE TRIGGER update_updated_at BEFORE UPDATE
   ON patient FOR EACH ROW EXECUTE PROCEDURE
+  update_column_updated_at();
+
+DROP TRIGGER IF EXISTS update_updated_at ON patient_disease_group;
+CREATE TRIGGER update_updated_at BEFORE UPDATE
+  ON patient_disease_group FOR EACH ROW EXECUTE PROCEDURE
   update_column_updated_at();

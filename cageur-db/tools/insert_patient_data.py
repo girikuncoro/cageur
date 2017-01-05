@@ -33,36 +33,18 @@ except psql.Error as err:
     print 'Unable to fetch clinic data', err
     sys.exit()
 
-# Get list of disease group
-disease_groups = []
-sql_get_disease_groups = '''
-SELECT id,name FROM disease_group;
-'''
-try:
-    cursor.execute(sql_get_disease_groups)
-    results = cursor.fetchall()
-    for row in results:
-        disease_group_id = row[0]
-        disease_group_name = row[1].strip()
-        disease_groups.append({'id': disease_group_id, 'name': disease_group_name})
-except psql.Error as err:
-    print 'Unable to fetch disease group data', err
-    sys.exit()
-
 # Generate random data for patient
 MAX_PATIENT = 100
 sql_insert_patient = '''
 INSERT INTO patient(
-    disease_group_id, clinic_id, phone_number, first_name,
+    clinic_id, phone_number, first_name,
     last_name, line_user_id)
-VALUES ('{}', '{}', '{}', '{}', '{}', '{}');
+VALUES ('{}', '{}', '{}', '{}', '{}');
 '''
 fake = Factory.create()
-total_disease_group = len(disease_groups)
 for clinic in clinics:
     clinic_id = clinic['id']
     for i in xrange(MAX_PATIENT):
-        disease_group_id = random.choice(disease_groups)['id']
         phone_number = '62{}{}'.format(str(random.randint(1111,9999)), i)
         patient_name = fake.name().split(' ')
         first_name = patient_name[0]
@@ -73,7 +55,7 @@ for clinic in clinics:
         try:
             # parse SQL command
             insert_sql = sql_insert_patient.format(
-                disease_group_id, clinic_id, phone_number, first_name,
+                clinic_id, phone_number, first_name,
                 last_name, line_user_id)
             cursor.execute(insert_sql)
             db.commit()

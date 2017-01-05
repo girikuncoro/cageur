@@ -1,79 +1,60 @@
--- Note:
--- max int(10) = 4294967295
-
 DROP TABLE IF EXISTS disease_group;
 CREATE TABLE disease_group (
-  id integer(10) unsigned NOT NULL UNIQUE auto_increment,
-  name varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-  inserted_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-    ON UPDATE CURRENT_TIMESTAMP,
+  id SERIAL NOT NULL,
+  name CHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 
-DROP TABLE IF EXISTS `candidates`;
-CREATE TABLE `candidates` (
-    `id` int(10) unsigned NOT NULL UNIQUE auto_increment,
-    `name` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `website_url` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `image_url` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `logo_url` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `facebookpage_url` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `slogan` varchar(255) collate utf8_unicode_ci NOT NULL,
-    `inserted_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+DROP TABLE IF EXISTS clinic;
+CREATE TABLE clinic (
+  id SERIAL NOT NULL,
+  name CHAR(255) NOT NULL,
+  address CHAR(255),
+  phone_number CHAR(32),
+  created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  PRIMARY KEY (id)
+);
 
-DROP TABLE IF EXISTS `media`;
-CREATE TABLE `media` (
-    `id` int(10) unsigned NOT NULL UNIQUE auto_increment,
-    `name` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `website_url` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `logo_url` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `facebookpage_url` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `slogan` varchar(255) collate utf8_unicode_ci NOT NULL,
-    `inserted_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+DROP TABLE IF EXISTS patient;
+CREATE TABLE patient (
+  id SERIAL NOT NULL,
+  disease_group_id INT UNIQUE NOT NULL,
+  clinic_id INT UNIQUE NOT NULL,
+  phone_number CHAR(32) NOT NULL,
+  first_name CHAR(255) NOT NULL,
+  last_name CHAR(255),
+  line_user_id CHAR(255),
+  created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  PRIMARY KEY (id),
+  FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE,
+  FOREIGN KEY (clinic_id) REFERENCES clinic(id) ON DELETE CASCADE
+);
 
-DROP TABLE IF EXISTS `sentiment`;
-CREATE TABLE `sentiment` (
-    `id` int(10) unsigned NOT NULL UNIQUE auto_increment,
-    `name` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `inserted_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+-- In Postgres, updated timestamp
+-- must be performed manually through trigger
+CREATE OR REPLACE FUNCTION update_column_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = now();
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
 
-DROP TABLE IF EXISTS `news`;
-CREATE TABLE `news` (
-    `id` int(10) unsigned NOT NULL UNIQUE auto_increment,
-    `media_id` int(10) unsigned NOT NULL,
-    `title` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    `content` text collate utf8_unicode_ci NOT NULL,
-    `url` varchar(255) collate utf8_unicode_ci NOT NULL UNIQUE,
-    FOREIGN KEY (`media_id`) REFERENCES media(`id`) ON DELETE CASCADE,
-    `inserted_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+DROP TRIGGER IF EXISTS update_updated_at ON disease_group;
+CREATE TRIGGER update_updated_at BEFORE UPDATE
+  ON disease_group FOR EACH ROW EXECUTE PROCEDURE
+  update_column_updated_at();
 
-DROP TABLE IF EXISTS `news_sentiment`;
-CREATE TABLE `news_sentiment` (
-    `id` int(10) unsigned NOT NULL UNIQUE auto_increment,
-    `news_id` int(10) unsigned NOT NULL,
-    `sentiment_id` int(10) unsigned NOT NULL,
-    FOREIGN KEY (`news_id`) REFERENCES news(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`sentiment_id`) REFERENCES sentiment(`id`) ON DELETE CASCADE,
-    `inserted_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    UNIQUE (`news_id`, `sentiment_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+DROP TRIGGER IF EXISTS update_updated_at ON clinic;
+CREATE TRIGGER update_updated_at BEFORE UPDATE
+  ON clinic FOR EACH ROW EXECUTE PROCEDURE
+  update_column_updated_at();
+
+DROP TRIGGER IF EXISTS update_updated_at ON patient;
+CREATE TRIGGER update_updated_at BEFORE UPDATE
+  ON patient FOR EACH ROW EXECUTE PROCEDURE
+  update_column_updated_at();

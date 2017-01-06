@@ -1,9 +1,9 @@
-// module requirement
+// module requirement bluebird as a promise. pgp for handling connection to postgre sql.
 const promise = require('bluebird');
 const options = { promiseLib: promise };
 const pgp = require('pg-promise')(options);
 
-// define configuration file
+// define configuration file to connect to postgre sql.
 let cn = {
     host: 'localhost',
     port: 5432,
@@ -141,6 +141,8 @@ function getSinglePatient(req, res, next) {
 }
 
 function createPatient(req, res, next) {
+  // get max patient id
+
     let data = {
         id_category : req.body.id_category,
         id_clinic : req.body.id_clinic,
@@ -150,18 +152,47 @@ function createPatient(req, res, next) {
         lineid : req.body.lineid
     };
 
-    db.none("insert into patient (id_category, id_clinic, phone_number, first_name, last_name, lineid) values(${id_category}, ${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data)
-    .then(function () {
-        // success;
-        res.status(200)
-        .json({
-          status: 'success',
-          message: 'patient data succesfully added to db'
-        });
+
+    db.one("select max(id) + 1 as maxID from patient")
+    .then(maxID => {
+      // process maxID, blabla
+      let abc = maxID + 1;
+      res.status(200)
+      .json({
+        status: 'woy id max',
+        message: maxID
+      });
+
+      db.one("insert into patient (clinic_id, phone_number, first_name, last_name, line_user_id) values (${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data);
+      return db.none("insert into patient (clinic_id, phone_number, first_name, last_name, line_user_id) values (${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data);
     })
+
+    .then(() => {
+      // success;
+      res.status(200)
+      .json({
+        status: 'success',
+        message: 'patient data succesfully added to db'
+      });
+    })
+
+
+    // db.none("insert into patient (id_category, id_clinic, phone_number, first_name, last_name, lineid) values(${id_category}, ${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data)
+    // .then(function () {
+    //     // success;
+    //     res.status(200)
+    //     .json({
+    //       status: 'success',
+    //       message: 'patient data succesfully added to db'
+    //     });
+    // })
+
+
     .catch(function (error) {
         return next(error);
     });
+
+    // insert to another table 
 
 }
 
@@ -297,22 +328,21 @@ function removeDiseaseGroup(req, res, next) {
 
 // export all modules
 module.exports = {
-  getAllClinic: getAllClinic,
-  getSingleClinic: getSingleClinic,
-  createClinic: createClinic,
-  updateClinic: updateClinic,
-  removeClinic: removeClinic,
+  getAllClinic,
+  getSingleClinic,
+  createClinic,
+  updateClinic,
+  removeClinic,
 
-  getAllPatient: getAllPatient,
-  getSinglePatient: getSinglePatient,
-  createPatient: createPatient,
-  updatePatient: updatePatient,
-  removePatient: removePatient,
+  getAllPatient,
+  getSinglePatient,
+  createPatient,
+  updatePatient,
+  removePatient,
 
-  getAllDiseaseGroup: getAllDiseaseGroup,
-  getSingleDiseaseGroup: getSingleDiseaseGroup,
-  createDiseaseGroup: createDiseaseGroup,
-  updateDiseaseGroup: updateDiseaseGroup,
-  removeDiseaseGroup: removeDiseaseGroup
-  
+  getAllDiseaseGroup,
+  getSingleDiseaseGroup,
+  createDiseaseGroup,
+  updateDiseaseGroup,
+  removeDiseaseGroup
 };

@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const db = require('../../config/db');
-const { abort } = require('../../util');
+const { abort, taskQueue } = require('../../util');
 
 /**
-* Sending message through Line API
+* Sending message through Line API and RabbitMQ producer
 * POST /api/v1/message/send
 */
 router.post('/', (req, res, next) => {
@@ -31,23 +31,26 @@ router.post('/', (req, res, next) => {
       FROM patient_disease_group AS pd
       JOIN patient AS p
       ON pd.patient_id = p.id
-      WHERE pd.disease_group_id = $1`, message.diseaseGroup);
+      WHERE pd.disease_group_id = $1 AND p.line_user_id IS NOT NULL`, message.diseaseGroup);
   }
 
   getLineUserIds.then(lineUserIds => {
-    lineUserIds.forEach(lineUserId => {
-      // TODO: add to task queue
-      console.log('adding to task queue');
-
-      // TODO: add to Message sent DB
-      console.log('insert into message DB');
+    if (!lineUserIds.length) {
+      throw abort(404, `No Line User Ids found for group ${message.diseaseGroup}`);
+    }
+    const tasks = lineUserIds.map(lineUserId => {
+      return {
+        lineUserId,
+        body: message.body,
+      };
     });
+    taskQueue.produce(tasks);
+
+    // TODO: insert message into DB
+
     return lineUserIds.length;
   })
   .then(queuedLineUserIds => {
-    if (!queuedLineUserIds) {
-      throw abort(404, `No Line User Ids found for group ${message.diseaseGroup}`);
-    }
     return res.status(200).json({
       status: 'success',
       message: `Group ${message.diseaseGroup} has been added to queue`,

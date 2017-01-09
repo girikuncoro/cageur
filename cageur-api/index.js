@@ -1,12 +1,33 @@
+/**
+* Module dependencies
+*/
 const express = require('express');
-const debug = require('debug')('cageur');
-
 const app = express();
+const bodyParser = require('body-parser');
+
+const debug = require('debug')('cageur');
+const morgan = require('morgan');
 
 app.set('port', (process.env.PORT || 5000));
 
-app.use('/', require('./app/api/test'));
+/**
+* Middleware
+*/
+app.use(morgan('combined'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
+/**
+* API routes
+*/
+app.use('/', require('./app/api/test'));
+app.use('/api/v1/message/send', require('./app/api/message/send'));
+
+/**
+ * Nodejs server listens forever
+ */
 app.listen(app.get('port'), () => {
   debug('Node app is running on port', app.get('port'));
 });
+
+module.exports = app;

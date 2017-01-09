@@ -40,7 +40,7 @@ router.post('/', (req, res, next) => {
     }
     const tasks = lineUserIds.map(lineUserId => {
       return {
-        lineUserId,
+        lineUserId: lineUserId['line_user_id'],
         body: message.body,
       };
     });

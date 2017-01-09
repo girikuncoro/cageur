@@ -26,7 +26,7 @@ python tools/insert_disease_group_data.py dummy_data/disease_group_data.json
 python tools/insert_patient_data.py
 
 # Generate random patient disease group
-python tools/insert_patient_disease_group.py
+python tools/insert_patient_disease_group_data.py
 ```
 
 ## Helpful tools

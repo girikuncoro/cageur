@@ -24,6 +24,17 @@ app.use('/', require('./app/api/test'));
 app.use('/api/v1/message/send', require('./app/api/message/send'));
 
 /**
+ * Error handler routes.
+ */
+app.use((err, req, res, next) => {
+  res.status(err.status || 500)
+  .json({
+    status: 'error',
+    message: err.message,
+  });
+});
+
+/**
  * Nodejs server listens forever
  */
 app.listen(app.get('port'), () => {

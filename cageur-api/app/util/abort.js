@@ -4,7 +4,7 @@ const debug = require('debug')('cageur');
 module.exports = (status, message, stack) => {
   const err = new Error(message);
   err.status = status;
-  debug(`error: ${stack}`);
+  debug(`error: ${message} | trace: ${stack}`);
 
   return err;
 };

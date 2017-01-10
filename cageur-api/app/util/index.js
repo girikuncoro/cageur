@@ -1,4 +1,4 @@
 module.exports = {
   abort: require('./abort'),
-  taskQueue: require('./taskQueue'),
+  taskQueue: require('./task-queue'),
 };

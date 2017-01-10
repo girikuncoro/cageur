@@ -1,11 +1,13 @@
+const stage = process.env.NODE_ENV;
+
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
 module.exports = {
   // services
-  postgresUrl: process.env.POSTGRES_URL || 'postgres://cageur_user:123456@localhost:5432/cageur_db',
-  rabbitUrl: process.env.CLOUDAMQP_URL || 'amqp://localhost',
+  postgresUrl: stage === 'test' ? 'postgres://cageur_user:123456@localhost:15432/cageur_db' : process.env.POSTGRES_URL || 'postgres://cageur_user:123456@localhost:5432/cageur_db',
+  rabbitUrl: stage === 'test' ? 'amqp://localhost:15672' : process.env.CLOUDAMQP_URL || 'amqp://localhost',
   port: parseInt(process.env.PORT) || 5000,
 
   // line api

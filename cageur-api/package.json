@@ -28,6 +28,7 @@
     "superagent-promise": "1.1.0"
   },
   "devDependencies": {
+    "chai-http": "3.0.0",
     "eslint": "^3.6.0",
     "eslint-config-airbnb": "^11.1.0",
     "eslint-plugin-import": "^1.16.0",

@@ -14,7 +14,7 @@ router.post('/', (req, res, next) => {
   let getLineUserIds;
 
   if (!message.diseaseGroup || !message.body) {
-    throw abort(400, `Missing required parameters 'diseaseGroup' or 'body'`);
+    throw abort(400, `Missing required parameters "diseaseGroup" or "body"`);
   }
 
   // Getting everyone if all
@@ -36,7 +36,7 @@ router.post('/', (req, res, next) => {
 
   getLineUserIds.then(lineUserIds => {
     if (!lineUserIds.length) {
-      throw abort(404, `No Line User Ids found for group ${message.diseaseGroup}`);
+      throw abort(404, `No Line User Ids found`, `${message.diseaseGroup} not found`);
     }
     const tasks = lineUserIds.map(lineUserId => {
       return {
@@ -46,7 +46,7 @@ router.post('/', (req, res, next) => {
     });
     taskQueue.produce(tasks);
 
-    // TODO: insert message into DB
+    // TODO: insert message into DB for audit/analytics
 
     return lineUserIds.length;
   })

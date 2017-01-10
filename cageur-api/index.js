@@ -13,7 +13,9 @@ app.set('port', (process.env.PORT || 5000));
 /**
 * Middleware
 */
-app.use(morgan('combined'));
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan('combined'));
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -38,7 +40,8 @@ app.use((err, req, res, next) => {
  * Nodejs server listens forever
  */
 app.listen(app.get('port'), () => {
-  debug('Node app is running on port', app.get('port'));
+  const stage = process.env.NODE_ENV === 'test' ? 'test' : 'dev';
+  debug(`Node ${stage} server is running on port`, app.get('port'));
 });
 
 module.exports = app;

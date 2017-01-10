@@ -13,10 +13,12 @@ module.exports = {
       const ok = ch.assertQueue(queue);
 
       ok.then(() => {
-        tasks.forEach(task => {
-          task = JSON.stringify(task);
-          return ch.sendToQueue(queue, new Buffer(task));
-        });
+        tasks = JSON.stringify(tasks);
+        return ch.sendToQueue(queue, new Buffer(tasks));
+        // tasks.forEach(task => {
+        //   task = JSON.stringify(task);
+        //   return ch.sendToQueue(queue, new Buffer(task));
+        // });
       })
       .finally(() => {
         debug('RabbitMQ channel closed (producer)');

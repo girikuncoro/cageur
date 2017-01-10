@@ -10,8 +10,10 @@ const workerStart = () => {
 };
 
 // line send text wrapper to get RabbitMQ message buffer
-const processTask =  (data) => {
-  Line.sendText(data.lineUserId, data.body);
+const processTask =  (dataList) => {
+  dataList.forEach(data => {
+    Line.sendText(data.lineUserId, data.body);
+  });
 };
 
 // start forever

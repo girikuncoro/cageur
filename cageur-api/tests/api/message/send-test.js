@@ -49,6 +49,7 @@ describe('Message Send API Test', () => {
       .catch(err => console.log(err));
     });
 
+    // make sure to clean test DB after all test cases done
     after(done => {
       // clinic delete cascade to patient and patient_disease_group table
       db.none(`DELETE FROM clinic`)

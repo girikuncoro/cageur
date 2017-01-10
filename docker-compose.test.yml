@@ -1,0 +1,12 @@
+version: '2'
+services:
+  cageur_db_test:
+    build: ./cageur-db
+    container_name: cageur_db_test
+    ports:
+      - "15432:5432"
+  cageur_rabbitmq_test:
+    image: rabbitmq
+    container_name: cageur_rabbitmq_test
+    ports:
+      - "15672:5672" # port for the daemon API, can be exposed to public.

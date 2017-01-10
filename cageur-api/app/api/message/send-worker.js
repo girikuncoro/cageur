@@ -18,3 +18,5 @@ const processTask =  (dataList) => {
 
 // start forever
 workerStart();
+
+module.exports = processTask;

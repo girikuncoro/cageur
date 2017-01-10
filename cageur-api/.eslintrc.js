@@ -10,6 +10,7 @@ module.exports = {
       "new-cap": ["off", { newIsCap: false }],
       "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "no-underscore-dangle": ["error", { "allow": ["_id"] }],
-      "dot-notation": ["off"]
+      "dot-notation": ["off"],
+      "global-require": ["off"]
     }
 };

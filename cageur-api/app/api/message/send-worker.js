@@ -1,4 +1,5 @@
 const taskQueue = require('../../util/task-queue');
+
 const Line = require('../../util/line');
 
 // line send text wrapper to get RabbitMQ message buffer

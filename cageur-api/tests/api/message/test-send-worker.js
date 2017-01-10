@@ -1,11 +1,14 @@
+/* eslint-disable no-unused-expressions */
 const chai = require('chai');
-const expect = chai.expect;
 const sinon = require('sinon');
 const mockery = require('mockery');
 
+const expect = chai.expect;
+
 describe('Message Send Worker Test', () => {
   describe('Process task module', () => {
-    let workerModule, sendTextStub, sendTextSpy;
+    let workerModule;
+    let sendTextSpy;
 
     before(() => {
       // mocking line API

@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 const app = require('../../../index');
 const chai = require('chai');
 
@@ -10,7 +11,7 @@ describe('Message Send API Test', () => {
   describe('POST /api/v1/message/send', () => {
     let diseaseGroupID;
 
-    before(done => {
+    before((done) => {
       const insertClinic = db.one(`
         INSERT INTO clinic(name)
         VALUES('klinik 1')
@@ -31,33 +32,32 @@ describe('Message Send API Test', () => {
         RETURNING id
       `);
 
-      const insertPatientDiseaseGroup = (patientID, diseaseGroupID) => {
+      const insertPatientDiseaseGroup = (patientID, _diseaseGroupID) => {
         return db.none(`
           INSERT INTO patient_disease_group(patient_id, disease_group_id)
-          VALUES(${patientID}, ${diseaseGroupID})
+          VALUES(${patientID}, ${_diseaseGroupID})
         `);
       };
 
       insertClinic.then(data => insertPatient(data.id))
-      .then(patientData => {
-        return insertDiseaseGroup.then(diseaseGroupData => {
+      .then((patientData) => {
+        return insertDiseaseGroup.then((diseaseGroupData) => {
           diseaseGroupID = diseaseGroupData.id;
           return insertPatientDiseaseGroup(patientData.id, diseaseGroupData.id);
         });
       })
-      .then(_ => done())
-      .catch(err => console.log(err));
-    });
-
-    // make sure to clean test DB after all test cases done
-    after(done => {
-      // clinic delete cascade to patient and patient_disease_group table
-      db.none(`DELETE FROM clinic`)
-      .then(_ => db.none(`DELETE FROM disease_group`))
       .then(_ => done());
     });
 
-    it('should return success response', done => {
+    // make sure to clean test DB after all test cases done
+    after((done) => {
+      // clinic delete cascade to patient and patient_disease_group table
+      db.none('DELETE FROM clinic')
+      .then(_ => db.none('DELETE FROM disease_group'))
+      .then(_ => done());
+    });
+
+    it('should return success response', (done) => {
       const validRequest = {
         diseaseGroup: diseaseGroupID,
         body: 'hello ucok',
@@ -66,20 +66,20 @@ describe('Message Send API Test', () => {
       chai.request(app)
       .post('/api/v1/message/send')
       .send(validRequest)
-      .then(res => {
-        const data = res.body;
+      .then((res) => {
+        const r = res.body;
 
         expect(res.status).to.equal(200);
-        expect(data.status).to.equal('success');
-        expect(data.message.diseaseGroup).to.equal(diseaseGroupID);
-        expect(data.message.body).to.equal('hello ucok');
-        expect(data.queuedLineUserIds).to.equal(1);
+        expect(r.status).to.equal('success');
+        expect(r.data.message.diseaseGroup).to.equal(diseaseGroupID);
+        expect(r.data.message.body).to.equal('hello ucok');
+        expect(r.data.queuedLineUserIds).to.equal(1);
 
         done();
       });
     });
 
-    it('should return 400 for missing parameters', done => {
+    it('should return 400 for missing parameters', (done) => {
       const invalidRequests = [
         {},
         { body: 'hello ucok' },
@@ -90,19 +90,19 @@ describe('Message Send API Test', () => {
         chai.request(app)
         .post('/api/v1/message/send')
         .send(req)
-        .then(res => {}, err => {
+        .then((_) => {}, (err) => {
           const data = err.response.body;
 
           expect(err.status).to.equal(400);
           expect(data.status).to.equal('error');
           expect(data.message).to.equal('Missing required parameters "diseaseGroup" or "body"');
 
-          if (i === invalidRequests.length-1) done();
-        })
+          if (i === invalidRequests.length - 1) done();
+        });
       });
     });
 
-    it('should return 404 for invalid disease group', done => {
+    it('should return 404 for invalid disease group', (done) => {
       const invalidDiseaseGroupID = diseaseGroupID + 999;
       const invalidRequest = {
         diseaseGroup: invalidDiseaseGroupID,
@@ -112,7 +112,7 @@ describe('Message Send API Test', () => {
       chai.request(app)
       .post('/api/v1/message/send')
       .send(invalidRequest)
-      .then(res => {}, err => {
+      .then((_) => {}, (err) => {
         const data = err.response.body;
 
         expect(err.status).to.equal(404);
@@ -120,7 +120,7 @@ describe('Message Send API Test', () => {
         expect(data.message).to.equal('No Line User Ids found');
 
         done();
-      })
+      });
     });
   });
 });

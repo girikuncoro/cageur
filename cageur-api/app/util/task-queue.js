@@ -5,20 +5,16 @@ const { rabbit, queue } = require('../config/rabbit');
 module.exports = {
   // producer runs per task basis, close channel at the end for efficiency
   produce(tasks) {
-    rabbit.then(conn => {
+    rabbit.then((conn) => {
       debug('RabbitMQ connection opened (producer)');
       return conn.createChannel();
     })
-    .then(ch => {
+    .then((ch) => {
       const ok = ch.assertQueue(queue);
 
       ok.then(() => {
-        tasks = JSON.stringify(tasks);
-        return ch.sendToQueue(queue, new Buffer(tasks));
-        // tasks.forEach(task => {
-        //   task = JSON.stringify(task);
-        //   return ch.sendToQueue(queue, new Buffer(task));
-        // });
+        const serializedTasks = JSON.stringify(tasks);
+        return ch.sendToQueue(queue, new Buffer(serializedTasks));
       })
       .finally(() => {
         debug('RabbitMQ channel closed (producer)');
@@ -29,15 +25,16 @@ module.exports = {
   },
   // consumer always listens, no need to close channel
   consume(processTask) {
-    rabbit.then(conn => {
+    rabbit.then((conn) => {
       debug('RabbitMQ connection opened (consumer)');
       return conn.createChannel();
     })
-    .then(ch => {
+    .then((ch) => {
       const ok = ch.assertQueue(queue);
 
+      /* eslint-disable */
       ok.then(() => {
-        return ch.consume(queue, message => {
+        return ch.consume(queue, (message) => {
           if (message !== null) {
             const data = JSON.parse(message.content.toString());
             processTask(data);
@@ -45,7 +42,8 @@ module.exports = {
           }
         });
       });
+      /* eslint-enable */
     })
-    .catch(err => debug('Error in RabbitMQ consumer: ', err));;
+    .catch(err => debug('Error in RabbitMQ consumer: ', err));
   },
 };

@@ -38,12 +38,10 @@ router.post('/', (req, res, next) => {
     if (!lineUserIds.length) {
       throw abort(404, 'No Line User Ids found', `${message.diseaseGroup} not found`);
     }
-    const tasks = lineUserIds.map((lineUserId) => {
-      return {
-        lineUserId: lineUserId['line_user_id'],
-        body: message.body,
-      };
-    });
+    const tasks = lineUserIds.map(lineUserId => ({
+      lineUserId: lineUserId['line_user_id'],
+      body: message.body,
+    }));
     taskQueue.produce(tasks);
 
     // TODO: insert message into DB for audit/analytics
@@ -51,11 +49,10 @@ router.post('/', (req, res, next) => {
     return lineUserIds.length;
   })
   .then((queuedLineUserIds) => {
-    return res.status(200).json({
+    res.status(200).json({
       status: 'success',
       message: `Group ${message.diseaseGroup} has been added to queue`,
-      queuedLineUserIds,
-      message,
+      data: { queuedLineUserIds, message },
     });
   })
   .catch(err => next(err));

@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const debug = require('debug')('cageur');
 const morgan = require('morgan');
 
-app.set('port', (process.env.PORT || 5000));
+const { port } = require('./app/config');
 
 /**
 * Middleware
@@ -40,9 +40,9 @@ app.use((err, _, res, __) => {
 /**
  * Nodejs server listens forever
  */
-app.listen(app.get('port'), () => {
+app.listen(port, () => {
   const stage = process.env.NODE_ENV === 'test' ? 'test' : 'dev';
-  debug(`Node ${stage} server is running on port`, app.get('port'));
+  debug(`Node ${stage} server is running on port`, port);
 });
 
 module.exports = app;

@@ -29,47 +29,48 @@ chai.use(chaiHttp);
 
 describe('API Clinic Test', function() {
 
-  it('should add a SINGLE clinic on /api/v1/clinic POST', function(done) {
-  var data = {
-    clinic_name: 'Clinic Dummy New',
-    address: 'Bandung',
-    phone: '8',
-    fax: '9',
-  };
+  // it('should add a SINGLE clinic on /api/v1/clinic POST', function(done) {
+  // var data = {
+  //   clinic_name: 'Clinic Dummy New',
+  //   address: 'Bandung',
+  //   phone: '8',
+  //   fax: '9',
+  // };
 
-  chai.request('http://localhost:5000')
-    .post('/api/v1/clinic/')
-    .send(data)
-    .end(function(err, res){
-        expect(res.status).to.equal(200);
-        console.log(err)
-        done();
-    });
-  });
+  // chai.request('http://localhost:5000')
+  //   .post('/api/v1/clinic/')
+  //   .send(data)
+  //   .end(function(err, res){
+  //       expect(res.status).to.equal(200);
+  //       console.log(err)
+  //       done();
+  //   });
+  // });
 
 let id_dummy = 7;
-let sid_dummy = 7;
-
-function getLastID(req, res, next) {
+function getLastID() {
     db.one("select MAX(id) + 1 as maxID from clinic")
     .then(maxID => {
-      let id_dummys = util.inspect(maxID, false, null);
-      console.log("======")
-      console.log("the value is :  " + id_dummys)
-      return id_dummys
+      let id_dumies = maxID;
+      var return_id = id_dumies.maxid
+      console.log("return new id dummy ::: " + return_id)
+      // return id_dumies.maxid;
+      return_id = 170
+      return return_id
     })
-
-    .catch(function (error) {
-        return next(error);
-    });
 }
 
-sid_dummy = getLastID();
+new_id_dummy = getLastID();
 
-console.log("outside main function")
-console.log(sid_dummy)
-console.log("id dummy ::::")
+new_id_dummy =  getJoke().then(function(res){
+   console.log(res.joke);
+ });
+console.log("old id dummy ::::")
 console.log(id_dummy)
+
+console.log("new id dummy ::::")
+console.log(new_id_dummy)
+
 
   // it('should update a SINGLE clinic on /api/v1/clinic/<id> PUT', function(done) {
   // var data = {

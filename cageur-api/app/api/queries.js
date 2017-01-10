@@ -19,6 +19,7 @@ let db = pgp(cn);
 function getAllClinic(req, res, next) {
   db.any('select * from clinic')
     .then(function (data) {
+      console.log(res)
       res.status(200)
         .json({
           status: 'success',
@@ -35,6 +36,7 @@ function getSingleClinic(req, res, next) {
   let clinicID = parseInt(req.params.id);
   db.one('select * from clinic where id = $1', clinicID)
     .then(function (data) {
+      console.log(res)
       res.status(200)
         .json({
           status: 'success',
@@ -56,8 +58,7 @@ function createClinic(req, res, next) {
     };
 
     db.none("insert into clinic (name, address, phone, fax) values(${name}, ${address}, ${phone}, ${fax})", data)
-    .then(function () {
-        // success;
+    .then(function (xyz) {
         res.status(200)
         .json({
           status: 'success',
@@ -141,40 +142,40 @@ function getSinglePatient(req, res, next) {
 }
 
 function createPatient(req, res, next) {
-  // get max patient id
-
-    let data = {
-        id_category : req.body.id_category,
-        id_clinic : req.body.id_clinic,
-        phone_number : req.body.phone_number,
-        first_name : req.body.first_name,
-        last_name : req.body.last_name,
-        lineid : req.body.lineid
-    };
-
-
-    db.one("select max(id) + 1 as maxID from patient")
+    db.one("select count(id) + 1 as maxID from patient")
     .then(maxID => {
-      // process maxID, blabla
       let abc = maxID + 1;
-      res.status(200)
-      .json({
-        status: 'woy id max',
-        message: maxID
-      });
+      // res.status(200)
+      // .json({
+      //   status: 'id max',
+      //   message: maxID
+      // });
 
-      db.one("insert into patient (clinic_id, phone_number, first_name, last_name, line_user_id) values (${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data);
+      let data = {
+          id_category : req.body.id_category,
+          id_clinic : req.body.id_clinic,
+          phone_number : req.body.phone_number,
+          first_name : req.body.first_name,
+          last_name : req.body.last_name,
+          lineid : req.body.lineid,
+          maxID : maxID
+      };
+
+      db.one("insert into patient_disease_group (patient_id, disease_group_id) values (${maxID}, ${id_category})", data);
       return db.none("insert into patient (clinic_id, phone_number, first_name, last_name, line_user_id) values (${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data);
     })
 
-    .then(() => {
-      // success;
-      res.status(200)
-      .json({
-        status: 'success',
-        message: 'patient data succesfully added to db'
-      });
-    })
+    .catch(function (error) {
+        return next(error);
+    });
+
+    // .then(() => {
+    //   res.status(200)
+    //   .json({
+    //     status: 'success',
+    //     message: 'patient data succesfully added to db'
+    //   });
+    // })
 
 
     // db.none("insert into patient (id_category, id_clinic, phone_number, first_name, last_name, lineid) values(${id_category}, ${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data)
@@ -187,12 +188,9 @@ function createPatient(req, res, next) {
     //     });
     // })
 
-
-    .catch(function (error) {
-        return next(error);
-    });
-
-    // insert to another table 
+    // .catch(function (error) {
+    //     return next(error);
+    // });
 
 }
 

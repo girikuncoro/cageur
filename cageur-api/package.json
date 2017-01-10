@@ -18,7 +18,11 @@
     "chai": "3.5.0",
     "debug": "2.6.0",
     "express": "4.14.0",
-    "pg-promise": "^5.5.0"
+    "pg-promise": "^5.5.0",
+    "request": "2.79.0",
+    "should": "11.1.2",
+    "superagent": "3.3.1",
+    "util": "0.10.3"
   },
   "devDependencies": {
     "eslint": "^3.6.0",

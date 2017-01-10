@@ -14,4 +14,4 @@ module.exports = {
   lineChannelID: process.env.LINE_CHANNEL_ID,
   lineChannelSecret: process.env.LINE_CHANNEL_SECRET,
   lineChannelToken: process.env.LINE_CHANNEL_TOKEN,
-}
+};

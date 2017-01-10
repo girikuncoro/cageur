@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const db = require('../../config/db');
-const { abort, taskQueue } = require('../../util');
+const abort = require('../../util/abort');
+const taskQueue = require('../../util/task-queue');
 
 /**
 * Sending message through Line API and RabbitMQ producer
@@ -14,7 +15,7 @@ router.post('/', (req, res, next) => {
   let getLineUserIds;
 
   if (!message.diseaseGroup || !message.body) {
-    throw abort(400, `Missing required parameters "diseaseGroup" or "body"`);
+    throw abort(400, 'Missing required parameters "diseaseGroup" or "body"');
   }
 
   // Getting everyone if all
@@ -23,9 +24,8 @@ router.post('/', (req, res, next) => {
       SELECT line_user_id
       FROM patient
       WHERE line_user_id IS NOT NULL`);
-  }
-  // Getting only requested diseaseGroup
-  else {
+  } else {
+    // Getting only requested diseaseGroup
     getLineUserIds = db.any(`
       SELECT p.line_user_id
       FROM patient_disease_group AS pd
@@ -34,11 +34,11 @@ router.post('/', (req, res, next) => {
       WHERE pd.disease_group_id = $1 AND p.line_user_id IS NOT NULL`, message.diseaseGroup);
   }
 
-  getLineUserIds.then(lineUserIds => {
+  getLineUserIds.then((lineUserIds) => {
     if (!lineUserIds.length) {
-      throw abort(404, `No Line User Ids found`, `${message.diseaseGroup} not found`);
+      throw abort(404, 'No Line User Ids found', `${message.diseaseGroup} not found`);
     }
-    const tasks = lineUserIds.map(lineUserId => {
+    const tasks = lineUserIds.map((lineUserId) => {
       return {
         lineUserId: lineUserId['line_user_id'],
         body: message.body,
@@ -50,7 +50,7 @@ router.post('/', (req, res, next) => {
 
     return lineUserIds.length;
   })
-  .then(queuedLineUserIds => {
+  .then((queuedLineUserIds) => {
     return res.status(200).json({
       status: 'success',
       message: `Group ${message.diseaseGroup} has been added to queue`,

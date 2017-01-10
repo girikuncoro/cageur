@@ -2,6 +2,7 @@
 * Module dependencies
 */
 const express = require('express');
+
 const app = express();
 const bodyParser = require('body-parser');
 
@@ -28,7 +29,7 @@ app.use('/api/v1/message/send', require('./app/api/message/send'));
 /**
  * Error handler routes.
  */
-app.use((err, req, res, next) => {
+app.use((err, _, res, __) => {
   res.status(err.status || 500)
   .json({
     status: 'error',

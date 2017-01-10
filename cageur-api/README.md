@@ -35,7 +35,7 @@ $ heroku --version
 
 
 ## Common Development Task
-- Run the mocha test scripts
+- Run the mocha test scripts (make sure docker compose for test is running)
 ```
 $ npm run test
 ```

@@ -6,3 +6,5 @@ npm-debug.log
 *.dev
 .DS_Store
 .nvmrc
+venv
+.env

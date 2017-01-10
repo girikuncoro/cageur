@@ -67,3 +67,6 @@ DELETE : http://localhost:5000/api/clinic/1
 
 - Notes :
 `db installation`, please running the query that i push to this branch. named `clinic.sql` and `patient.sql`.
+
+
+- test commit new branch : API-patient

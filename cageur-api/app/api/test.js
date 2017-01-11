@@ -34,4 +34,11 @@ router.post('/api/v1/disease_group', db.createDiseaseGroup);
 router.put('/api/v1/disease_group/:id', db.updateDiseaseGroup);
 router.delete('/api/v1/disease_group/:id', db.removeDiseaseGroup);
 
+// router url for patient_disease_group
+router.get('/api/v1/patient_disease_group', db.getAllPatientDiseaseGroup);
+router.get('/api/v1/patient_disease_group/:id', db.getSinglePatientDiseaseGroup);
+router.post('/api/v1/patient_disease_group', db.createPatientDiseaseGroup);
+router.put('/api/v1/patient_disease_group/:id', db.updatePatientDiseaseGroup);
+router.delete('/api/v1/patient_disease_group/:id', db.removePatientDiseaseGroup);
+
 module.exports = router;

@@ -51,13 +51,16 @@ DROP TABLE IF EXISTS content;
 CREATE TABLE content (
   id SERIAL NOT NULL,
   disease_group_id INT,
-  is_all BOOLEAN DEFAULT TRUE,
-  content TEXT NOT NULL,
+  template TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id),
   FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
 );
+CREATE UNIQUE INDEX distinct_content ON content (disease_group_id, template)
+  WHERE disease_group_id IS NOT NULL;
+CREATE UNIQUE INDEX distinct_content_null ON content (template)
+  WHERE disease_group_id IS NULL;
 
 -- In Postgres, updated timestamp
 -- must be performed manually through trigger

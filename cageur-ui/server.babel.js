@@ -10,7 +10,7 @@ import routes from './src/routes';
 import { renderHTMLString } from '@sketchpixy/rubix/lib/node/router';
 import RubixAssetMiddleware from '@sketchpixy/rubix/lib/node/RubixAssetMiddleware';
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 let app = express();
 app.use(compression());

@@ -19,7 +19,8 @@ export default class Message extends React.Component {
     this.state = {
       showModal: false,
       group: [],
-      selectedGroup: {}
+      selectedGroup: {},
+      text: ''
     };
   }
 
@@ -55,8 +56,11 @@ export default class Message extends React.Component {
     });
   }
 
+  handleChange(e) {
+    this.setState({text: e.target.value});
+  }
   sendMessage() {
-    let {selectedGroup} = this.state;
+    let {selectedGroup, text} = this.state;
 
     // Alert user to select group first befor sending a message
     if(Object.keys(selectedGroup).length === 0 && selectedGroup.constructor === Object) {
@@ -64,9 +68,15 @@ export default class Message extends React.Component {
       return;
     }
 
+    // Alert user to at least write something in message body
+    if(text === '') {
+      alert("Please write something or use a template:)");
+      return;
+    }    
+
     let message = {
       diseaseGroup: selectedGroup.id,
-      body: 'tes message'
+      body: text
     };
 
     fetch(API_URL+'/message/send', {
@@ -76,7 +86,8 @@ export default class Message extends React.Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      console.log(responseData.message);
+      alert(responseData.message);
+      console.log(responseData);
     });
   }
 
@@ -105,7 +116,11 @@ export default class Message extends React.Component {
               Message
             </Col>
             <Col sm={10}>
-        	    <FormControl componentClass="textarea" placeholder="Message" />
+        	    <FormControl componentClass="textarea"
+                placeholder="Message"
+                value={this.state.value}
+                onChange={::this.handleChange}
+              />
             </Col>
         	</FormGroup>
 

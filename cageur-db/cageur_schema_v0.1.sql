@@ -47,6 +47,18 @@ CREATE TABLE patient_disease_group (
   FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS content;
+CREATE TABLE content (
+  id SERIAL NOT NULL,
+  disease_group_id INT,
+  is_all BOOLEAN DEFAULT TRUE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  PRIMARY KEY (id),
+  FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
+);
+
 -- In Postgres, updated timestamp
 -- must be performed manually through trigger
 CREATE OR REPLACE FUNCTION update_column_updated_at()
@@ -75,4 +87,9 @@ CREATE TRIGGER update_updated_at BEFORE UPDATE
 DROP TRIGGER IF EXISTS update_updated_at ON patient_disease_group;
 CREATE TRIGGER update_updated_at BEFORE UPDATE
   ON patient_disease_group FOR EACH ROW EXECUTE PROCEDURE
+  update_column_updated_at();
+
+DROP TRIGGER IF EXISTS update_updated_at ON content;
+CREATE TRIGGER update_updated_at BEFORE UPDATE
+  ON content FOR EACH ROW EXECUTE PROCEDURE
   update_column_updated_at();

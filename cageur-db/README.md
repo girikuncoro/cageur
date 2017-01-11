@@ -4,10 +4,23 @@ Cageur database stored in Postgres
 ## Requirement
 * Python 2.7
 
+## Quick start
+Run your `cageur-db` from Docker (the schema is loaded through Dockerfile), then run:
+```
+# install dependencies (OSx only)
+sh install_deps.sh
+
+# populate dummy data
+sh populate_dummy_data.sh
+```
+
 ## How to install dependencies
 ```
 # install postgres adaptor on local machine
 brew install postgresql
+
+# or if you are on unix, install using apt-get
+apt-get install libpq-dev
 
 # install python libraries
 pip install -r requirements.txt

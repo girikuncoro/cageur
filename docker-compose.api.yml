@@ -1,0 +1,25 @@
+version: '2'
+services:
+  cageur_api:
+    build: ./cageur-api
+    container_name: cageur_api
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - POSTGRES_URL=postgres://cageur_user:123456@cageur_db:5432/cageur_db
+      - CLOUDAMQP_URL=amqp://cageur_rabbitmq
+    links:
+      - cageur_db
+      - cageur_rabbitmq
+  cageur_db:
+    build: ./cageur-db
+    container_name: cageur_db
+    ports:
+      - "5432:5432"
+  cageur_rabbitmq:
+    image: rabbitmq
+    container_name: cageur_rabbitmq
+    ports:
+      - "5672:5672" # port for the daemon API, can be exposed to public.
+      - "8080:15672" # port for the Management interface

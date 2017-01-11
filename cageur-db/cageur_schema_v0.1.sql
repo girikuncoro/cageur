@@ -37,11 +37,12 @@ CREATE TABLE patient (
 
 DROP TABLE IF EXISTS patient_disease_group;
 CREATE TABLE patient_disease_group (
+  id SERIAL NOT NULL,
   patient_id INT NOT NULL,
   disease_group_id INT NOT NULL,
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
-  PRIMARY KEY (patient_id, disease_group_id),
+  PRIMARY KEY (id),
   FOREIGN KEY (patient_id) REFERENCES patient(id) ON DELETE CASCADE,
   FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
 );

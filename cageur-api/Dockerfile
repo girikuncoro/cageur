@@ -18,4 +18,4 @@ EXPOSE 5000
 
 # Run the app.  CMD is required to run on Heroku
 # $PORT is set by Heroku
-CMD npm start
+CMD bash -c "sleep 10; DEBUG=cageur npm start"

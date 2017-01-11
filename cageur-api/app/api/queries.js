@@ -133,11 +133,10 @@ function createPatient(req, res, next) {
           phone_number : req.body.phone_number,
           first_name : req.body.first_name,
           last_name : req.body.last_name,
-          lineid : req.body.lineid,
-          maxID : maxID
+          lineid : req.body.lineid
     };
 
-    db.none("insert into patient (id_category, id_clinic, phone_number, first_name, last_name, lineid) values(${id_category}, ${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data)
+    db.none("insert into patient (clinic_id, phone_number, first_name, last_name, line_user_id) values(${id_clinic}, ${phone_number}, ${first_name}, ${last_name}, ${lineid})", data)
     .then(function () {
         // success;
         res.status(200)
@@ -165,7 +164,7 @@ function updatePatient(req, res, next) {
         lineid : req.body.lineid
   };
 
-  db.none("update patient set id_category=${id_category}, id_clinic=${id_clinic}, phone_number=${phone_number}, first_name=${first_name} , last_name=${last_name}, lineid=${lineid} where id = ${id}", data)
+  db.none("update patient set clinic_id=${id_clinic}, phone_number=${phone_number}, first_name=${first_name} , last_name=${last_name}, line_user_id=${lineid} where id = ${id}", data)
 
       .then(function () {
           res.status(200)
@@ -334,7 +333,6 @@ function createPatientDiseaseGroup(req, res, next) {
     });
 
 }
-
 
 function updatePatientDiseaseGroup(req, res, next) {
 

@@ -5,6 +5,7 @@ const express = require('express');
 
 const app = express();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const debug = require('debug')('cageur');
 const morgan = require('morgan');
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors()); // TODO: whitelist the origin for production
 
 /**
 * API routes

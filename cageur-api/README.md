@@ -35,7 +35,7 @@ $ heroku --version
 
 
 ## Common Development Task
-- Run the mocha test scripts
+- Run the mocha test scripts (make sure docker compose for test is running)
 ```
 $ npm run test
 ```
@@ -50,23 +50,54 @@ $ npm run server:dev
 
 ## How to use cageur-api
 
+## Clinic API
 - Clinic API : Get Data
-GET : http://localhost:5000/api/clinic
+GET : http://localhost:5000/api/v1/clinic
 
 - Clinic API : Detail Data
-GET : http://localhost:5000/api/clinic/1
+GET : http://localhost:5000/api/v1/clinic/1
 
 - Clinic API : Insert Data
-POST : http://localhost:5000/api/clinic
+POST : http://localhost:5000/api/v1/clinic
 
 - Clinic API : Update Data
-PUT : http://localhost:5000/api/clinic/1
+PUT : http://localhost:5000/api/v1/clinic/1
 
 - Clinic API : Delete Data
-DELETE : http://localhost:5000/api/clinic/1
+DELETE : http://localhost:5000/api/v1/clinic/1
+
+## Patient API
+- Patient API : Get Data
+GET : http://localhost:5000/api/v1/patient
+
+- Patient API : Detail Data
+GET : http://localhost:5000/api/v1/patient/1
+
+- Patient API : Insert Data
+POST : http://localhost:5000/api/v1/patient
+
+- Patient API : Update Data
+PUT : http://localhost:5000/api/v1/patient/1
+
+- Patient API : Delete Data
+DELETE : http://localhost:5000/api/v1/patient/1
+
+## Disease Group API
+- Disease Group API : Get Data
+GET : http://localhost:5000/api/v1/disease_group
+
+- Disease Group API : Detail Data
+GET : http://localhost:5000/api/v1/disease_group/1
+
+- Disease Group API : Insert Data
+POST : http://localhost:5000/api/v1/disease_group
+
+- Disease Group API : Update Data
+PUT : http://localhost:5000/api/v1/disease_group/1
+
+- Disease Group API : Delete Data
+DELETE : http://localhost:5000/api/v1/disease_group/1
 
 - Notes :
-`db installation`, please running the query that i push to this branch. named `clinic.sql` and `patient.sql`.
-
-
-- test commit new branch : API-patient
+`db installation`, please running the query that i push to this branch. 
+named `clinic.sql` , `patient.sql` , and `disease_group.sql`.

@@ -1,19 +1,4 @@
-// module requirement bluebird as a promise. pgp for handling connection to postgre sql.
-const promise = require('bluebird');
-const options = { promiseLib: promise };
-const pgp = require('pg-promise')(options);
-
-// define configuration file to connect to postgre sql.
-let cn = {
-    host: 'localhost',
-    port: 5432,
-    database: 'cageur_db',
-    user: 'cageur_user',
-    password: '123456'
-};
-
-// initiate db
-let db = pgp(cn);
+const db = require('../config/db');
 
 // routes start here
 function getAllClinic(req, res, next) {

@@ -20,17 +20,19 @@ router.post('/', (req, res, next) => {
   const validateDiseaseGroupID = (diseaseGroup) => {
     if (diseaseGroup === 'all') {
       return Promise.resolve(true);
-    } else {
-      return db.any(`
-        SELECT *
-        FROM content
-        WHERE disease_group_id = $1`, content.diseaseGroup
-      )
-      .then((data) => {
-        return data.length === 0 ? Promise.resolve(false) : Promise.resolve(true);
-      })
-      .catch(err => next(err));
     }
+    return db.any(`
+      SELECT *
+      FROM content
+      WHERE disease_group_id = $1`, content.diseaseGroup
+    )
+    .then((data) => {
+      if (data.length === 0) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(true);
+    })
+    .catch(err => next(err));
   };
 
   let sqlInsertContent;
@@ -57,7 +59,7 @@ router.post('/', (req, res, next) => {
     return db.any(sqlInsertContent, [disease, template]);
   })
   .then((data) => {
-    return res.status(200).json({
+    res.status(200).json({
       status: 'success',
       data,
       message: 'Content data has been inserted',
@@ -100,18 +102,17 @@ router.get('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   const contentID = req.params.id;
   const sqlGetContent = `
-    SELECT *
-    FROM (
-    	SELECT c.id, d.name AS disease_group, c.template
-    	FROM content AS c
-    	JOIN disease_group AS d
-    	ON c.disease_group_id = d.id
-    	UNION
-    	SELECT id, 'all' AS disease_group, template
-    	FROM content
-    	WHERE disease_group_id IS NULL
-    	ORDER BY id) AS cdg
-    WHERE cdg.id = $1`;
+  SELECT *
+  FROM (SELECT c.id, d.name AS disease_group, c.template
+    FROM content AS c
+    JOIN disease_group AS d
+    ON c.disease_group_id = d.id
+    UNION
+    SELECT id, 'all' AS disease_group, template
+    FROM content
+    WHERE disease_group_id IS NULL
+    ORDER BY id) AS cdg
+  WHERE cdg.id = $1`;
 
   db.any(sqlGetContent, contentID).then((data) => {
     if (data.length === 0) {
@@ -120,7 +121,7 @@ router.get('/:id', (req, res, next) => {
     return res.status(200).json({
       status: 'success',
       data,
-      message: 'Retrieved one content'
+      message: 'Retrieved one content',
     });
   })
   .catch(err => next(err));
@@ -160,7 +161,7 @@ router.get('/disease_group/:id', (req, res, next) => {
     return res.status(200).json({
       status: 'success',
       data,
-      message: 'Retrieved content data for disease group'
+      message: 'Retrieved content data for disease group',
     });
   })
   .catch(err => next(err));

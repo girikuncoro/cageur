@@ -7,7 +7,63 @@ const abort = require('../../util/abort');
 * POST /api/v1/content
 */
 router.post('/', (req, res, next) => {
+  const content = {
+    diseaseGroup: req.body.diseaseGroup,
+    template: req.body.template,
+  };
 
+  if (!content.diseaseGroup || !content.template) {
+    throw abort(400, 'Missing required parameters "diseaseGroup" or "template"');
+  }
+
+  // Check if valid diseaseGroup
+  const validateDiseaseGroupID = (diseaseGroup) => {
+    if (diseaseGroup === 'all') {
+      return Promise.resolve(true);
+    } else {
+      return db.any(`
+        SELECT *
+        FROM content
+        WHERE disease_group_id = $1`, content.diseaseGroup
+      )
+      .then((data) => {
+        return data.length === 0 ? Promise.resolve(false) : Promise.resolve(true);
+      })
+      .catch(err => next(err));
+    }
+  };
+
+  let sqlInsertContent;
+  if (content.diseaseGroup !== 'all') {
+    sqlInsertContent = `
+      INSERT INTO content(disease_group_id, template)
+      VALUES($1, $2)
+      RETURNING id, disease_group_id AS disease_group, template, created_at, updated_at`;
+  } else {
+    sqlInsertContent = `
+      INSERT INTO content(disease_group_id, template)
+      VALUES($1, $2)
+      RETURNING id, 'all' AS disease_group, template, created_at, updated_at`;
+  }
+
+  validateDiseaseGroupID(content.diseaseGroup)
+  .then((valid) => {
+    if (!valid) {
+      throw abort(400, 'Invalid disease group', `DiseaseGroup ${content.diseaseGroup}`);
+    }
+    const disease = content.diseaseGroup === 'all' ? null : content.diseaseGroup;
+    const template = content.template;
+
+    return db.any(sqlInsertContent, [disease, template]);
+  })
+  .then((data) => {
+    return res.status(200).json({
+      status: 'success',
+      data,
+      message: 'Content data has been inserted',
+    });
+  })
+  .catch(err => next(err));
 });
 
 /**
@@ -15,7 +71,7 @@ router.post('/', (req, res, next) => {
 * GET /api/v1/content
 */
 router.get('/', (req, res, next) => {
-  const getContents = db.any(`
+  const sqlGetContents = `
     SELECT c.id, d.name AS disease_group, c.template
     FROM content AS c
     JOIN disease_group AS d
@@ -24,9 +80,9 @@ router.get('/', (req, res, next) => {
     SELECT id, 'all' AS disease_group, template
     FROM content
     WHERE disease_group_id IS NULL
-    ORDER BY id`);
+    ORDER BY id`;
 
-  getContents.then((data) => {
+  db.any(sqlGetContents).then((data) => {
     const message = data.length === 0 ? 'No content data yet' : 'Retrieved all content data';
     return res.status(200).json({
       status: 'success',
@@ -43,7 +99,7 @@ router.get('/', (req, res, next) => {
 */
 router.get('/:id', (req, res, next) => {
   const contentID = req.params.id;
-  const getContent = db.any(`
+  const sqlGetContent = `
     SELECT *
     FROM (
     	SELECT c.id, d.name AS disease_group, c.template
@@ -55,9 +111,9 @@ router.get('/:id', (req, res, next) => {
     	FROM content
     	WHERE disease_group_id IS NULL
     	ORDER BY id) AS cdg
-    WHERE cdg.id = $1`, contentID);
+    WHERE cdg.id = $1`;
 
-  getContent.then((data) => {
+  db.any(sqlGetContent, contentID).then((data) => {
     if (data.length === 0) {
       throw abort(404, 'No content data found', `Content ${contentID} not found`);
     }
@@ -78,26 +134,26 @@ router.get('/:id', (req, res, next) => {
 router.get('/disease_group/:id', (req, res, next) => {
   const diseaseGroupID = req.params.id;
 
-  const getContentsDiseaseGroup = db.any(`
+  const sqlGetContentsDiseaseGroup = `
     SELECT c.id, d.name AS disease_group, c.template
     FROM content AS c
     JOIN disease_group AS d
     ON c.disease_group_id = d.id
-    WHERE d.id = $1`, diseaseGroupID);
+    WHERE d.id = $1`;
 
-  const getContentsAllGroup = db.any(`
-    SELECT id, 'all' AS disease_group, template
+  const sqlGetContentsAllGroup = `
+    SELECT id, $1 AS disease_group, template
     FROM content
-    WHERE disease_group_id IS NULL`);
+    WHERE disease_group_id IS NULL`;
 
-  let getContents;
+  let sqlGetContents;
   if (diseaseGroupID === 'all') {
-    getContents = getContentsAllGroup;
+    sqlGetContents = sqlGetContentsAllGroup;
   } else {
-    getContents = getContentsDiseaseGroup;
+    sqlGetContents = sqlGetContentsDiseaseGroup;
   }
 
-  getContents.then((data) => {
+  db.any(sqlGetContents, diseaseGroupID).then((data) => {
     if (data.length === 0) {
       throw abort(404, 'No content data found', `DiseaseGroup ${diseaseGroupID} not found`);
     }

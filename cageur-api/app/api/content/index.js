@@ -166,4 +166,61 @@ router.get('/disease_group/:id', (req, res, next) => {
   .catch(err => next(err));
 });
 
+/**
+* Update content
+* PUT /api/v1/content/:id
+*/
+router.put('/:id', (req, res, next) => {
+  const content = {
+    contentID: req.params.id,
+    diseaseGroup: req.body.diseaseGroup === 'all' ? null : req.body.diseaseGroup,
+    template: req.body.template,
+  };
+
+  let sqlUpdateContent;
+  if (!content.diseaseGroup) {
+    sqlUpdateContent = `
+      UPDATE content
+      SET disease_group_id=$(diseaseGroup), template=$(template)
+      WHERE id=$(contentID)
+      RETURNING id, 'all' AS disease_group, template, created_at, updated_at`;
+  } else {
+    sqlUpdateContent = `
+      UPDATE content
+      SET disease_group_id=$(diseaseGroup), template=$(template)
+      WHERE id=$(contentID)
+      RETURNING id, disease_group_id AS disease_group, template, created_at, updated_at`;
+  }
+
+  db.one(sqlUpdateContent, content)
+  .then((data) => {
+    res.status(200).json({
+      status: 'success',
+      data,
+      message: 'Content has been updated',
+    });
+  })
+  .catch(err => next(err));
+});
+
+/**
+* Remove content
+* DELETE /api/v1/content/:id
+*/
+router.delete('/:id', (req, res, next) => {
+  const contentID = req.params.id;
+
+  db.result('DELETE FROM content WHERE id=$1', contentID)
+  .then((result) => {
+    if (result.rowCount === 0) {
+      throw abort(404, 'Content not exist or already removed', `${contentID} not found`);
+    }
+    res.status(200).json({
+      status: 'success',
+      message: `Content ${contentID} has been removed`,
+    });
+  })
+  .catch(err => next(err));
+});
+
 module.exports = router;

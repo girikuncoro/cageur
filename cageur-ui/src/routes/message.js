@@ -12,6 +12,16 @@ const API_HEADERS = {
   'Content-Type': 'application/json'
 }
 
+function compare(a,b) {
+  // c: object property
+  let c = 'value';
+  if (a[c] < b[c])
+    return -1;
+  if (a[c] > b[c])
+    return 1;
+  return 0;
+}
+
 export default class Message extends React.Component {
   constructor(props) {
     super(props);
@@ -33,6 +43,7 @@ export default class Message extends React.Component {
       responseData.data.map(function(d,i) {
         group.push({id: d.id, value: d.name, label: d.name});
       })
+      group.sort(compare);
       this.setState({group: group});
       console.log(group);
     })
@@ -72,7 +83,7 @@ export default class Message extends React.Component {
     if(text === '') {
       alert("Please write something or use a template:)");
       return;
-    }    
+    }
 
     let message = {
       diseaseGroup: selectedGroup.id,
@@ -103,6 +114,7 @@ export default class Message extends React.Component {
         	  </Col>
         	  <Col sm={10}>
               <Select
+                  matchProp="label"
                   name="form-field-name"
                   value={selectedGroup}
                   options={group}

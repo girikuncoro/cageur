@@ -4,7 +4,7 @@ import 'whatwg-fetch';
 
 import {
   Form, FormGroup, FormControl, Col,
-  Button, ControlLabel,Modal
+  Button, ControlLabel, Modal, Alert
 } from '@sketchpixy/rubix';
 
 const API_URL = 'http://localhost:5000/api/v1';
@@ -30,7 +30,11 @@ export default class Message extends React.Component {
       showModal: false,
       group: [],
       selectedGroup: {},
-      text: ''
+      text: '',
+      showGroupSelectAlert: false,
+      showMessageAlert: false,
+      groupSelectAlert: 'success',
+      messageAlert: 'success'
     };
   }
 
@@ -61,27 +65,35 @@ export default class Message extends React.Component {
   }
 
   setGroup(newValue) {
-    console.log('State changed to ' + newValue);
     this.setState({
-      selectedGroup: newValue
+      selectedGroup: newValue,
+      showGroupSelectAlert: false,
+      groupSelectAlert: "success"
     });
   }
 
   handleChange(e) {
     this.setState({text: e.target.value});
   }
+
   sendMessage() {
     let {selectedGroup, text} = this.state;
 
     // Alert user to select group first befor sending a message
     if(Object.keys(selectedGroup).length === 0 && selectedGroup.constructor === Object) {
-      alert("Please select group before sending message.");
+      this.setState({
+        showGroupSelectAlert: true,
+        groupSelectAlert: "danger"
+      })
       return;
     }
 
     // Alert user to at least write something in message body
     if(text === '') {
-      alert("Please write something or use a template:)");
+      this.setState({
+        showMessageAlert: true,
+        messageAlert: "danger"
+      })
       return;
     }
 
@@ -97,17 +109,42 @@ export default class Message extends React.Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      alert(responseData.message);
-      console.log(responseData);
+      this.setState({
+        responseMessage: responseData.message,
+        messageAlert: "success"
+      });
     });
   }
 
+  handleAlertGroupSelectDismiss() {
+    this.setState({showGroupSelectAlert: false})
+  }
+
+  handleAlertMessageDismiss() {
+    this.setState({showMessageAlert: false})
+  }
+
   render() {
-    let {group, selectedGroup} = this.state;
+    let {group, selectedGroup, showGroupSelectAlert, showMessageAlert,
+         groupSelectAlert, messageAlert, responseMessage} = this.state;
+    let alertGroupSelect = (showGroupSelectAlert) ?
+    (<Alert bsStyle={groupSelectAlert} onDismiss={::this.handleAlertGroupSelectDismiss}>
+        <strong>Oh snap! </strong><span>Please select group before sending message.</span>
+    </Alert>) : ""
+
+    let message = (messageAlert == "success") ?
+        this.state.responseMessage :
+        "Please write something or use a template:)";
+    let alertMessage = (showMessageAlert) ?
+    (<Alert bsStyle={messageAlert} onDismiss={::this.handleAlertMessageDismiss}>
+        <span>{message}</span>
+    </Alert>) : "";
 
     return (
       <div>
         <Form horizontal>
+          {alertGroupSelect}
+          {alertMessage}
         	<FormGroup controlId="formHorizontalEmail">
         	  <Col componentClass={ControlLabel} sm={2}>
         		  Group

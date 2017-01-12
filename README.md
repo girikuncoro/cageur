@@ -19,6 +19,9 @@ docker-compose -f docker-compose.db.yml up
 docker-compose -f docker-compose.dev.yml build
 docker-compose -f docker-compose.dev.yml up
 
+docker-compose -f docker-compose.test.yml build
+docker-compose -f docker-compose.test.yml up
+
 # connect psql client from docker
 docker run -it --rm --network=cageur_default --link cageur_db:postgres postgres psql -h postgres -U cageur_user -d cageur_db
 ```

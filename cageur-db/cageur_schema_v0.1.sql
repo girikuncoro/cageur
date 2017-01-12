@@ -47,19 +47,22 @@ CREATE TABLE patient_disease_group (
   FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS content;
-CREATE TABLE content (
+DROP TABLE IF EXISTS template;
+CREATE TABLE template (
   id SERIAL NOT NULL,
   disease_group_id INT,
-  template TEXT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id),
   FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX distinct_content ON content (disease_group_id, template)
+DROP INDEX IF EXISTS distinct_content;
+CREATE UNIQUE INDEX distinct_content ON template (disease_group_id, content)
   WHERE disease_group_id IS NOT NULL;
-CREATE UNIQUE INDEX distinct_content_null ON content (template)
+DROP INDEX IF EXISTS distinct_content_null;
+CREATE UNIQUE INDEX distinct_content_null ON template (content)
   WHERE disease_group_id IS NULL;
 
 -- In Postgres, updated timestamp

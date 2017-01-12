@@ -35,20 +35,21 @@ except psql.Error as err:
 # Generate random data for content
 MAX_CONTENT = 5
 sql_insert_content = '''
-INSERT INTO content(disease_group_id, template)
-VALUES ({}, '{}');
+INSERT INTO template(disease_group_id, title, content)
+VALUES ({}, '{}', '{}');
 '''
 fake = Factory.create()
 for disease_id in disease_group_ids:
     for i in xrange(random.randint(1,MAX_CONTENT)):
-        template = fake.text()
-        template += ' ' + fake.text()
+        content = fake.text()
+        title = ' '.join(content.split()[:10]) + ' ' + str(disease_id)
+        content += ' ' + fake.text()
 
         # insert to database
         try:
             # parse SQL command
             insert_sql = sql_insert_content.format(
-                disease_id, template)
+                disease_id, title, content)
             cursor.execute(insert_sql)
             db.commit()
         except psql.Error as err:

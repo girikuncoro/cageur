@@ -9,3 +9,6 @@ python tools/insert_patient_data.py
 
 # Generate random patient disease group
 python tools/insert_patient_disease_group_data.py
+
+# Generate random content template
+python tools/insert_patient_content_data.py

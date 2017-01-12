@@ -26,6 +26,7 @@ app.use(cors()); // TODO: whitelist the origin for production
 * API routes
 */
 app.use('/', require('./app/api/test'));
+app.use('/api/v1/content', require('./app/api/content'));
 app.use('/api/v1/message/send', require('./app/api/message/send'));
 
 /**

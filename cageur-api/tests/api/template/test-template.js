@@ -8,9 +8,9 @@ chai.use(require('chai-http'));
 const db = require('../../../app/config/db');
 
 describe('Template API Test', () => {
-  let _diseaseGroupID;
-  let _templateID_Single;
-  let _templateID_All;
+  let currDiseaseGroupID;
+  let currSingleTemplateID;
+  let currAllTemplateID;
 
   const sqlInsertDiseaseGroup = `
     INSERT INTO disease_group(name)
@@ -27,8 +27,8 @@ describe('Template API Test', () => {
   before((done) => {
     db.one(sqlInsertDiseaseGroup)
     .then((data) => {
-      _diseaseGroupID = data.id;
-      return db.any(sqlInsertTemplate(_diseaseGroupID));
+      currDiseaseGroupID = data.id;
+      return db.any(sqlInsertTemplate(currDiseaseGroupID));
     })
     .then(_ => db.any(sqlInsertTemplate(null)))
     .then(_ => done());
@@ -43,19 +43,19 @@ describe('Template API Test', () => {
 
   describe('POST /api/v1/template', () => {
     // test case should be independent on others
-    let _cleanedID;
+    let cleanedID;
     const countRow = (table) => {
       return db.one(`SELECT COUNT(*) FROM ${table}`);
     };
 
     afterEach((done) => {
-      db.none(`DELETE FROM template WHERE id=${_cleanedID}`)
+      db.none(`DELETE FROM template WHERE id=${cleanedID}`)
       .then(_ => done());
     });
 
     it('should insert for requested disease group', (done) => {
       const validRequest = {
-        diseaseGroup: _diseaseGroupID,
+        diseaseGroup: currDiseaseGroupID,
         title: 'Foo bar',
         content: 'Some content',
       };
@@ -68,11 +68,13 @@ describe('Template API Test', () => {
 
         expect(res.status).to.equal(200);
         expect(r.status).to.equal('success');
-        expect(r.data.disease_group).to.equal(_diseaseGroupID);  // TODO: should return camel case
+
+        // TODO: should have returned camel case
+        expect(r.data.disease_group).to.equal(currDiseaseGroupID);
         expect(r.data.title).to.equal('Foo bar');
         expect(r.data.content).to.equal('Some content');
 
-        _cleanedID = r.data.id;
+        cleanedID = r.data.id;
 
         countRow('template').then((row) => {
           expect(parseInt(row.count, 10)).to.equal(3);
@@ -83,7 +85,7 @@ describe('Template API Test', () => {
 
     it('should insert for all disease group', (done) => {
       const validRequest = {
-        diseaseGroup: _diseaseGroupID,
+        diseaseGroup: currDiseaseGroupID,
         title: 'Foo bar',
         content: 'Some content for all patient',
       };
@@ -96,11 +98,13 @@ describe('Template API Test', () => {
 
         expect(res.status).to.equal(200);
         expect(r.status).to.equal('success');
-        expect(r.data.disease_group).to.equal(_diseaseGroupID);  // TODO: should return camel case
+
+        // TODO: should return camel case
+        expect(r.data.disease_group).to.equal(currDiseaseGroupID);
         expect(r.data.title).to.equal('Foo bar');
         expect(r.data.content).to.equal('Some content for all patient');
 
-        _cleanedID = r.data.id;
+        cleanedID = r.data.id;
 
         countRow('template').then((row) => {
           expect(parseInt(row.count, 10)).to.equal(3);
@@ -112,7 +116,7 @@ describe('Template API Test', () => {
     it('should return 400 for missing parameters', (done) => {
       const invalidRequests = [
         {},
-        { diseaseGroup: _diseaseGroupID },
+        { diseaseGroup: currDiseaseGroupID },
         { title: 'Foo bar' },
         { content: 'Some content' },
       ];
@@ -134,7 +138,7 @@ describe('Template API Test', () => {
     });
 
     it('should return 400 for invalid disease group', (done) => {
-      const invalidDiseaseGroupID = _diseaseGroupID + 999;
+      const invalidDiseaseGroupID = currDiseaseGroupID + 999;
       const invalidRequest = {
         diseaseGroup: invalidDiseaseGroupID,
         title: 'Foo bar',
@@ -184,22 +188,22 @@ describe('Template API Test', () => {
       .then((_) => {
         return chai.request(app)
         .get('/api/v1/template')
-        .then((_) => {}, (err) => {
+        .then((__) => {}, (err) => {
           const data = err.response.body;
 
           expect(err.status).to.equal(404);
           expect(data.status).to.equal('error');
           expect(data.message).to.equal('No template data yet');
-        })
+        });
       })
-      .then(_ => db.one(sqlInsertTemplate(_diseaseGroupID)))
+      .then(_ => db.one(sqlInsertTemplate(currDiseaseGroupID)))
       .then((data) => {
-        _templateID_Single = data.id;
-        return db.one(sqlInsertTemplate(null))
+        currSingleTemplateID = data.id;
+        return db.one(sqlInsertTemplate(null));
       })
       .then((data) => {
-        _templateID_All = data.id;
-        done()
+        currAllTemplateID = data.id;
+        done();
       });
     });
   });
@@ -207,7 +211,7 @@ describe('Template API Test', () => {
   describe('GET /api/v1/template/:id', () => {
     it('should retrieve single template for specific disease group', (done) => {
       chai.request(app)
-      .get(`/api/v1/template/${_templateID_Single}`)
+      .get(`/api/v1/template/${currSingleTemplateID}`)
       .then((res) => {
         const r = res.body;
 
@@ -225,7 +229,7 @@ describe('Template API Test', () => {
 
     it('should retrieve single template for all patient group', (done) => {
       chai.request(app)
-      .get(`/api/v1/template/${_templateID_All}`)
+      .get(`/api/v1/template/${currAllTemplateID}`)
       .then((res) => {
         const r = res.body;
 
@@ -242,7 +246,7 @@ describe('Template API Test', () => {
     });
 
     it('should return 404 for invalid templateID', (done) => {
-      const invalidTemplateID = _templateID_Single + 999;
+      const invalidTemplateID = currSingleTemplateID + 999;
 
       chai.request(app)
       .get(`/api/v1/template/${invalidTemplateID}`)
@@ -261,7 +265,7 @@ describe('Template API Test', () => {
   describe('GET /api/v1/template/disease_group/:id', () => {
     it('should retrieve template list for specific disease group', (done) => {
       chai.request(app)
-      .get(`/api/v1/template/disease_group/${_diseaseGroupID}`)
+      .get(`/api/v1/template/disease_group/${currDiseaseGroupID}`)
       .then((res) => {
         const r = res.body;
 
@@ -298,7 +302,7 @@ describe('Template API Test', () => {
     });
 
     it('should return 404 for invalid diseaseGroupID', (done) => {
-      const invalidDiseaseGroupID = _diseaseGroupID + 999;
+      const invalidDiseaseGroupID = currDiseaseGroupID + 999;
 
       chai.request(app)
       .get(`/api/v1/template/disease_group/${invalidDiseaseGroupID}`)
@@ -325,13 +329,13 @@ describe('Template API Test', () => {
       };
 
       // insert new disease
-      let _newDiseaseID;
-      db.any(`INSERT INTO disease_group(name) VALUES('sakit hati') RETURNING id`)
+      let newDiseaseID;
+      db.any('INSERT INTO disease_group(name) VALUES(\'sakit hati\') RETURNING id')
       .then((data) => {
-        _newDiseaseID = data[0].id;
+        newDiseaseID = data[0].id;
         return chai.request(app)
-          .put(`/api/v1/template/${_templateID_Single}`)
-          .send(updateTemplate(_newDiseaseID))
+          .put(`/api/v1/template/${currSingleTemplateID}`)
+          .send(updateTemplate(newDiseaseID));
       })
       .then((res) => {
         const r = res.body;
@@ -340,7 +344,7 @@ describe('Template API Test', () => {
         expect(r.status).to.equal('success');
         expect(r.message).to.equal('Template has been updated');
 
-        expect(r.data.disease_group).to.equal(_newDiseaseID);
+        expect(r.data.disease_group).to.equal(newDiseaseID);
         expect(r.data.title).to.equal('New title');
         expect(r.data.content).to.equal('New content');
 
@@ -356,7 +360,7 @@ describe('Template API Test', () => {
       };
 
       chai.request(app)
-      .put(`/api/v1/template/${_templateID_Single}`)
+      .put(`/api/v1/template/${currSingleTemplateID}`)
       .send(updateTemplate)
       .then((res) => {
         const r = res.body;
@@ -375,13 +379,13 @@ describe('Template API Test', () => {
 
     it('should update template data for all patient group', (done) => {
       const updateTemplate = {
-        diseaseGroup: _diseaseGroupID,
+        diseaseGroup: currDiseaseGroupID,
         title: 'New title',
         content: 'New content',
       };
 
       chai.request(app)
-      .put(`/api/v1/template/${_templateID_All}`)
+      .put(`/api/v1/template/${currAllTemplateID}`)
       .send(updateTemplate)
       .then((res) => {
         const r = res.body;
@@ -390,7 +394,7 @@ describe('Template API Test', () => {
         expect(r.status).to.equal('success');
         expect(r.message).to.equal('Template has been updated');
 
-        expect(r.data.disease_group).to.equal(_diseaseGroupID);
+        expect(r.data.disease_group).to.equal(currDiseaseGroupID);
         expect(r.data.title).to.equal('New title');
         expect(r.data.content).to.equal('New content');
 
@@ -401,7 +405,7 @@ describe('Template API Test', () => {
 
   describe('DELETE /api/v1/template/:id', () => {
     it('should remove template data', (done) => {
-      const templateID = _templateID_Single;
+      const templateID = currSingleTemplateID;
 
       chai.request(app)
       .delete(`/api/v1/template/${templateID}`)
@@ -417,7 +421,7 @@ describe('Template API Test', () => {
     });
 
     it('should return 404 for invalid templateID', (done) => {
-      const invalidTemplateID = _templateID_Single + 999;
+      const invalidTemplateID = currSingleTemplateID + 999;
 
       chai.request(app)
       .delete(`/api/v1/template/${invalidTemplateID}`)

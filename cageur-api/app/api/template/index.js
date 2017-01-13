@@ -223,7 +223,7 @@ router.delete('/:id', (req, res, next) => {
     }
     res.status(200).json({
       status: 'success',
-      message: `Template ${templateID} has been removed`,
+      message: `Template has been removed`,
     });
   })
   .catch(err => next(err));

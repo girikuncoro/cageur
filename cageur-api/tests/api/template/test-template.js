@@ -257,4 +257,179 @@ describe('Template API Test', () => {
       });
     });
   });
+
+  describe('GET /api/v1/template/disease_group/:id', () => {
+    it('should retrieve template list for specific disease group', (done) => {
+      chai.request(app)
+      .get(`/api/v1/template/disease_group/${_diseaseGroupID}`)
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Retrieved template data for disease group');
+
+        expect(r.data).to.be.instanceof(Array);
+        expect(r.data[0].disease_group).to.equal('darah tinggi');
+        expect(r.data[0].title).to.equal('Foo for bar');
+        expect(r.data[0].content).to.equal('This is foo content');
+
+        done();
+      });
+    });
+
+    it('should retrieve template list for all patient group', (done) => {
+      chai.request(app)
+      .get('/api/v1/template/disease_group/all')
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Retrieved template data for disease group');
+
+        expect(r.data).to.be.instanceof(Array);
+        expect(r.data[0].disease_group).to.equal('all');
+        expect(r.data[0].title).to.equal('Foo for bar');
+        expect(r.data[0].content).to.equal('This is foo content');
+
+        done();
+      });
+    });
+
+    it('should return 404 for invalid diseaseGroupID', (done) => {
+      const invalidDiseaseGroupID = _diseaseGroupID + 999;
+
+      chai.request(app)
+      .get(`/api/v1/template/disease_group/${invalidDiseaseGroupID}`)
+      .then((_) => {}, (err) => {
+        const data = err.response.body;
+
+        expect(err.status).to.equal(404);
+        expect(data.status).to.equal('error');
+        expect(data.message).to.equal('No template data found');
+
+        done();
+      });
+    });
+  });
+
+  describe('PUT /api/v1/template/:id', () => {
+    it('should update template data for specific disease group', (done) => {
+      const updateTemplate = (diseaseID) => {
+        return {
+          diseaseGroup: diseaseID,
+          title: 'New title',
+          content: 'New content',
+        };
+      };
+
+      // insert new disease
+      let _newDiseaseID;
+      db.any(`INSERT INTO disease_group(name) VALUES('sakit hati') RETURNING id`)
+      .then((data) => {
+        _newDiseaseID = data[0].id;
+        return chai.request(app)
+          .put(`/api/v1/template/${_templateID_Single}`)
+          .send(updateTemplate(_newDiseaseID))
+      })
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Template has been updated');
+
+        expect(r.data.disease_group).to.equal(_newDiseaseID);
+        expect(r.data.title).to.equal('New title');
+        expect(r.data.content).to.equal('New content');
+
+        done();
+      });
+    });
+
+    it('should update template data to all patient group', (done) => {
+      const updateTemplate = {
+        diseaseGroup: 'all',
+        title: 'New title for all',
+        content: 'New content for all',
+      };
+
+      chai.request(app)
+      .put(`/api/v1/template/${_templateID_Single}`)
+      .send(updateTemplate)
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Template has been updated');
+
+        expect(r.data.disease_group).to.equal('all');
+        expect(r.data.title).to.equal('New title for all');
+        expect(r.data.content).to.equal('New content for all');
+
+        done();
+      });
+    });
+
+    it('should update template data for all patient group', (done) => {
+      const updateTemplate = {
+        diseaseGroup: _diseaseGroupID,
+        title: 'New title',
+        content: 'New content',
+      };
+
+      chai.request(app)
+      .put(`/api/v1/template/${_templateID_All}`)
+      .send(updateTemplate)
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Template has been updated');
+
+        expect(r.data.disease_group).to.equal(_diseaseGroupID);
+        expect(r.data.title).to.equal('New title');
+        expect(r.data.content).to.equal('New content');
+
+        done();
+      });
+    });
+  });
+
+  describe('DELETE /api/v1/template/:id', () => {
+    it('should remove template data', (done) => {
+      const templateID = _templateID_Single;
+
+      chai.request(app)
+      .delete(`/api/v1/template/${templateID}`)
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Template has been removed');
+
+        done();
+      });
+    });
+
+    it('should return 404 for invalid templateID', (done) => {
+      const invalidTemplateID = _templateID_Single + 999;
+
+      chai.request(app)
+      .delete(`/api/v1/template/${invalidTemplateID}`)
+      .then((_) => {}, (err) => {
+        const data = err.response.body;
+
+        expect(err.status).to.equal(404);
+        expect(data.status).to.equal('error');
+        expect(data.message).to.equal('Template not exist or already removed');
+
+        done();
+      });
+    });
+  });
 });

@@ -47,6 +47,24 @@ CREATE TABLE patient_disease_group (
   FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS template;
+CREATE TABLE template (
+  id SERIAL NOT NULL,
+  disease_group_id INT,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  PRIMARY KEY (id),
+  FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE
+);
+DROP INDEX IF EXISTS distinct_content;
+CREATE UNIQUE INDEX distinct_content ON template (disease_group_id, content)
+  WHERE disease_group_id IS NOT NULL;
+DROP INDEX IF EXISTS distinct_content_null;
+CREATE UNIQUE INDEX distinct_content_null ON template (content)
+  WHERE disease_group_id IS NULL;
+
 -- In Postgres, updated timestamp
 -- must be performed manually through trigger
 CREATE OR REPLACE FUNCTION update_column_updated_at()
@@ -75,4 +93,9 @@ CREATE TRIGGER update_updated_at BEFORE UPDATE
 DROP TRIGGER IF EXISTS update_updated_at ON patient_disease_group;
 CREATE TRIGGER update_updated_at BEFORE UPDATE
   ON patient_disease_group FOR EACH ROW EXECUTE PROCEDURE
+  update_column_updated_at();
+
+DROP TRIGGER IF EXISTS update_updated_at ON template;
+CREATE TRIGGER update_updated_at BEFORE UPDATE
+  ON content FOR EACH ROW EXECUTE PROCEDURE
   update_column_updated_at();

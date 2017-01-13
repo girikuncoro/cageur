@@ -28,7 +28,7 @@ describe('Message Send API Test', () => {
 
       const insertDiseaseGroup = db.one(`
         INSERT INTO disease_group(name)
-        VALUES('asam urat')
+        VALUES('diabetes')
         RETURNING id
       `);
 

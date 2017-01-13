@@ -51,8 +51,8 @@ router.post('/', (req, res, next) => {
   .then((queuedLineUserIds) => {
     res.status(200).json({
       status: 'success',
-      message: `Group ${message.diseaseGroup} has been added to queue`,
       data: { queuedLineUserIds, message },
+      message: `Group ${message.diseaseGroup} has been added to queue`,
     });
   })
   .catch(err => next(err));

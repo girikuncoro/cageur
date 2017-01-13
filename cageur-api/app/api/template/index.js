@@ -87,11 +87,13 @@ router.get('/', (req, res, next) => {
     ORDER BY id`;
 
   db.any(sqlGetTemplates).then((data) => {
-    const message = data.length === 0 ? 'No template data yet' : 'Retrieved all template data';
+    if (data.length === 0) {
+      throw abort(404, 'No template data yet', 'Empty template table');
+    }
     return res.status(200).json({
       status: 'success',
       data,
-      message,
+      message: 'Retrieved all template data',
     });
   })
   .catch(err => next(err));

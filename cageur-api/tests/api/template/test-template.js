@@ -11,29 +11,25 @@ describe('Template API Test', () => {
   let _diseaseGroupID;
   let _templateID;
 
-  const countRow = (table) => {
-    return db.one(`SELECT COUNT(*) FROM ${table}`);
+  const sqlInsertDiseaseGroup = `
+    INSERT INTO disease_group(name)
+    VALUES('darah tinggi')
+    RETURNING id`;
+
+  const sqlInsertTemplate = (diseaseGroupID) => {
+    return `
+      INSERT INTO template(disease_group_id, title, content)
+      VALUES(${diseaseGroupID}, 'Foo for bar', 'This is foo content')
+      RETURNING id`;
   };
 
   before((done) => {
-    const insertDiseaseGroup = db.one(`
-      INSERT INTO disease_group(name)
-      VALUES('asam urat')
-      RETURNING id
-    `);
-
-    const insertTemplate = (diseaseGroupID) => {
-      return db.one(`
-        INSERT INTO template(disease_group_id, title, content)
-        VALUES(${diseaseGroupID}, 'Foo for bar', 'This is foo content')
-        RETURNING id`);
-    };
-
-    insertDiseaseGroup.then((data) => {
+    db.one(sqlInsertDiseaseGroup)
+    .then((data) => {
       _diseaseGroupID = data.id;
-      return insertTemplate(_diseaseGroupID);
+      return db.any(sqlInsertTemplate(_diseaseGroupID));
     })
-    .then(_ => insertTemplate(null))
+    .then(_ => db.any(sqlInsertTemplate(null)))
     .then(_ => done());
   });
 
@@ -47,6 +43,9 @@ describe('Template API Test', () => {
   describe('POST /api/v1/template', () => {
     // test case should be independent on others
     let _cleanedID;
+    const countRow = (table) => {
+      return db.one(`SELECT COUNT(*) FROM ${table}`);
+    };
 
     afterEach((done) => {
       db.none(`DELETE FROM template WHERE id=${_cleanedID}`)
@@ -100,6 +99,8 @@ describe('Template API Test', () => {
         expect(r.data.title).to.equal('Foo bar');
         expect(r.data.content).to.equal('Some content for all patient');
 
+        _cleanedID = r.data.id;
+
         countRow('template').then((row) => {
           expect(parseInt(row.count, 10)).to.equal(3);
           done();
@@ -151,6 +152,48 @@ describe('Template API Test', () => {
 
         done();
       });
+    });
+  });
+
+  describe('GET /api/v1/template', () => {
+    it('should retrieve all templates', (done) => {
+      chai.request(app)
+      .get('/api/v1/template')
+      .then((res) => {
+        const r = res.body;
+        const validDiseaseGroup = ['darah tinggi', 'all'];
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Retrieved all template data');
+
+        r.data.forEach((data, i) => {
+          expect(data.disease_group).to.equal(validDiseaseGroup[i]);
+          expect(data.title).to.equal('Foo for bar');
+          expect(data.content).to.equal('This is foo content');
+
+          if (i === r.data.length - 1) done();
+        });
+      });
+    });
+
+    it('should return 404 when table is empty', (done) => {
+      // empty table first
+      db.none('DELETE FROM template')
+      .then((_) => {
+        return chai.request(app)
+        .get('/api/v1/template')
+        .then((_) => {}, (err) => {
+          const data = err.response.body;
+
+          expect(err.status).to.equal(404);
+          expect(data.status).to.equal('error');
+          expect(data.message).to.equal('No template data yet');
+        })
+      })
+      .then(_ => db.any(sqlInsertTemplate(_diseaseGroupID)))
+      .then(_ => db.any(sqlInsertTemplate(null)))
+      .then(_ => done());
     });
   });
 });

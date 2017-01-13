@@ -95,7 +95,7 @@ CREATE TRIGGER update_updated_at BEFORE UPDATE
   ON patient_disease_group FOR EACH ROW EXECUTE PROCEDURE
   update_column_updated_at();
 
-DROP TRIGGER IF EXISTS update_updated_at ON content;
+DROP TRIGGER IF EXISTS update_updated_at ON template;
 CREATE TRIGGER update_updated_at BEFORE UPDATE
   ON content FOR EACH ROW EXECUTE PROCEDURE
   update_column_updated_at();

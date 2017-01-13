@@ -29,12 +29,13 @@ export default class Message extends React.Component {
     this.state = {
       showModal: false,
       group: [],
-      selectedGroup: {},
+      selectedGroup: null,
       text: '',
       showGroupSelectAlert: false,
       showMessageAlert: false,
-      groupSelectAlert: 'success',
-      messageAlert: 'success'
+      messageAlert: false,
+      messageError: 1,
+      responseMessage: ''
     };
   }
 
@@ -49,7 +50,7 @@ export default class Message extends React.Component {
       })
       group.sort(compare);
       this.setState({group: group});
-      console.log(group);
+      // console.log(group);
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
@@ -68,8 +69,8 @@ export default class Message extends React.Component {
     this.setState({
       selectedGroup: newValue,
       showGroupSelectAlert: false,
-      groupSelectAlert: "success"
     });
+    console.log(newValue);
   }
 
   handleChange(e) {
@@ -79,11 +80,10 @@ export default class Message extends React.Component {
   sendMessage() {
     let {selectedGroup, text} = this.state;
 
-    // Alert user to select group first befor sending a message
-    if(Object.keys(selectedGroup).length === 0 && selectedGroup.constructor === Object) {
+    // Alert user to select group first before sending a message
+    if(selectedGroup === null) {
       this.setState({
-        showGroupSelectAlert: true,
-        groupSelectAlert: "danger"
+        showGroupSelectAlert: true
       })
       return;
     }
@@ -92,7 +92,8 @@ export default class Message extends React.Component {
     if(text === '') {
       this.setState({
         showMessageAlert: true,
-        messageAlert: "danger"
+        messageAlert: false,
+        messageError: 1
       })
       return;
     }
@@ -110,8 +111,19 @@ export default class Message extends React.Component {
     .then((response) => response.json())
     .then((responseData) => {
       this.setState({
-        responseMessage: responseData.message,
-        messageAlert: "success"
+        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${selectedGroup.value}`,
+        messageAlert: true,
+        showMessageAlert: true,
+        messageError: 3,
+      });
+    })
+    .catch((error) => {
+      console.log('Error fetching and parsing data', error);
+      this.setState({
+        responseMessage: `Terdapat kesalahan berupa ${error}`,
+        messageAlert: true,
+        showMessageAlert: true,
+        messageError: 2,
       });
     });
   }
@@ -126,70 +138,87 @@ export default class Message extends React.Component {
 
   render() {
     let {group, selectedGroup, showGroupSelectAlert, showMessageAlert,
-         groupSelectAlert, messageAlert, responseMessage} = this.state;
+         messageAlert, responseMessage, messageError} = this.state;
     let alertGroupSelect = (showGroupSelectAlert) ?
-    (<Alert bsStyle={groupSelectAlert} onDismiss={::this.handleAlertGroupSelectDismiss}>
-        <strong>Oh snap! </strong><span>Please select group before sending message.</span>
+    (<Alert bsStyle="danger" onDismiss={::this.handleAlertGroupSelectDismiss}>
+        <strong>Perhatian! </strong><span>Silahkan pilih salah satu grup penyakit sebelum mengirim pesan.</span>
     </Alert>) : ""
 
-    let message = (messageAlert == "success") ?
-        this.state.responseMessage :
-        "Please write something or use a template:)";
+    let message = (messageAlert) ?
+        responseMessage :
+        "Silahkan isi bagian pesan sebelum mengirim pesan.";
+    let alertStyle;
+
+    if (messageError == 1) {
+      alertStyle = "danger";
+    } else if (messageError == 2) {
+      alertStyle = "danger";
+    } else if (messageError == 3) {
+      alertStyle = "success";
+    }
+
     let alertMessage = (showMessageAlert) ?
-    (<Alert bsStyle={messageAlert} onDismiss={::this.handleAlertMessageDismiss}>
+    (<Alert bsStyle={alertStyle} onDismiss={::this.handleAlertMessageDismiss}>
         <span>{message}</span>
     </Alert>) : "";
 
     return (
       <div>
         <Form horizontal>
-          {alertGroupSelect}
-          {alertMessage}
         	<FormGroup controlId="formHorizontalEmail">
         	  <Col componentClass={ControlLabel} sm={2}>
-        		  Group
+        		  Grup Penyakit
         	  </Col>
         	  <Col sm={10}>
               <Select
+                  ref="groupDiseaseSelect"
                   matchProp="label"
-                  name="form-field-name"
+                  name="select-group-disease"
                   value={selectedGroup}
                   options={group}
                   onChange={::this.setGroup}
+                  placeholder="Pilih Grup Penyakit"
+                  autofocus={true}
               />
         	  </Col>
+            <Col sm={10}>
+            {alertGroupSelect}
+            </Col>
         	</FormGroup>
 
           <FormGroup controlId="formControlsTextarea">
             <Col componentClass={ControlLabel} sm={2}>
-              Message
+              Pesan
             </Col>
             <Col sm={10}>
         	    <FormControl componentClass="textarea"
-                placeholder="Message"
+                placeholder="Isi Pesan ..."
                 value={this.state.value}
                 onChange={::this.handleChange}
               />
+            </Col>
+            <Col sm={10}>
+            {alertMessage}
             </Col>
         	</FormGroup>
 
         	<FormGroup>
             <Col smOffset={2} sm={10}>
           		<Button>
-          		  Schedule
+          		  BERKALA
           		</Button>
               <Button bsStyle="primary" onClick={::this.open}>
-                Template
+                TEMPLATE
               </Button>
               <Button bsStyle="success" onClick={::this.sendMessage}>
-                Send Now
+                KIRIM PESAN
               </Button>
             </Col>
         	</FormGroup>
         </Form>
         <Modal show={this.state.showModal} onHide={::this.close}>
     		  <Modal.Header closeButton>
-    			   <Modal.Title>Group Message Template</Modal.Title>
+    			   <Modal.Title>Template Pesan Untuk Grup Penyakit</Modal.Title>
     		  </Modal.Header>
     		  <Modal.Body>
             <h1>All</h1>

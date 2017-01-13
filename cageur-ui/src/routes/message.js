@@ -165,6 +165,8 @@ export default class Message extends React.Component {
     return (
       <div>
         <Form horizontal>
+          {alertGroupSelect}
+          {alertMessage}
         	<FormGroup controlId="formHorizontalEmail">
         	  <Col componentClass={ControlLabel} sm={2}>
         		  Grup Penyakit
@@ -181,9 +183,6 @@ export default class Message extends React.Component {
                   autofocus={true}
               />
         	  </Col>
-            <Col sm={10}>
-            {alertGroupSelect}
-            </Col>
         	</FormGroup>
 
           <FormGroup controlId="formControlsTextarea">
@@ -191,14 +190,11 @@ export default class Message extends React.Component {
               Pesan
             </Col>
             <Col sm={10}>
-        	    <FormControl componentClass="textarea"
+        	    <FormControl style={{height: 200}} componentClass="textarea"
                 placeholder="Isi Pesan ..."
                 value={this.state.value}
                 onChange={::this.handleChange}
               />
-            </Col>
-            <Col sm={10}>
-            {alertMessage}
             </Col>
         	</FormGroup>
 

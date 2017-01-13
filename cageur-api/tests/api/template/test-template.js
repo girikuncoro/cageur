@@ -9,7 +9,8 @@ const db = require('../../../app/config/db');
 
 describe('Template API Test', () => {
   let _diseaseGroupID;
-  let _templateID;
+  let _templateID_Single;
+  let _templateID_All;
 
   const sqlInsertDiseaseGroup = `
     INSERT INTO disease_group(name)
@@ -191,9 +192,69 @@ describe('Template API Test', () => {
           expect(data.message).to.equal('No template data yet');
         })
       })
-      .then(_ => db.any(sqlInsertTemplate(_diseaseGroupID)))
-      .then(_ => db.any(sqlInsertTemplate(null)))
-      .then(_ => done());
+      .then(_ => db.one(sqlInsertTemplate(_diseaseGroupID)))
+      .then((data) => {
+        _templateID_Single = data.id;
+        return db.one(sqlInsertTemplate(null))
+      })
+      .then((data) => {
+        _templateID_All = data.id;
+        done()
+      });
+    });
+  });
+
+  describe('GET /api/v1/template/:id', () => {
+    it('should retrieve single template for specific disease group', (done) => {
+      chai.request(app)
+      .get(`/api/v1/template/${_templateID_Single}`)
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Retrieved one template');
+
+        expect(r.data.disease_group).to.equal('darah tinggi');
+        expect(r.data.title).to.equal('Foo for bar');
+        expect(r.data.content).to.equal('This is foo content');
+
+        done();
+      });
+    });
+
+    it('should retrieve single template for all patient group', (done) => {
+      chai.request(app)
+      .get(`/api/v1/template/${_templateID_All}`)
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Retrieved one template');
+
+        expect(r.data.disease_group).to.equal('all');
+        expect(r.data.title).to.equal('Foo for bar');
+        expect(r.data.content).to.equal('This is foo content');
+
+        done();
+      });
+    });
+
+    it('should return 404 for invalid templateID', (done) => {
+      const invalidTemplateID = _templateID_Single + 999;
+
+      chai.request(app)
+      .get(`/api/v1/template/${invalidTemplateID}`)
+      .then((_) => {}, (err) => {
+        const data = err.response.body;
+
+        expect(err.status).to.equal(404);
+        expect(data.status).to.equal('error');
+        expect(data.message).to.equal('No template data found');
+
+        done();
+      });
     });
   });
 });

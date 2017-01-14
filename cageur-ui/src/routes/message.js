@@ -7,6 +7,8 @@ import {
   Button, ControlLabel, Modal, Alert
 } from '@sketchpixy/rubix';
 
+import Template from '../common/template';
+
 const API_URL = 'http://localhost:5000/api/v1';
 const API_HEADERS = {
   'Content-Type': 'application/json'
@@ -35,7 +37,8 @@ export default class Message extends React.Component {
       showMessageAlert: false,
       messageAlert: false,
       messageError: 1,
-      responseMessage: ''
+      responseMessage: '',
+      template: []
     };
   }
 
@@ -62,7 +65,25 @@ export default class Message extends React.Component {
   }
 
   open() {
+    let {selectedGroup} = this.state;
     this.setState({ showModal: true });
+
+    if (selectedGroup !== null) {
+      // Fetching Disease Group Data
+      fetch(`${API_URL}/template/disease_group/${selectedGroup.id}`, {headers: API_HEADERS})
+      .then((response) => response.json())
+      .then((responseData) => {
+        let template = [];
+        responseData.data.map(function(d,i) {
+          template.push({id: d.id, disease_group: d.disease_group, title: d.title, content: d.content});
+        })
+        this.setState({template: template});
+        console.log(responseData.data);
+      })
+      .catch((error) => {
+        console.log('Error fetching and parsing data', error);
+      });
+    }
   }
 
   setGroup(newValue) {
@@ -138,7 +159,9 @@ export default class Message extends React.Component {
 
   render() {
     let {group, selectedGroup, showGroupSelectAlert, showMessageAlert,
-         messageAlert, responseMessage, messageError} = this.state;
+         messageAlert, responseMessage, messageError,
+         template} = this.state;
+
     let alertGroupSelect = (showGroupSelectAlert) ?
     (<Alert bsStyle="danger" onDismiss={::this.handleAlertGroupSelectDismiss}>
         <strong>Perhatian! </strong><span>Silahkan pilih salah satu grup penyakit sebelum mengirim pesan.</span>
@@ -212,34 +235,14 @@ export default class Message extends React.Component {
             </Col>
         	</FormGroup>
         </Form>
-        <Modal show={this.state.showModal} onHide={::this.close}>
-    		  <Modal.Header closeButton>
-    			   <Modal.Title>Template Pesan Untuk Grup Penyakit</Modal.Title>
-    		  </Modal.Header>
-    		  <Modal.Body>
-            <h1>All</h1>
-            <ul>
-              <li>Bla 1</li>
-              <li>Bla 2</li>
-              <li>Bla 3</li>
-            </ul>
-            <h1>Asam Urat</h1>
-            <ul>
-              <li>Bla 1</li>
-              <li>Bla 2</li>
-              <li>Bla 3</li>
-            </ul>
-            <h1>Diabetes</h1>
-            <ul>
-              <li>Bla 1</li>
-              <li>Bla 2</li>
-              <li>Bla 3</li>
-            </ul>
-    		  </Modal.Body>
-    		  <Modal.Footer>
-    			   <Button onClick={::this.close}>Close</Button>
-    		  </Modal.Footer>
-    		</Modal>
+
+        {/*  Template Modal */}
+        <Template
+          showModal={this.state.showModal}
+          handleHide={::this.close}
+          template={this.state.template}
+          group={(this.state.selectedGroup!==null) ? this.state.selectedGroup.value : ""}
+          />
       </div>
     );
   }

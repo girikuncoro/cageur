@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button} from '@sketchpixy/rubix';
+import {Button} from '@sketchpixy/rubix';
 
 export default class TemplateContent extends React.Component {
   constructor(props) {
@@ -13,13 +13,19 @@ export default class TemplateContent extends React.Component {
     this.setState({showDetails: !this.state.showDetails})
   }
 
+  handleUseClick() {
+    let {fullTittle, content, handleUse} = this.props;
+    handleUse({title: fullTittle, content: content})
+  }
+
   render() {
-    let {title, fullTittle, content} = this.props;
+    let {title, fullTittle, content, handleUse} = this.props;
     let {showDetails} = this.state;
     let renderContent = (showDetails) ?
                         (<div style={boxStyle}>
                           <h4>{fullTittle}</h4>
                           <p>{content}</p>
+                          <Button bsStyle="primary" onClick={::this.handleUseClick}>Gunakan Template</Button>
                          </div>) : "";
 
     return (

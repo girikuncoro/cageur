@@ -38,7 +38,8 @@ export default class Message extends React.Component {
       messageAlert: false,
       messageError: 1,
       responseMessage: '',
-      template: []
+      template: [],
+      selectedTemplate: null
     };
   }
 
@@ -49,11 +50,10 @@ export default class Message extends React.Component {
     .then((responseData) => {
       let group = [];
       responseData.data.map(function(d,i) {
-        group.push({id: d.id, value: d.name, label: d.name});
+        group.push({id: d.id, value: d.name, label: d.name.toUpperCase()});
       })
       group.sort(compare);
       this.setState({group: group});
-      // console.log(group);
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
@@ -78,7 +78,6 @@ export default class Message extends React.Component {
           template.push({id: d.id, disease_group: d.disease_group, title: d.title, content: d.content});
         })
         this.setState({template: template});
-        console.log(responseData.data);
       })
       .catch((error) => {
         console.log('Error fetching and parsing data', error);
@@ -91,7 +90,6 @@ export default class Message extends React.Component {
       selectedGroup: newValue,
       showGroupSelectAlert: false,
     });
-    console.log(newValue);
   }
 
   handleChange(e) {
@@ -132,7 +130,7 @@ export default class Message extends React.Component {
     .then((response) => response.json())
     .then((responseData) => {
       this.setState({
-        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${selectedGroup.value}`,
+        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${selectedGroup.value.toUpperCase()}`,
         messageAlert: true,
         showMessageAlert: true,
         messageError: 3,
@@ -155,6 +153,14 @@ export default class Message extends React.Component {
 
   handleAlertMessageDismiss() {
     this.setState({showMessageAlert: false})
+  }
+
+  handleUse(template) {
+    this.setState({
+      showModal: false,
+      selectedTemplate: template,
+      text: template.content
+    })
   }
 
   render() {
@@ -215,7 +221,7 @@ export default class Message extends React.Component {
             <Col sm={10}>
         	    <FormControl style={{height: 200}} componentClass="textarea"
                 placeholder="Isi Pesan ..."
-                value={this.state.value}
+                value={this.state.text}
                 onChange={::this.handleChange}
               />
             </Col>
@@ -242,6 +248,7 @@ export default class Message extends React.Component {
           handleHide={::this.close}
           template={this.state.template}
           group={(this.state.selectedGroup!==null) ? this.state.selectedGroup.value : ""}
+          handleUse={::this.handleUse}
           />
       </div>
     );

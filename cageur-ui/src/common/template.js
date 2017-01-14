@@ -9,13 +9,13 @@ export default class Template extends React.Component {
   }
 
   render() {
-    let {showModal, handleHide, template, group} = this.props;
+    let {showModal, handleHide, template, group, handleUse} = this.props;
 
     return (
       <Modal show={showModal}
         onHide={handleHide}>
         <Modal.Header closeButton>
-           <Modal.Title>{`Template Pesan Untuk Grup Penyakit ${group}`}</Modal.Title>
+           <Modal.Title>{`Template Pesan Untuk Grup Penyakit ${group.toUpperCase()}`}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <ul>
@@ -26,7 +26,12 @@ export default class Template extends React.Component {
             let fullTittle = d.title;
             let content = d.content;
             return (
-              <TemplateContent title={title} fullTittle={fullTittle} content={content}/>
+              <TemplateContent
+                key={i}
+                title={title}
+                fullTittle={fullTittle}
+                content={content}
+                handleUse={handleUse}/>
             )
           })}
           </ul>

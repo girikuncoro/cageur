@@ -1,25 +1,16 @@
 import React from 'react';
 import Select from 'react-select';
 import 'whatwg-fetch';
-
 import {
   Form, FormGroup, FormControl, Col,
   Button, ControlLabel, Modal, Alert
 } from '@sketchpixy/rubix';
+import Template from '../common/template';
+import {compare, toTitleCase} from '../utilities/util';
 
 const API_URL = 'http://localhost:5000/api/v1';
 const API_HEADERS = {
   'Content-Type': 'application/json'
-}
-
-function compare(a,b) {
-  // c: object property
-  let c = 'value';
-  if (a[c] < b[c])
-    return -1;
-  if (a[c] > b[c])
-    return 1;
-  return 0;
 }
 
 export default class Message extends React.Component {
@@ -35,26 +26,29 @@ export default class Message extends React.Component {
       showMessageAlert: false,
       messageAlert: false,
       messageError: 1,
-      responseMessage: ''
+      responseMessage: '',
+      template: [],
+      selectedTemplate: null
     };
   }
 
- componentDidMount(){
+ componentDidMount() {
     // Fetching Disease Group Data
-    fetch(API_URL+'/disease_group', {headers: API_HEADERS})
+    fetch(API_URL+'/disease_group', {
+      headers: API_HEADERS
+    })
     .then((response) => response.json())
     .then((responseData) => {
       let group = [];
       responseData.data.map(function(d,i) {
-        group.push({id: d.id, value: d.name, label: d.name});
+        group.push({id: d.id, value: d.name, label: toTitleCase(d.name)});
       })
       group.sort(compare);
       this.setState({group: group});
-      // console.log(group);
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
-    });
+    })
   }
 
   close() {
@@ -62,7 +56,33 @@ export default class Message extends React.Component {
   }
 
   open() {
+    let {selectedGroup} = this.state;
+
+    // Alert user to select group first before opening template
+    if(selectedGroup === null) {
+      this.setState({
+        showGroupSelectAlert: true
+      })
+      return;
+    }
+
     this.setState({ showModal: true });
+
+    if (selectedGroup !== null) {
+      // Fetching Disease Group Data
+      fetch(`${API_URL}/template/disease_group/${selectedGroup.id}`, {headers: API_HEADERS})
+      .then((response) => response.json())
+      .then((responseData) => {
+        let template = [];
+        responseData.data.map(function(d,i) {
+          template.push({id: d.id, disease_group: d.disease_group, title: d.title, content: d.content});
+        })
+        this.setState({template: template});
+      })
+      .catch((error) => {
+        console.log('Error fetching and parsing data', error);
+      });
+    }
   }
 
   setGroup(newValue) {
@@ -70,7 +90,6 @@ export default class Message extends React.Component {
       selectedGroup: newValue,
       showGroupSelectAlert: false,
     });
-    console.log(newValue);
   }
 
   handleChange(e) {
@@ -111,7 +130,7 @@ export default class Message extends React.Component {
     .then((response) => response.json())
     .then((responseData) => {
       this.setState({
-        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${selectedGroup.value}`,
+        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${toTitleCase(selectedGroup.value)}`,
         messageAlert: true,
         showMessageAlert: true,
         messageError: 3,
@@ -136,12 +155,22 @@ export default class Message extends React.Component {
     this.setState({showMessageAlert: false})
   }
 
+  handleUse(template) {
+    this.setState({
+      showModal: false,
+      selectedTemplate: template,
+      text: template.content
+    })
+  }
+
   render() {
     let {group, selectedGroup, showGroupSelectAlert, showMessageAlert,
-         messageAlert, responseMessage, messageError} = this.state;
+         messageAlert, responseMessage, messageError,
+         template} = this.state;
+
     let alertGroupSelect = (showGroupSelectAlert) ?
     (<Alert bsStyle="danger" onDismiss={::this.handleAlertGroupSelectDismiss}>
-        <strong>Perhatian! </strong><span>Silahkan pilih salah satu grup penyakit sebelum mengirim pesan.</span>
+        <strong>Perhatian! </strong><span>Silahkan pilih salah satu grup penyakit.</span>
     </Alert>) : ""
 
     let message = (messageAlert) ?
@@ -165,8 +194,14 @@ export default class Message extends React.Component {
     return (
       <div>
         <Form horizontal>
-          {alertGroupSelect}
-          {alertMessage}
+          <FormGroup controlId="alert">
+            <Col sm={2}>
+            </Col>
+            <Col sm={10}>
+              {alertGroupSelect}
+              {alertMessage}
+            </Col>
+          </FormGroup>
         	<FormGroup controlId="formHorizontalEmail">
         	  <Col componentClass={ControlLabel} sm={2}>
         		  Grup Penyakit
@@ -192,7 +227,7 @@ export default class Message extends React.Component {
             <Col sm={10}>
         	    <FormControl style={{height: 200}} componentClass="textarea"
                 placeholder="Isi Pesan ..."
-                value={this.state.value}
+                value={this.state.text}
                 onChange={::this.handleChange}
               />
             </Col>
@@ -212,34 +247,15 @@ export default class Message extends React.Component {
             </Col>
         	</FormGroup>
         </Form>
-        <Modal show={this.state.showModal} onHide={::this.close}>
-    		  <Modal.Header closeButton>
-    			   <Modal.Title>Template Pesan Untuk Grup Penyakit</Modal.Title>
-    		  </Modal.Header>
-    		  <Modal.Body>
-            <h1>All</h1>
-            <ul>
-              <li>Bla 1</li>
-              <li>Bla 2</li>
-              <li>Bla 3</li>
-            </ul>
-            <h1>Asam Urat</h1>
-            <ul>
-              <li>Bla 1</li>
-              <li>Bla 2</li>
-              <li>Bla 3</li>
-            </ul>
-            <h1>Diabetes</h1>
-            <ul>
-              <li>Bla 1</li>
-              <li>Bla 2</li>
-              <li>Bla 3</li>
-            </ul>
-    		  </Modal.Body>
-    		  <Modal.Footer>
-    			   <Button onClick={::this.close}>Close</Button>
-    		  </Modal.Footer>
-    		</Modal>
+
+        {/*  Template Modal */}
+        <Template
+          showModal={this.state.showModal}
+          handleHide={::this.close}
+          template={this.state.template}
+          group={(this.state.selectedGroup!==null) ? this.state.selectedGroup.value : ""}
+          handleUse={::this.handleUse}
+          />
       </div>
     );
   }

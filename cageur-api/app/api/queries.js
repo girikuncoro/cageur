@@ -427,10 +427,10 @@ function createPatientDiseaseGroup(req, res, next) {
 }
 
 function updatePatientDiseaseGroup(req, res, next) {
-  if(!req.body.password){
-        return res.send(400, 'Error. Need a Clinic Name Field');
-  } else if(!req.body.password){
-        return res.send(400, 'Error. Need a Clinic Name Field');
+  if(!req.body.patient_id){
+        return res.send(400, 'Error. Need a Patient ID Field');
+  } else if(!req.body.disease_group_id){
+        return res.send(400, 'Error. Need a Disease Group ID Field');
   } else {
       let data = {
             id : req.params.id,

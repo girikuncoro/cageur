@@ -55,48 +55,64 @@ $ npm run server:dev
 GET : http://localhost:5000/api/v1/clinic
 
 - Clinic API : Detail Data
-GET : http://localhost:5000/api/v1/clinic/1
+GET : http://localhost:5000/api/v1/clinic/:id
 
 - Clinic API : Insert Data
 POST : http://localhost:5000/api/v1/clinic
 
 - Clinic API : Update Data
-PUT : http://localhost:5000/api/v1/clinic/1
+PUT : http://localhost:5000/api/v1/clinic/:id
 
 - Clinic API : Delete Data
-DELETE : http://localhost:5000/api/v1/clinic/1
+DELETE : http://localhost:5000/api/v1/clinic/:id
 
 ## Patient API
 - Patient API : Get Data
 GET : http://localhost:5000/api/v1/patient
 
 - Patient API : Detail Data
-GET : http://localhost:5000/api/v1/patient/1
+GET : http://localhost:5000/api/v1/patient/:id
 
 - Patient API : Insert Data
 POST : http://localhost:5000/api/v1/patient
 
 - Patient API : Update Data
-PUT : http://localhost:5000/api/v1/patient/1
+PUT : http://localhost:5000/api/v1/patient/:id
 
 - Patient API : Delete Data
-DELETE : http://localhost:5000/api/v1/patient/1
+DELETE : http://localhost:5000/api/v1/patient/:id
+
+## Patient Disease Group API
+- Patient Disease Group API : Get Data
+GET : http://localhost:5000/api/v1/patient_disease_group
+
+- Patient Disease Group API : Detail Data
+GET : http://localhost:5000/api/v1/patient_disease_group/:id
+
+- Patient Disease Group API : Insert Data
+POST : http://localhost:5000/api/v1/patient_disease_group
+
+- Patient Disease Group API : Update Data
+PUT : http://localhost:5000/api/v1/patient_disease_group/:id
+
+- Patient Disease Group API : Delete Data
+DELETE : http://localhost:5000/api/v1/patient_disease_group/:id
 
 ## Disease Group API
 - Disease Group API : Get Data
 GET : http://localhost:5000/api/v1/disease_group
 
 - Disease Group API : Detail Data
-GET : http://localhost:5000/api/v1/disease_group/1
+GET : http://localhost:5000/api/v1/disease_group/:id
 
 - Disease Group API : Insert Data
 POST : http://localhost:5000/api/v1/disease_group
 
 - Disease Group API : Update Data
-PUT : http://localhost:5000/api/v1/disease_group/1
+PUT : http://localhost:5000/api/v1/disease_group/:id
 
 - Disease Group API : Delete Data
-DELETE : http://localhost:5000/api/v1/disease_group/1
+DELETE : http://localhost:5000/api/v1/disease_group/:id
 
 - Notes :
 `db installation`, please running the query that i push to this branch. 

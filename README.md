@@ -15,6 +15,13 @@ Using DB for development. You can connect psql client via docker or your own loc
 docker-compose -f docker-compose.db.yml build
 docker-compose -f docker-compose.db.yml up
 
+#in order to implement rabbitmq, we need to change this command into 
+docker-compose -f docker-compose.dev.yml build
+docker-compose -f docker-compose.dev.yml up
+
+docker-compose -f docker-compose.test.yml build
+docker-compose -f docker-compose.test.yml up
+
 # connect psql client from docker
 docker run -it --rm --network=cageur_default --link cageur_db:postgres postgres psql -h postgres -U cageur_user -d cageur_db
 ```

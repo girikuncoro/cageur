@@ -14,11 +14,11 @@ router.get('/', (req, res) => {
 });
 
 
-// router url for patient
-router.get('/api/v1/patient', db.getAllPatient);
-router.get('/api/v1/patient/:id', db.getSinglePatient);
-router.post('/api/v1/patient', db.createPatient);
-router.put('/api/v1/patient/:id', db.updatePatient);
-router.delete('/api/v1/patient/:id', db.removePatient);
+// router url for patient_disease_group
+router.get('/api/v1/patient_disease_group', db.getAllPatientDiseaseGroup);
+router.get('/api/v1/patient_disease_group/:id', db.getSinglePatientDiseaseGroup);
+router.post('/api/v1/patient_disease_group', db.createPatientDiseaseGroup);
+router.put('/api/v1/patient_disease_group/:id', db.updatePatientDiseaseGroup);
+router.delete('/api/v1/patient_disease_group/:id', db.removePatientDiseaseGroup);
 
 module.exports = router;

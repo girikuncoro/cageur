@@ -99,8 +99,7 @@ describe('Template API Test', () => {
         expect(res.status).to.equal(200);
         expect(r.status).to.equal('success');
 
-        // TODO: should return camel case
-        expect(r.data.disease_group).to.equal(currDiseaseGroupID);
+        expect(r.data['disease_group']).to.equal(currDiseaseGroupID);
         expect(r.data.title).to.equal('Foo bar');
         expect(r.data.content).to.equal('Some content for all patient');
 
@@ -399,6 +398,30 @@ describe('Template API Test', () => {
         expect(r.data.content).to.equal('New content');
 
         done();
+      });
+    });
+
+    it('should return 400 for missing parameters', (done) => {
+      const invalidRequests = [
+        {},
+        { diseaseGroup: currDiseaseGroupID },
+        { title: 'Foo bar' },
+        { content: 'Some content' },
+      ];
+
+      invalidRequests.forEach((req, i) => {
+        chai.request(app)
+        .put(`/api/v1/template/${currAllTemplateID}`)
+        .send(req)
+        .then((_) => {}, (err) => {
+          const data = err.response.body;
+
+          expect(err.status).to.equal(400);
+          expect(data.status).to.equal('error');
+          expect(data.message).to.equal('Missing required parameters "diseaseGroup" or "title" or "content"');
+
+          if (i === invalidRequests.length - 1) done();
+        });
       });
     });
   });

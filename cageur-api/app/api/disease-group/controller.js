@@ -53,7 +53,7 @@ const ctl = {
       if (data.length === 0) {
         throw abort(404, 'No disease group data found', `Disease group ${diseaseGroupID} not found`);
       }
-      res.status(200).json({
+      return res.status(200).json({
         status: 'success',
         data: data[0],
         message: 'Retrieved one disease group',
@@ -68,11 +68,16 @@ const ctl = {
       name: req.body.name,
     };
 
+    if (!diseaseGroup.name) {
+      throw abort(400, 'Missing required parameters "name"');
+    }
+
     db.one(`
       UPDATE disease_group
       SET name=$(name)
       WHERE id = $(id)
-      RETURNING id, name`, diseaseGroup
+      RETURNING id, name, created_at, updated_at`,
+      diseaseGroup
     )
     .then((data) => {
       res.status(200).json({

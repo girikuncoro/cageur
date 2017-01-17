@@ -13,12 +13,6 @@ router.get('/', (req, res) => {
   res.send('Hello world from Cageur! inside of API folder');
 });
 
-// routing url for clinic
-router.get('/api/v1/clinic', db.getAllClinic);
-router.get('/api/v1/clinic/:id', db.getSingleClinic);
-router.post('/api/v1/clinic', db.createClinic);
-router.put('/api/v1/clinic/:id', db.updateClinic);
-router.delete('/api/v1/clinic/:id', db.removeClinic);
 
 // router url for patient
 router.get('/api/v1/patient', db.getAllPatient);

@@ -182,6 +182,22 @@ describe('Disease Group API Test', () => {
         done();
       });
     });
+
+    it('should return 400 for missing parameters', (done) => {
+      const invalidRequest = {};
+
+      chai.request(app)
+      .put(`/api/v1/disease_group/${currDiseaseGroupID}`)
+      .send(invalidRequest)
+      .then((_) => {}, (err) => {
+        const data = err.response.body;
+
+        expect(err.status).to.equal(400);
+        expect(data.status).to.equal('error');
+        expect(data.message).to.equal('Missing required parameters "name"');
+        done();
+      });
+    });
   });
 
   describe('DELETE /api/v1/disease_group/:id', () => {

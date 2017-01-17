@@ -9,7 +9,7 @@ const ctl = {
       phoneNumber: req.body['phone_number'],
     };
 
-    if(!req.body.name){
+    if (!clinic.name) {
       throw abort(400, 'Missing required parameters "name"');
     }
 
@@ -22,7 +22,7 @@ const ctl = {
       res.status(200).json({
         status: 'success',
         data: data[0],
-        message: 'Clinic data succesfully added to db'
+        message: 'Clinic data succesfully added to db',
       });
     })
     .catch(err => next(err));
@@ -30,7 +30,7 @@ const ctl = {
 
   getAllClinic(req, res, next) {
     db.any('SELECT * FROM clinic')
-    .then(function (data) {
+    .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No clinic data yet', 'Empty clinic table');
       }
@@ -38,7 +38,7 @@ const ctl = {
       return res.status(200).json({
         status: 'success',
         data,
-        message: 'Retrieved all clinic data'
+        message: 'Retrieved all clinic data',
       });
     })
     .catch(err => next(err));
@@ -73,6 +73,10 @@ const ctl = {
       phoneNumber: req.body['phone_number'],
     };
 
+    if (!clinic.name) {
+      throw abort(400, 'Missing required parameters "name"');
+    }
+
     db.one(`
       UPDATE clinic
       SET name=$(name), address=$(address), phone_number=$(phoneNumber)
@@ -81,11 +85,11 @@ const ctl = {
       clinic
     )
     .then((data) => {
-        res.status(200).json({
-          status: 'success',
-          data,
-          message: 'Clinic data has been updated',
-        });
+      res.status(200).json({
+        status: 'success',
+        data,
+        message: 'Clinic data has been updated',
+      });
     })
     .catch(err => next(err));
   },
@@ -99,8 +103,8 @@ const ctl = {
         throw abort(404, 'Clinic not exist or already removed', `${clinicID} not found`);
       }
       return res.status(200).json({
-          status: 'success',
-          message: `Clinic has been removed`,
+        status: 'success',
+        message: 'Clinic has been removed',
       });
     })
     .catch(err => next(err));

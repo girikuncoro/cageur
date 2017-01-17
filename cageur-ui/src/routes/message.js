@@ -32,7 +32,7 @@ export default class Message extends React.Component {
     };
   }
 
- componentDidMount() {
+  componentDidMount() {
     // Fetching Disease Group Data
     fetch(API_URL+'/disease_group', {
       headers: API_HEADERS

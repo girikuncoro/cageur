@@ -54,7 +54,7 @@ require('source-map-support').install({environment: 'node'});
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';var _path=__webpack_require__(2);var _path2=_interopRequireDefault(_path);var _express=__webpack_require__(3);var _express2=_interopRequireDefault(_express);var _compression=__webpack_require__(4);var _compression2=_interopRequireDefault(_compression);var _cookieParser=__webpack_require__(5);var _cookieParser2=_interopRequireDefault(_cookieParser);var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _server=__webpack_require__(7);var _server2=_interopRequireDefault(_server);var _routes=__webpack_require__(176);var _routes2=_interopRequireDefault(_routes);var _router=__webpack_require__(591);var _RubixAssetMiddleware=__webpack_require__(604);var _RubixAssetMiddleware2=_interopRequireDefault(_RubixAssetMiddleware);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var port=process.env.PORT||8080;var app=(0,_express2.default)();app.use((0,_compression2.default)());app.use((0,_cookieParser2.default)());app.use(_express2.default.static(_path2.default.join(process.cwd(),'public')));app.set('views',_path2.default.join(process.cwd(),'views'));app.set('view engine','pug');function renderHTML(req,res){(0,_router.renderHTMLString)(_routes2.default,req,function(error,redirectLocation,html){if(error){if(error.message==='Not found'){res.status(404).send(error.message);}else{res.status(500).send(error.message);}}else if(redirectLocation){res.redirect(302,redirectLocation.pathname+redirectLocation.search);}else{res.render('index',{content:html});}});}app.get('*',(0,_RubixAssetMiddleware2.default)('ltr'),function(req,res,next){renderHTML(req,res);});app.listen(port,function(){console.log('Node.js app is running at http://localhost:'+port+'/');});;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(port,'port','/Users/rudyprihantoro/cageur/cageur-ui/server.babel.js');__REACT_HOT_LOADER__.register(app,'app','/Users/rudyprihantoro/cageur/cageur-ui/server.babel.js');__REACT_HOT_LOADER__.register(renderHTML,'renderHTML','/Users/rudyprihantoro/cageur/cageur-ui/server.babel.js');}();;
+	'use strict';var _path=__webpack_require__(2);var _path2=_interopRequireDefault(_path);var _express=__webpack_require__(3);var _express2=_interopRequireDefault(_express);var _compression=__webpack_require__(4);var _compression2=_interopRequireDefault(_compression);var _cookieParser=__webpack_require__(5);var _cookieParser2=_interopRequireDefault(_cookieParser);var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _server=__webpack_require__(7);var _server2=_interopRequireDefault(_server);var _routes=__webpack_require__(176);var _routes2=_interopRequireDefault(_routes);var _router=__webpack_require__(599);var _RubixAssetMiddleware=__webpack_require__(612);var _RubixAssetMiddleware2=_interopRequireDefault(_RubixAssetMiddleware);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var port=process.env.PORT||3000;var app=(0,_express2.default)();app.use((0,_compression2.default)());app.use((0,_cookieParser2.default)());app.use(_express2.default.static(_path2.default.join(process.cwd(),'public')));app.set('views',_path2.default.join(process.cwd(),'views'));app.set('view engine','pug');function renderHTML(req,res){(0,_router.renderHTMLString)(_routes2.default,req,function(error,redirectLocation,html){if(error){if(error.message==='Not found'){res.status(404).send(error.message);}else{res.status(500).send(error.message);}}else if(redirectLocation){res.redirect(302,redirectLocation.pathname+redirectLocation.search);}else{res.render('index',{content:html});}});}app.get('*',(0,_RubixAssetMiddleware2.default)('ltr'),function(req,res,next){renderHTML(req,res);});app.listen(port,function(){console.log('Node.js app is running at http://localhost:'+port+'/');});;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(port,'port','/Users/rudyprihantoro/cageur/cageur-ui/server.babel.js');__REACT_HOT_LOADER__.register(app,'app','/Users/rudyprihantoro/cageur/cageur-ui/server.babel.js');__REACT_HOT_LOADER__.register(renderHTML,'renderHTML','/Users/rudyprihantoro/cageur/cageur-ui/server.babel.js');}();;
 
 /***/ },
 /* 2 */
@@ -20254,7 +20254,7 @@ require('source-map-support').install({environment: 'node'});
 /* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';exports.__esModule=true;var _classCallCheck2=__webpack_require__(177);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(178);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(247);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _classnames=__webpack_require__(255);var _classnames2=_interopRequireDefault(_classnames);var _reactRouter=__webpack_require__(256);var _rubix=__webpack_require__(257);var _footer=__webpack_require__(587);var _footer2=_interopRequireDefault(_footer);var _header=__webpack_require__(588);var _header2=_interopRequireDefault(_header);var _sidebar=__webpack_require__(589);var _sidebar2=_interopRequireDefault(_sidebar);var _message=__webpack_require__(590);var _message2=_interopRequireDefault(_message);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var App=function(_React$Component){(0,_inherits3.default)(App,_React$Component);function App(){(0,_classCallCheck3.default)(this,App);return(0,_possibleConstructorReturn3.default)(this,_React$Component.apply(this,arguments));}App.prototype.render=function render(){return _react2.default.createElement(_rubix.MainContainer,this.props,_react2.default.createElement(_sidebar2.default,null),_react2.default.createElement(_header2.default,null),_react2.default.createElement('div',{id:'body'},_react2.default.createElement(_rubix.Grid,null,_react2.default.createElement(_rubix.Row,null,_react2.default.createElement(_rubix.Col,{xs:12},this.props.children)))),_react2.default.createElement(_footer2.default,null));};return App;}(_react2.default.Component);var _default=_react2.default.createElement(_reactRouter.Route,{path:'/',component:App},_react2.default.createElement(_reactRouter.IndexRoute,{component:_message2.default}));exports.default=_default;;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(App,'App','/Users/rudyprihantoro/cageur/cageur-ui/src/routes.js');__REACT_HOT_LOADER__.register(_default,'default','/Users/rudyprihantoro/cageur/cageur-ui/src/routes.js');}();;
+	'use strict';exports.__esModule=true;var _classCallCheck2=__webpack_require__(177);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(178);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(247);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _classnames=__webpack_require__(255);var _classnames2=_interopRequireDefault(_classnames);var _reactRouter=__webpack_require__(256);var _rubix=__webpack_require__(257);var _footer=__webpack_require__(587);var _footer2=_interopRequireDefault(_footer);var _header=__webpack_require__(588);var _header2=_interopRequireDefault(_header);var _sidebar=__webpack_require__(589);var _sidebar2=_interopRequireDefault(_sidebar);var _message=__webpack_require__(590);var _message2=_interopRequireDefault(_message);var _patient_info=__webpack_require__(597);var _patient_info2=_interopRequireDefault(_patient_info);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}/* Pages */var App=function(_React$Component){(0,_inherits3.default)(App,_React$Component);function App(){(0,_classCallCheck3.default)(this,App);return(0,_possibleConstructorReturn3.default)(this,_React$Component.apply(this,arguments));}App.prototype.render=function render(){return _react2.default.createElement(_rubix.MainContainer,this.props,_react2.default.createElement(_sidebar2.default,null),_react2.default.createElement(_header2.default,null),_react2.default.createElement('div',{id:'body'},_react2.default.createElement(_rubix.Grid,null,_react2.default.createElement(_rubix.Row,null,_react2.default.createElement(_rubix.Col,{xs:12},this.props.children)))),_react2.default.createElement(_footer2.default,null));};return App;}(_react2.default.Component);/* Common Components */var _default=_react2.default.createElement(_reactRouter.Route,{path:'/',component:App},_react2.default.createElement(_reactRouter.Route,{path:'pesan-grup',component:_message2.default}),_react2.default.createElement(_reactRouter.Route,{path:'informasi-pasien',component:_patient_info2.default}));exports.default=_default;;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(App,'App','/Users/rudyprihantoro/cageur/cageur-ui/src/routes.js');__REACT_HOT_LOADER__.register(_default,'default','/Users/rudyprihantoro/cageur/cageur-ui/src/routes.js');}();;
 
 /***/ },
 /* 177 */
@@ -48421,16 +48421,75 @@ require('source-map-support').install({environment: 'node'});
 /* 589 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';exports.__esModule=true;exports.default=undefined;var _classCallCheck2=__webpack_require__(177);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(178);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(247);var _inherits3=_interopRequireDefault(_inherits2);var _class,_class2;var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _rubix=__webpack_require__(257);var _reactRouter=__webpack_require__(256);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var ApplicationSidebar=(0,_reactRouter.withRouter)(_class=function(_React$Component){(0,_inherits3.default)(ApplicationSidebar,_React$Component);function ApplicationSidebar(){(0,_classCallCheck3.default)(this,ApplicationSidebar);return(0,_possibleConstructorReturn3.default)(this,_React$Component.apply(this,arguments));}ApplicationSidebar.prototype.render=function render(){var _this2=this;return _react2.default.createElement('div',null,_react2.default.createElement(_rubix.Grid,null,_react2.default.createElement(_rubix.Row,null,_react2.default.createElement(_rubix.Col,{xs:12},_react2.default.createElement('div',{className:'sidebar-nav-container'},_react2.default.createElement(_rubix.SidebarNav,{style:{marginBottom:0},ref:function ref(c){return _this2._nav=c;}},_react2.default.createElement(_rubix.SidebarNavItem,{glyph:'icon-fontello-mail',name:'Group Message',href:'/'})))))));};return ApplicationSidebar;}(_react2.default.Component))||_class;var SidebarContainer=(0,_reactRouter.withRouter)(_class2=function(_React$Component2){(0,_inherits3.default)(SidebarContainer,_React$Component2);function SidebarContainer(){(0,_classCallCheck3.default)(this,SidebarContainer);return(0,_possibleConstructorReturn3.default)(this,_React$Component2.apply(this,arguments));}SidebarContainer.prototype.render=function render(){return _react2.default.createElement('div',{id:'sidebar'},_react2.default.createElement('div',{id:'avatar'},_react2.default.createElement(_rubix.Grid,null,_react2.default.createElement(_rubix.Row,{className:'fg-white'},_react2.default.createElement(_rubix.Col,{xs:4,collapseRight:true},_react2.default.createElement('img',{src:'/imgs/app/avatars/avatar0.png',width:'40',height:'40'})),_react2.default.createElement(_rubix.Col,{xs:8,collapseLeft:true,id:'avatar-col'},_react2.default.createElement('div',{style:{top:23,fontSize:16,lineHeight:1,position:'relative'}},'Anna Sanchez'),_react2.default.createElement('div',null,_react2.default.createElement(_rubix.Progress,{id:'demo-progress',value:30,color:'#ffffff'}),_react2.default.createElement('a',{href:'#'},_react2.default.createElement(_rubix.Icon,{id:'demo-icon',bundle:'fontello',glyph:'lock-5'}))))))),_react2.default.createElement(_rubix.SidebarControls,null,_react2.default.createElement(_rubix.SidebarControlBtn,{bundle:'fontello',glyph:'docs',sidebar:0})),_react2.default.createElement('div',{id:'sidebar-container'},_react2.default.createElement(_rubix.Sidebar,{sidebar:0},_react2.default.createElement(ApplicationSidebar,null))));};return SidebarContainer;}(_react2.default.Component))||_class2;exports.default=SidebarContainer;;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(ApplicationSidebar,'ApplicationSidebar','/Users/rudyprihantoro/cageur/cageur-ui/src/common/sidebar.js');__REACT_HOT_LOADER__.register(SidebarContainer,'SidebarContainer','/Users/rudyprihantoro/cageur/cageur-ui/src/common/sidebar.js');}();;
+	'use strict';exports.__esModule=true;exports.default=undefined;var _classCallCheck2=__webpack_require__(177);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(178);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(247);var _inherits3=_interopRequireDefault(_inherits2);var _class,_class2;var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _rubix=__webpack_require__(257);var _reactRouter=__webpack_require__(256);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var ApplicationSidebar=(0,_reactRouter.withRouter)(_class=function(_React$Component){(0,_inherits3.default)(ApplicationSidebar,_React$Component);function ApplicationSidebar(){(0,_classCallCheck3.default)(this,ApplicationSidebar);return(0,_possibleConstructorReturn3.default)(this,_React$Component.apply(this,arguments));}ApplicationSidebar.prototype.render=function render(){var _this2=this;return _react2.default.createElement('div',null,_react2.default.createElement(_rubix.Grid,null,_react2.default.createElement(_rubix.Row,null,_react2.default.createElement(_rubix.Col,{xs:12},_react2.default.createElement('div',{className:'sidebar-nav-container'},_react2.default.createElement(_rubix.SidebarNav,{style:{marginBottom:0},ref:function ref(c){return _this2._nav=c;}},_react2.default.createElement(_rubix.SidebarNavItem,{glyph:'icon-fontello-mail',name:'Pesan Grup',href:'/pesan-grup'}),_react2.default.createElement(_rubix.SidebarNavItem,{glyph:'icon-simple-line-icons-users',name:'Informasi Pasien',href:'/informasi-pasien'})))))));};return ApplicationSidebar;}(_react2.default.Component))||_class;var SidebarContainer=(0,_reactRouter.withRouter)(_class2=function(_React$Component2){(0,_inherits3.default)(SidebarContainer,_React$Component2);function SidebarContainer(){(0,_classCallCheck3.default)(this,SidebarContainer);return(0,_possibleConstructorReturn3.default)(this,_React$Component2.apply(this,arguments));}SidebarContainer.prototype.render=function render(){return _react2.default.createElement('div',{id:'sidebar'},_react2.default.createElement('div',{id:'avatar'},_react2.default.createElement(_rubix.Grid,null,_react2.default.createElement(_rubix.Row,{className:'fg-white'},_react2.default.createElement(_rubix.Col,{xs:4,collapseRight:true},_react2.default.createElement('img',{src:'/imgs/app/avatars/avatar0.png',width:'40',height:'40'})),_react2.default.createElement(_rubix.Col,{xs:8,collapseLeft:true,id:'avatar-col'},_react2.default.createElement('div',{style:{top:23,fontSize:16,lineHeight:1,position:'relative'}},'Teteh Cageur'),_react2.default.createElement('div',null,_react2.default.createElement(_rubix.Progress,{id:'demo-progress',value:30,color:'#ffffff'}),_react2.default.createElement('a',{href:'#'},_react2.default.createElement(_rubix.Icon,{id:'demo-icon',bundle:'fontello',glyph:'lock-5'}))))))),_react2.default.createElement(_rubix.SidebarControls,null,_react2.default.createElement(_rubix.SidebarControlBtn,{bundle:'fontello',glyph:'docs',sidebar:0})),_react2.default.createElement('div',{id:'sidebar-container'},_react2.default.createElement(_rubix.Sidebar,{sidebar:0},_react2.default.createElement(ApplicationSidebar,null))));};return SidebarContainer;}(_react2.default.Component))||_class2;exports.default=SidebarContainer;;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(ApplicationSidebar,'ApplicationSidebar','/Users/rudyprihantoro/cageur/cageur-ui/src/common/sidebar.js');__REACT_HOT_LOADER__.register(SidebarContainer,'SidebarContainer','/Users/rudyprihantoro/cageur/cageur-ui/src/common/sidebar.js');}();;
 
 /***/ },
 /* 590 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';exports.__esModule=true;exports.default=undefined;var _classCallCheck2=__webpack_require__(177);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(178);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(247);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _rubix=__webpack_require__(257);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var Message=function(_React$Component){(0,_inherits3.default)(Message,_React$Component);function Message(props){(0,_classCallCheck3.default)(this,Message);var _this=(0,_possibleConstructorReturn3.default)(this,_React$Component.call(this,props));_this.state={showModal:false};return _this;}Message.prototype.close=function close(){this.setState({showModal:false});};Message.prototype.open=function open(){this.setState({showModal:true});};Message.prototype.render=function render(){return _react2.default.createElement('div',null,_react2.default.createElement(_rubix.Form,{horizontal:true},_react2.default.createElement(_rubix.FormGroup,{controlId:'formHorizontalEmail'},_react2.default.createElement(_rubix.Col,{componentClass:_rubix.ControlLabel,sm:2},'Group'),_react2.default.createElement(_rubix.Col,{sm:10},_react2.default.createElement(_rubix.FormControl,{type:'text',placeholder:'Group'}))),_react2.default.createElement(_rubix.FormGroup,{controlId:'formControlsTextarea'},_react2.default.createElement(_rubix.Col,{componentClass:_rubix.ControlLabel,sm:2},'Message'),_react2.default.createElement(_rubix.Col,{sm:10},_react2.default.createElement(_rubix.FormControl,{componentClass:'textarea',placeholder:'Message'}))),_react2.default.createElement(_rubix.FormGroup,null,_react2.default.createElement(_rubix.Col,{smOffset:2,sm:10},_react2.default.createElement(_rubix.Button,{type:'submit'},'Schedule'),_react2.default.createElement(_rubix.Button,{bsStyle:'primary',onClick:this.open.bind(this)},'Template'),_react2.default.createElement(_rubix.Button,{bsStyle:'success',type:'submit'},'Send Now')))),_react2.default.createElement(_rubix.Modal,{show:this.state.showModal,onHide:this.close.bind(this)},_react2.default.createElement(_rubix.Modal.Header,{closeButton:true},_react2.default.createElement(_rubix.Modal.Title,null,'Group Message Template')),_react2.default.createElement(_rubix.Modal.Body,null,_react2.default.createElement('h1',null,'All'),_react2.default.createElement('ul',null,_react2.default.createElement('li',null,'Bla 1'),_react2.default.createElement('li',null,'Bla 2'),_react2.default.createElement('li',null,'Bla 3')),_react2.default.createElement('h1',null,'Asam Urat'),_react2.default.createElement('ul',null,_react2.default.createElement('li',null,'Bla 1'),_react2.default.createElement('li',null,'Bla 2'),_react2.default.createElement('li',null,'Bla 3')),_react2.default.createElement('h1',null,'Diabetes'),_react2.default.createElement('ul',null,_react2.default.createElement('li',null,'Bla 1'),_react2.default.createElement('li',null,'Bla 2'),_react2.default.createElement('li',null,'Bla 3'))),_react2.default.createElement(_rubix.Modal.Footer,null,_react2.default.createElement(_rubix.Button,{onClick:this.close.bind(this)},'Close'))));};return Message;}(_react2.default.Component);exports.default=Message;;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(Message,'Message','/Users/rudyprihantoro/cageur/cageur-ui/src/routes/message.js');}();;
+	'use strict';exports.__esModule=true;exports.default=undefined;var _stringify=__webpack_require__(591);var _stringify2=_interopRequireDefault(_stringify);var _classCallCheck2=__webpack_require__(177);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(178);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(247);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _reactSelect=__webpack_require__(593);var _reactSelect2=_interopRequireDefault(_reactSelect);__webpack_require__(594);var _rubix=__webpack_require__(257);var _template=__webpack_require__(595);var _template2=_interopRequireDefault(_template);var _util=__webpack_require__(596);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var API_URL='http://localhost:5000/api/v1';var API_HEADERS={'Content-Type':'application/json'};var Message=function(_React$Component){(0,_inherits3.default)(Message,_React$Component);function Message(props){(0,_classCallCheck3.default)(this,Message);var _this=(0,_possibleConstructorReturn3.default)(this,_React$Component.call(this,props));_this.state={showModal:false,group:[],selectedGroup:null,text:'',showGroupSelectAlert:false,showMessageAlert:false,messageAlert:false,messageError:1,responseMessage:'',template:[],selectedTemplate:null};return _this;}Message.prototype.componentDidMount=function componentDidMount(){var _this2=this;// Fetching Disease Group Data
+	fetch(API_URL+'/disease_group',{headers:API_HEADERS}).then(function(response){return response.json();}).then(function(responseData){var group=[];responseData.data.map(function(d,i){group.push({id:d.id,value:d.name,label:(0,_util.toTitleCase)(d.name)});});group.sort(_util.compare);_this2.setState({group:group});}).catch(function(error){console.log('Error fetching and parsing data',error);});};Message.prototype.close=function close(){this.setState({showModal:false});};Message.prototype.open=function open(){var _this3=this;var selectedGroup=this.state.selectedGroup;// Alert user to select group first before opening template
+	if(selectedGroup===null){this.setState({showGroupSelectAlert:true});return;}this.setState({showModal:true});if(selectedGroup!==null){// Fetching Disease Group Data
+	fetch(API_URL+'/template/disease_group/'+selectedGroup.id,{headers:API_HEADERS}).then(function(response){return response.json();}).then(function(responseData){var template=[];responseData.data.map(function(d,i){template.push({id:d.id,disease_group:d.disease_group,title:d.title,content:d.content});});_this3.setState({template:template});}).catch(function(error){console.log('Error fetching and parsing data',error);});}};Message.prototype.setGroup=function setGroup(newValue){this.setState({selectedGroup:newValue,showGroupSelectAlert:false});};Message.prototype.handleChange=function handleChange(e){this.setState({text:e.target.value});};Message.prototype.sendMessage=function sendMessage(){var _this4=this;var _state=this.state,selectedGroup=_state.selectedGroup,text=_state.text;// Alert user to select group first before sending a message
+	if(selectedGroup===null){this.setState({showGroupSelectAlert:true});return;}// Alert user to at least write something in message body
+	if(text===''){this.setState({showMessageAlert:true,messageAlert:false,messageError:1});return;}var message={diseaseGroup:selectedGroup.id,body:text};fetch(API_URL+'/message/send',{method:'post',headers:API_HEADERS,body:(0,_stringify2.default)(message)}).then(function(response){return response.json();}).then(function(responseData){_this4.setState({responseMessage:'Pesan telah berhasil terkirim ke grup penyakit '+(0,_util.toTitleCase)(selectedGroup.value),messageAlert:true,showMessageAlert:true,messageError:3});}).catch(function(error){console.log('Error fetching and parsing data',error);_this4.setState({responseMessage:'Terdapat kesalahan berupa '+error,messageAlert:true,showMessageAlert:true,messageError:2});});};Message.prototype.handleAlertGroupSelectDismiss=function handleAlertGroupSelectDismiss(){this.setState({showGroupSelectAlert:false});};Message.prototype.handleAlertMessageDismiss=function handleAlertMessageDismiss(){this.setState({showMessageAlert:false});};Message.prototype.handleUse=function handleUse(template){this.setState({showModal:false,selectedTemplate:template,text:template.content});};Message.prototype.render=function render(){var _state2=this.state,group=_state2.group,selectedGroup=_state2.selectedGroup,showGroupSelectAlert=_state2.showGroupSelectAlert,showMessageAlert=_state2.showMessageAlert,messageAlert=_state2.messageAlert,responseMessage=_state2.responseMessage,messageError=_state2.messageError,template=_state2.template;var alertGroupSelect=showGroupSelectAlert?_react2.default.createElement(_rubix.Alert,{bsStyle:'danger',onDismiss:this.handleAlertGroupSelectDismiss.bind(this)},_react2.default.createElement('strong',null,'Perhatian! '),_react2.default.createElement('span',null,'Silahkan pilih salah satu grup penyakit.')):"";var message=messageAlert?responseMessage:"Silahkan isi bagian pesan sebelum mengirim pesan.";var alertStyle=void 0;if(messageError==1){alertStyle="danger";}else if(messageError==2){alertStyle="danger";}else if(messageError==3){alertStyle="success";}var alertMessage=showMessageAlert?_react2.default.createElement(_rubix.Alert,{bsStyle:alertStyle,onDismiss:this.handleAlertMessageDismiss.bind(this)},_react2.default.createElement('span',null,message)):"";return _react2.default.createElement('div',null,_react2.default.createElement(_rubix.Form,{horizontal:true},_react2.default.createElement(_rubix.FormGroup,{controlId:'alert'},_react2.default.createElement(_rubix.Col,{sm:2}),_react2.default.createElement(_rubix.Col,{sm:10},alertGroupSelect,alertMessage)),_react2.default.createElement(_rubix.FormGroup,{controlId:'formHorizontalEmail'},_react2.default.createElement(_rubix.Col,{componentClass:_rubix.ControlLabel,sm:2},'Grup Penyakit'),_react2.default.createElement(_rubix.Col,{sm:10},_react2.default.createElement(_reactSelect2.default,{ref:'groupDiseaseSelect',matchProp:'label',name:'select-group-disease',value:selectedGroup,options:group,onChange:this.setGroup.bind(this),placeholder:'Pilih Grup Penyakit',autofocus:true}))),_react2.default.createElement(_rubix.FormGroup,{controlId:'formControlsTextarea'},_react2.default.createElement(_rubix.Col,{componentClass:_rubix.ControlLabel,sm:2},'Pesan'),_react2.default.createElement(_rubix.Col,{sm:10},_react2.default.createElement(_rubix.FormControl,{style:{height:200},componentClass:'textarea',placeholder:'Isi Pesan ...',value:this.state.text,onChange:this.handleChange.bind(this)}))),_react2.default.createElement(_rubix.FormGroup,null,_react2.default.createElement(_rubix.Col,{smOffset:2,sm:10},_react2.default.createElement(_rubix.Button,null,'BERKALA'),_react2.default.createElement(_rubix.Button,{bsStyle:'primary',onClick:this.open.bind(this)},'TEMPLATE'),_react2.default.createElement(_rubix.Button,{bsStyle:'success',onClick:this.sendMessage.bind(this)},'KIRIM PESAN')))),_react2.default.createElement(_template2.default,{showModal:this.state.showModal,handleHide:this.close.bind(this),template:this.state.template,group:this.state.selectedGroup!==null?this.state.selectedGroup.value:"",handleUse:this.handleUse.bind(this)}));};return Message;}(_react2.default.Component);exports.default=Message;;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(API_URL,'API_URL','/Users/rudyprihantoro/cageur/cageur-ui/src/routes/message.js');__REACT_HOT_LOADER__.register(API_HEADERS,'API_HEADERS','/Users/rudyprihantoro/cageur/cageur-ui/src/routes/message.js');__REACT_HOT_LOADER__.register(Message,'Message','/Users/rudyprihantoro/cageur/cageur-ui/src/routes/message.js');}();;
 
 /***/ },
 /* 591 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(592), __esModule: true };
+
+/***/ },
+/* 592 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var core  = __webpack_require__(190)
+	  , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
+	module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
+	  return $JSON.stringify.apply($JSON, arguments);
+	};
+
+/***/ },
+/* 593 */
+/***/ function(module, exports) {
+
+	module.exports = require("react-select");
+
+/***/ },
+/* 594 */
+/***/ function(module, exports) {
+
+	module.exports = require("whatwg-fetch");
+
+/***/ },
+/* 595 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';exports.__esModule=true;exports.default=undefined;var _classCallCheck2=__webpack_require__(177);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(178);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(247);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _rubix=__webpack_require__(257);var _util=__webpack_require__(596);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var Template=function(_React$Component){(0,_inherits3.default)(Template,_React$Component);function Template(props){(0,_classCallCheck3.default)(this,Template);return(0,_possibleConstructorReturn3.default)(this,_React$Component.call(this,props));}Template.prototype.handleUseClick=function handleUseClick(fullTittle,content){this.props.handleUse({title:fullTittle,content:content});};Template.prototype.render=function render(){var _props=this.props,showModal=_props.showModal,handleHide=_props.handleHide,template=_props.template,group=_props.group,handleUse=_props.handleUse;var self=this;return _react2.default.createElement(_rubix.Modal,{show:showModal,onHide:handleHide,bsSize:'lg'},_react2.default.createElement(_rubix.Modal.Header,{closeButton:true},_react2.default.createElement(_rubix.Modal.Title,null,'Template Pesan Untuk Grup Penyakit '+(0,_util.toTitleCase)(group))),_react2.default.createElement(_rubix.Modal.Body,null,_react2.default.createElement(_rubix.Accordion,{defaultActiveKey:'1'},template.map(function(d,i){var title=d.title.length>50?d.title.substr(0,50)+' ...':d.title;var fullTittle=d.title;var content=d.content;return _react2.default.createElement(_rubix.BPanel,{key:i,header:fullTittle,eventKey:i,style:{cursor:"pointer",display:"inline-block",width:"100%"}},_react2.default.createElement('p',null,content),_react2.default.createElement(_rubix.Button,{bsStyle:'primary',onClick:self.handleUseClick.bind(self,fullTittle,content)},'Gunakan Template'));}))),_react2.default.createElement(_rubix.Modal.Footer,null,_react2.default.createElement(_rubix.Button,{onClick:handleHide},'Close')));};return Template;}(_react2.default.Component);exports.default=Template;;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(Template,'Template','/Users/rudyprihantoro/cageur/cageur-ui/src/common/template.js');}();;
+
+/***/ },
+/* 596 */
+/***/ function(module, exports) {
+
+	'use strict';exports.__esModule=true;exports.toTitleCase=toTitleCase;exports.compare=compare;function toTitleCase(str){return str.replace(/\w\S*/g,function(txt){return txt.charAt(0).toUpperCase()+txt.substr(1).toLowerCase();});}function compare(a,b){// c: object property
+	var c='value';if(a[c]<b[c])return-1;if(a[c]>b[c])return 1;return 0;};var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(toTitleCase,'toTitleCase','/Users/rudyprihantoro/cageur/cageur-ui/src/utilities/util.js');__REACT_HOT_LOADER__.register(compare,'compare','/Users/rudyprihantoro/cageur/cageur-ui/src/utilities/util.js');}();;
+
+/***/ },
+/* 597 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';exports.__esModule=true;exports.default=undefined;var _classCallCheck2=__webpack_require__(177);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(178);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(247);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(6);var _react2=_interopRequireDefault(_react);var _reactDom=__webpack_require__(272);var _reactDom2=_interopRequireDefault(_reactDom);var _rubix=__webpack_require__(257);var _constant=__webpack_require__(598);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}var PatientInfoTable=function(_Component){(0,_inherits3.default)(PatientInfoTable,_Component);function PatientInfoTable(props){(0,_classCallCheck3.default)(this,PatientInfoTable);var _this=(0,_possibleConstructorReturn3.default)(this,_Component.call(this,props));_this.state={patients:[]};return _this;}PatientInfoTable.prototype.componentDidMount=function componentDidMount(){var _this2=this;// Fetching Patient Information
+	fetch(_constant.API_URL+'/patient_disease_group',{headers:_constant.API_HEADERS}).then(function(response){return response.json();}).then(function(responseData){var patients=[];responseData.data.map(function(d,i){patients.push({name:d["patient_id"],group:d["disease_group_id"],date:d["updated_at"]});});_this2.setState({patients:patients});$(_reactDom2.default.findDOMNode(_this2.table)).addClass('nowrap').dataTable({responsive:true});}).catch(function(error){console.log('Error fetching and parsing data',error);});};PatientInfoTable.prototype.render=function render(){var _this3=this;var patients=this.state.patients;return _react2.default.createElement(_rubix.Table,{ref:function ref(c){return _this3.table=c;},className:'display',cellSpacing:'0',width:'100%'},_react2.default.createElement('thead',null,_react2.default.createElement('tr',null,_react2.default.createElement('th',null,'Nama Pasien'),_react2.default.createElement('th',null,'Penyakit'),_react2.default.createElement('th',null,'Tanggal Terakhir'))),_react2.default.createElement('tfoot',null,_react2.default.createElement('tr',null,_react2.default.createElement('th',null,'Nama Pasien'),_react2.default.createElement('th',null,'Penyakit'),_react2.default.createElement('th',null,'Tanggal Terakhir'))),_react2.default.createElement('tbody',null,patients.map(function(d,i){return _react2.default.createElement('tr',{key:i},_react2.default.createElement('td',null,d.name),_react2.default.createElement('td',null,d.group),_react2.default.createElement('td',null,d.date));})));};return PatientInfoTable;}(_react.Component);var PatientInfo=function(_Component2){(0,_inherits3.default)(PatientInfo,_Component2);function PatientInfo(){(0,_classCallCheck3.default)(this,PatientInfo);return(0,_possibleConstructorReturn3.default)(this,_Component2.apply(this,arguments));}PatientInfo.prototype.handleClosePanel=function handleClosePanel(){console.log(this);};PatientInfo.prototype.render=function render(){return _react2.default.createElement(_rubix.Row,null,_react2.default.createElement(_rubix.Col,{xs:12},_react2.default.createElement(_rubix.PanelContainer,{onRemove:this.handleClosePanel.bind(this)},_react2.default.createElement(_rubix.Panel,null,_react2.default.createElement(_rubix.PanelBody,null,_react2.default.createElement(_rubix.Grid,null,_react2.default.createElement(_rubix.Row,null,_react2.default.createElement(_rubix.Col,{xs:12},_react2.default.createElement(PatientInfoTable,null),_react2.default.createElement('br',null)))))))));};return PatientInfo;}(_react.Component);exports.default=PatientInfo;;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(PatientInfoTable,'PatientInfoTable','/Users/rudyprihantoro/cageur/cageur-ui/src/routes/patient_info.js');__REACT_HOT_LOADER__.register(PatientInfo,'PatientInfo','/Users/rudyprihantoro/cageur/cageur-ui/src/routes/patient_info.js');}();;
+
+/***/ },
+/* 598 */
+/***/ function(module, exports) {
+
+	'use strict';exports.__esModule=true;var API_URL=exports.API_URL='http://localhost:5000/api/v1';var API_HEADERS=exports.API_HEADERS={'Content-Type':'application/json'};;var _temp=function(){if(typeof __REACT_HOT_LOADER__==='undefined'){return;}__REACT_HOT_LOADER__.register(API_URL,'API_URL','/Users/rudyprihantoro/cageur/cageur-ui/src/common/constant.js');__REACT_HOT_LOADER__.register(API_HEADERS,'API_HEADERS','/Users/rudyprihantoro/cageur/cageur-ui/src/common/constant.js');}();;
+
+/***/ },
+/* 599 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48476,17 +48535,17 @@ require('source-map-support').install({environment: 'node'});
 	
 	var _reactRouter = __webpack_require__(256);
 	
-	var _reactHotLoader = __webpack_require__(592);
+	var _reactHotLoader = __webpack_require__(600);
 	
-	var _reactRouterScroll = __webpack_require__(593);
+	var _reactRouterScroll = __webpack_require__(601);
 	
 	var _reactRouterScroll2 = _interopRequireDefault(_reactRouterScroll);
 	
-	var _onRouterSetup = __webpack_require__(599);
+	var _onRouterSetup = __webpack_require__(607);
 	
 	var _onRouterSetup2 = _interopRequireDefault(_onRouterSetup);
 	
-	var _checkScroll = __webpack_require__(601);
+	var _checkScroll = __webpack_require__(609);
 	
 	var _checkScroll2 = _interopRequireDefault(_checkScroll);
 	
@@ -48572,13 +48631,13 @@ require('source-map-support').install({environment: 'node'});
 	}
 
 /***/ },
-/* 592 */
+/* 600 */
 /***/ function(module, exports) {
 
 	module.exports = require("react-hot-loader");
 
 /***/ },
-/* 593 */
+/* 601 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48590,7 +48649,7 @@ require('source-map-support').install({environment: 'node'});
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _ScrollBehaviorContainer = __webpack_require__(594);
+	var _ScrollBehaviorContainer = __webpack_require__(602);
 	
 	var _ScrollBehaviorContainer2 = _interopRequireDefault(_ScrollBehaviorContainer);
 	
@@ -48613,7 +48672,7 @@ require('source-map-support').install({environment: 'node'});
 	module.exports = exports['default'];
 
 /***/ },
-/* 594 */
+/* 602 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48624,7 +48683,7 @@ require('source-map-support').install({environment: 'node'});
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _ScrollBehavior = __webpack_require__(595);
+	var _ScrollBehavior = __webpack_require__(603);
 	
 	var _ScrollBehavior2 = _interopRequireDefault(_ScrollBehavior);
 	
@@ -48705,7 +48764,7 @@ require('source-map-support').install({environment: 'node'});
 
 
 /***/ },
-/* 595 */
+/* 603 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48728,13 +48787,13 @@ require('source-map-support').install({environment: 'node'});
 	
 	var _scrollTop2 = _interopRequireDefault(_scrollTop);
 	
-	var _requestAnimationFrame = __webpack_require__(596);
+	var _requestAnimationFrame = __webpack_require__(604);
 	
 	var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
 	
-	var _Actions = __webpack_require__(597);
+	var _Actions = __webpack_require__(605);
 	
-	var _DOMStateStorage = __webpack_require__(598);
+	var _DOMStateStorage = __webpack_require__(606);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -48912,7 +48971,7 @@ require('source-map-support').install({environment: 'node'});
 	module.exports = exports['default'];
 
 /***/ },
-/* 596 */
+/* 604 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48963,7 +49022,7 @@ require('source-map-support').install({environment: 'node'});
 	module.exports = compatRaf;
 
 /***/ },
-/* 597 */
+/* 605 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -48990,7 +49049,7 @@ require('source-map-support').install({environment: 'node'});
 	var POP = exports.POP = 'POP';
 
 /***/ },
-/* 598 */
+/* 606 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49080,7 +49139,7 @@ require('source-map-support').install({environment: 'node'});
 	};
 
 /***/ },
-/* 599 */
+/* 607 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49094,7 +49153,7 @@ require('source-map-support').install({environment: 'node'});
 	
 	var _isBrowser2 = _interopRequireDefault(_isBrowser);
 	
-	__webpack_require__(600);
+	__webpack_require__(608);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -49159,7 +49218,7 @@ require('source-map-support').install({environment: 'node'});
 	}
 
 /***/ },
-/* 600 */
+/* 608 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -49386,7 +49445,7 @@ require('source-map-support').install({environment: 'node'});
 	}
 
 /***/ },
-/* 601 */
+/* 609 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49400,11 +49459,11 @@ require('source-map-support').install({environment: 'node'});
 	
 	var _isBrowser2 = _interopRequireDefault(_isBrowser);
 	
-	var _onRouterUpdate = __webpack_require__(602);
+	var _onRouterUpdate = __webpack_require__(610);
 	
 	var _onRouterUpdate2 = _interopRequireDefault(_onRouterUpdate);
 	
-	var _ga = __webpack_require__(603);
+	var _ga = __webpack_require__(611);
 	
 	var _ga2 = _interopRequireDefault(_ga);
 	
@@ -49432,7 +49491,7 @@ require('source-map-support').install({environment: 'node'});
 	}
 
 /***/ },
-/* 602 */
+/* 610 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49478,7 +49537,7 @@ require('source-map-support').install({environment: 'node'});
 	}
 
 /***/ },
-/* 603 */
+/* 611 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49505,7 +49564,7 @@ require('source-map-support').install({environment: 'node'});
 	};
 
 /***/ },
-/* 604 */
+/* 612 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

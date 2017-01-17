@@ -20,7 +20,8 @@ class ApplicationSidebar extends React.Component {
             <Col xs={12}>
               <div className='sidebar-nav-container'>
                 <SidebarNav style={{marginBottom: 0}} ref={(c) => this._nav = c}>
-                  <SidebarNavItem glyph='icon-fontello-mail' name='Group Message' href='/' />
+                  <SidebarNavItem glyph='icon-fontello-mail' name='Pesan Grup' href='/pesan-grup' />
+                  <SidebarNavItem glyph='icon-simple-line-icons-users' name='Informasi Pasien' href='/informasi-pasien' />
                 </SidebarNav>
               </div>
             </Col>
@@ -43,7 +44,7 @@ export default class SidebarContainer extends React.Component {
                 <img src='/imgs/app/avatars/avatar0.png' width='40' height='40' />
               </Col>
               <Col xs={8} collapseLeft id='avatar-col'>
-                <div style={{top: 23, fontSize: 16, lineHeight: 1, position: 'relative'}}>Anna Sanchez</div>
+                <div style={{top: 23, fontSize: 16, lineHeight: 1, position: 'relative'}}>Teteh Cageur</div>
                 <div>
                   <Progress id='demo-progress' value={30} color='#ffffff'/>
                   <a href='#'>

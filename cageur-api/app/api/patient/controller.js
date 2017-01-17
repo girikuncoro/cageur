@@ -11,8 +11,8 @@ const ctl = {
       lineUserID: req.body['line_user_id'],
     };
 
-    if (!patient.clinicID || !patient.firstName || !patient.phoneNumber || !patient.lineUserID) {
-      throw abort(400, 'Missing required parameters "clinic_id" or "phone_number" or "first_name" or "line_user_id"');
+    if (!patient.clinicID || !patient.firstName || !patient.phoneNumber) {
+      throw abort(400, 'Missing required parameters "clinic_id" or "phone_number" or "first_name"');
     }
 
     db.any(`
@@ -22,11 +22,11 @@ const ctl = {
       patient
     )
     .then((data) => {
-        res.status(200).json({
-          status: 'success',
-          data,
-          message: 'Patient data succesfully added to db'
-        });
+      res.status(200).json({
+        status: 'success',
+        data: data[0],
+        message: 'Patient data succesfully added to db',
+      });
     })
     .catch(err => next(err));
   },
@@ -34,13 +34,13 @@ const ctl = {
   getAllPatient(req, res, next) {
     db.any('SELECT * FROM patient')
     .then((data) => {
-      if(data.length === 0) {
+      if (data.length === 0) {
         throw abort(404, 'No patient data yet', 'Empty patient table');
       }
       return res.status(200).json({
         status: 'success',
         data,
-        message: 'Retrieved all patient data'
+        message: 'Retrieved all patient data',
       });
     })
     .catch(err => next(err));
@@ -55,10 +55,13 @@ const ctl = {
       WHERE id = ${patientID}
     `)
     .then((data) => {
+      if (data.length === 0) {
+        throw abort(404, 'No patient data found', `Patient ${patientID} not found`);
+      }
       res.status(200).json({
         status: 'success',
         data: data[0],
-        message: 'Retrieved one patient'
+        message: 'Retrieved one patient',
       });
     })
     .catch(err => next(err));
@@ -75,7 +78,7 @@ const ctl = {
     };
 
     if (!patient.clinicID || !patient.firstName || !patient.phoneNumber || !patient.lineUserID) {
-      throw abort(400, 'Missing required parameters "clinic_id" or "phone_number" or "first_name" or "line_user_id"');
+      throw abort(400, 'Missing required parameters "clinic_id" or "phone_number" or "first_name"');
     }
 
     db.one(`
@@ -96,19 +99,19 @@ const ctl = {
   },
 
   removePatient(req, res, next) {
-      const patientID = req.params.id;
+    const patientID = req.params.id;
 
-      db.result(`DELETE FROM patient WHERE id = ${patientID}`)
-      .then((result) => {
-        if (result.rowCount === 0) {
-          throw abort(404, 'Patient not exist or already removed', `${patientID} not found`);
-        }
-        return res.status(200).json({
-          status: 'success',
-          message: 'Patient has been removed',
-        });
-      })
-      .catch(err => next(err));
+    db.result(`DELETE FROM patient WHERE id = ${patientID}`)
+    .then((result) => {
+      if (result.rowCount === 0) {
+        throw abort(404, 'Patient not exist or already removed', `${patientID} not found`);
+      }
+      return res.status(200).json({
+        status: 'success',
+        message: 'Patient has been removed',
+      });
+    })
+    .catch(err => next(err));
   },
 };
 

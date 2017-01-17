@@ -183,6 +183,10 @@ router.put('/:id', (req, res, next) => {
     content: req.body.content,
   };
 
+  if (!req.body.diseaseGroup || !template.title || !template.content) {
+    throw abort(400, 'Missing required parameters "diseaseGroup" or "title" or "content"');
+  }
+
   let sqlUpdateTemplate;
   if (!template.diseaseGroup) {
     sqlUpdateTemplate = `

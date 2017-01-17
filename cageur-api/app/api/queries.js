@@ -221,94 +221,6 @@ function removePatient(req, res, next) {
     });
 }
 
-
-function getAllDiseaseGroup(req, res, next) {
-  db.any('select * from disease_group')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved all disease_group data'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-function getSingleDiseaseGroup(req, res, next) {
-  let clinicID = parseInt(req.params.id);
-  db.one('select * from disease_group where id = $1', clinicID)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved one disease_group'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-function createDiseaseGroup(req, res, next) {
-    let data = {
-        disease_group : req.body.disease_name
-    };
-
-    db.none("insert into disease_group (name) values(${disease_group})", data)
-    .then(function () {
-        // success;
-        res.status(200)
-        .json({
-          status: 'success',
-          message: 'disease_group data succesfully added to db'
-        });
-    })
-    .catch(function (error) {
-        return next(error);
-    });
-
-}
-
-function updateDiseaseGroup(req, res, next) {
-
-  let data = {
-        id : req.params.id,
-        disease_group : req.body.disease_name
-  };
-
-  db.none("update disease_group set name=${disease_group} where id = ${id}", data)
-      .then(function () {
-          res.status(200)
-          .json({
-            status: 'success',
-            message: 'disease_group data succesfully updated to db'
-          });
-      })
-      .catch(function (error) {
-          return next(error);
-      });
-
-}
-
-function removeDiseaseGroup(req, res, next) {
-  var dgID = parseInt(req.params.id);
-  db.result('delete from disease_group where id = $1', dgID)
-    .then(function (result) {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: `Removed ${result.rowCount} disease_group`
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
 // export all modules
 module.exports = {
   getAllClinic,
@@ -322,10 +234,4 @@ module.exports = {
   createPatient,
   updatePatient,
   removePatient,
-
-  getAllDiseaseGroup,
-  getSingleDiseaseGroup,
-  createDiseaseGroup,
-  updateDiseaseGroup,
-  removeDiseaseGroup
 };

@@ -35,7 +35,7 @@ const ctl = {
       return res.status(200).json({
         status: 'success',
         data,
-        message: 'Retrieved all disease group data'
+        message: 'Retrieved all disease group data',
       });
     })
     .catch(err => next(err));
@@ -44,16 +44,19 @@ const ctl = {
   getSingleDiseaseGroup(req, res, next) {
     const diseaseGroupID = req.params.id;
 
-    db.one(`
+    db.any(`
       SELECT *
       FROM disease_group
       WHERE id = ${diseaseGroupID}
     `)
     .then((data) => {
+      if (data.length === 0) {
+        throw abort(404, 'No disease group data found', `Disease group ${diseaseGroupID} not found`);
+      }
       res.status(200).json({
         status: 'success',
-        data,
-        message: 'Retrieved one disease group'
+        data: data[0],
+        message: 'Retrieved one disease group',
       });
     })
     .catch(err => next(err));
@@ -75,7 +78,7 @@ const ctl = {
       res.status(200).json({
         status: 'success',
         data,
-        message: 'Disease group data succesfully updated to db'
+        message: 'Disease group has been updated',
       });
     })
     .catch(err => next(err));
@@ -91,7 +94,7 @@ const ctl = {
       }
       return res.status(200).json({
         status: 'success',
-        message: `Removed disease group`,
+        message: 'Disease group has been removed',
       });
     })
     .catch(err => next(err));

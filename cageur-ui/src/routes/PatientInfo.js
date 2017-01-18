@@ -34,7 +34,7 @@ class PatientInfoTable extends Component {
       responseData.data.map(function(d,i) {
         patients.push(
           {
-            name: `${d["first_name"]} ${d["last_name"]}`, 
+            name: `${d["first_name"]} ${d["last_name"]}`,
             group: d["disease_group_name"],
             clinic: d["clinic_name"]
           }
@@ -86,14 +86,11 @@ class PatientInfoTable extends Component {
 }
 
 export default class PatientInfo extends Component {
-  handleClosePanel() {
-    console.log(this);
-  }
   render() {
     return (
       <Row>
         <Col xs={12}>
-          <PanelContainer onRemove={::this.handleClosePanel}>
+          <PanelContainer controls={false}>
             <Panel>
               <PanelBody>
                 <Grid>

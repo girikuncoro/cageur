@@ -32,7 +32,13 @@ class PatientInfoTable extends Component {
     .then((responseData) => {
       let patients = [];
       responseData.data.map(function(d,i) {
-        patients.push({name: d["patient_id"], group: d["disease_group_id"], date: d["updated_at"]});
+        patients.push(
+          {
+            name: `${d["first_name"]} ${d["last_name"]}`, 
+            group: d["disease_group_name"],
+            clinic: d["clinic_name"]
+          }
+        );
       })
       this.setState({patients: patients});
       $(ReactDOM.findDOMNode(this.table))
@@ -55,14 +61,14 @@ class PatientInfoTable extends Component {
           <tr>
             <th>Nama Pasien</th>
             <th>Penyakit</th>
-            <th>Tanggal Terakhir</th>
+            <th>Klinik</th>
           </tr>
         </thead>
         <tfoot>
           <tr>
             <th>Nama Pasien</th>
             <th>Penyakit</th>
-            <th>Tanggal Terakhir</th>
+            <th>Klinik</th>
           </tr>
         </tfoot>
         <tbody>
@@ -70,7 +76,7 @@ class PatientInfoTable extends Component {
             <tr key={i}>
               <td>{d.name}</td>
               <td>{d.group}</td>
-              <td>{d.date}</td>
+              <td>{d.clinic}</td>
             </tr>
           ))}
         </tbody>

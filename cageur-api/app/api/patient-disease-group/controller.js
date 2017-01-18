@@ -19,11 +19,11 @@ const ctl = {
       patientDiseaseGroup
     )
     .then((data) => {
-        res.status(200).json({
-          status: 'success',
-          data: data[0],
-          message: 'Patient disease group data succesfully added to db',
-        });
+      res.status(200).json({
+        status: 'success',
+        data: data[0],
+        message: 'Patient disease group data succesfully added to db',
+      });
     })
     .catch(err => next(err));
   },
@@ -48,7 +48,7 @@ const ctl = {
       return res.status(200).json({
         status: 'success',
         data,
-        message: 'Retrieved all patient data with disease group'
+        message: 'Retrieved all patient data with disease group',
       });
     })
     .catch(err => next(err));
@@ -77,7 +77,7 @@ const ctl = {
       return res.status(200).json({
         status: 'success',
         data: data[0],
-        message: 'Retrieved one patient data with disease group'
+        message: 'Retrieved one patient data with disease group',
       });
     })
     .catch(err => next(err));
@@ -106,7 +106,7 @@ const ctl = {
       return res.status(200).json({
         status: 'success',
         data: data[0],
-        message: 'Retrieved one patient data with disease group'
+        message: 'Retrieved one patient data with disease group',
       });
     })
     .catch(err => next(err));
@@ -125,8 +125,8 @@ const ctl = {
 
     db.one(`
       UPDATE patient_disease_group
-      SET patient_id=${patientID}, disease_group_id=${diseaseGroupID}
-      WHERE id = ${id}
+      SET patient_id=$(patientID), disease_group_id=$(diseaseGroupID)
+      WHERE id = $(id)
       RETURNING id, patient_id, disease_group_id`,
       patientDiseaseGroup
     )
@@ -134,7 +134,7 @@ const ctl = {
       res.status(200).json({
         status: 'success',
         data,
-        message: 'Patient data has been updated'
+        message: 'Patient data has been updated',
       });
     })
     .catch(err => next(err));

@@ -10,7 +10,7 @@ import Sidebar from './common/sidebar';
 
 /* Pages */
 import Message from './routes/message';
-import PatientInfo from './routes/patient_info';
+import PatientInfo from './routes/PatientInfo';
 
 class App extends React.Component {
   render() {

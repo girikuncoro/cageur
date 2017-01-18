@@ -14,6 +14,12 @@ router.post('/', ctl.createPatientDiseaseGroup);
 router.get('/', ctl.getAllPatientDiseaseGroup);
 
 /**
+* Retrieve all patient disease group data with clinic id
+* GET /api/v1/patient_disease_group/clinic/:id
+*/
+router.get('/clinic/:id', ctl.getAllPatientDiseaseGroupWithClinicID);
+
+/**
 * Retrieve single patient disease group data
 * GET /api/v1/patient_disease_group/:id
 */

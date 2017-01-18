@@ -197,6 +197,57 @@ describe('Patient Disease Group API Test', () => {
     });
   });
 
+  describe('GET /api/v1/patient_disease_group/clinic/:id', () => {
+    it('should retrieve all patient from clinic with disease group info', (done) => {
+      chai.request(app)
+      .get(`/api/v1/patient_disease_group/clinic/${currClinicID}`)
+      .then((res) => {
+        const r = res.body;
+        const validPatients = [
+          {
+            patientID: currPatientIDs[0],
+            firstName: 'Ujang',
+            lineUserID: 'ujang123',
+            phoneNumber: '666',
+            diseaseGroupID: currDiseaseGroupID,
+            diseaseGroupName: 'ginjal',
+            clinicID: currClinicID,
+            clinicName: 'klinik lebak bulus',
+            patientDiseaseGroupID: currPatientDiseaseGroupID,
+          },
+          {
+            patientID: currPatientIDs[1],
+            firstName: 'Budi',
+            lineUserID: 'budi123',
+            phoneNumber: '777',
+            diseaseGroupID: null,
+            diseaseGroupName: null,
+            clinicID: currClinicID,
+            clinicName: 'klinik lebak bulus',
+            patientDiseaseGroupID: null,
+          },
+        ];
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Retrieved all patient data with disease group');
+
+        r.data.forEach((data, i) => {
+          expect(data['patient_id']).to.equal(validPatients[i].patientID);
+          expect(data['first_name']).to.equal(validPatients[i].firstName);
+          expect(data['last_name']).to.equal(null);
+          expect(data['phone_number']).to.equal(validPatients[i].phoneNumber);
+          expect(data['line_user_id']).to.equal(validPatients[i].lineUserID);
+          expect(data['disease_group_id']).to.equal(validPatients[i].diseaseGroupID);
+          expect(data['disease_group_name']).to.equal(validPatients[i].diseaseGroupName);
+          expect(data['patient_disease_group_id']).to.equal(validPatients[i].patientDiseaseGroupID);
+
+          if (i === r.data.length - 1) done();
+        });
+      });
+    });
+  });
+
   describe('GET /api/v1/patient_disease_group/:id', () => {
     it('should retrieve single patient', (done) => {
       chai.request(app)

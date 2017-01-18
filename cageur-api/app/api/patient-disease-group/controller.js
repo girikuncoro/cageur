@@ -30,7 +30,7 @@ const ctl = {
 
   getAllPatientDiseaseGroup(req, res, next) {
     const sqlGetAllData = `
-      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, clinic_id, c.name AS clinic_name, pdg.id AS patient_disease_group_id
+      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, clinic_id, c.name AS clinic_name, pdg.id AS patient_disease_group_id, p.created_at AS patient_created_at, p.updated_at AS patient_updated_at, pdg.created_at AS disease_created_at, pdg.updated_at AS disease_updated_at
       FROM patient AS p
       LEFT JOIN patient_disease_group AS pdg
         ON p.id = pdg.patient_id
@@ -58,7 +58,7 @@ const ctl = {
     const patientDiseaseGroupID = req.params.id;
 
     const sqlGetOneData = `
-      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, clinic_id, c.name AS clinic_name, pdg.id AS patient_disease_group_id
+      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, clinic_id, c.name AS clinic_name, pdg.id AS patient_disease_group_id, p.created_at AS patient_created_at, p.updated_at AS patient_updated_at, pdg.created_at AS disease_created_at, pdg.updated_at AS disease_updated_at
       FROM patient AS p
       LEFT JOIN patient_disease_group AS pdg
         ON p.id = pdg.patient_id
@@ -87,7 +87,7 @@ const ctl = {
     const patientID = req.params.id;
 
     const sqlGetOneData = `
-      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, clinic_id, c.name AS clinic_name, pdg.id AS patient_disease_group_id
+      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, clinic_id, c.name AS clinic_name, pdg.id AS patient_disease_group_id, p.created_at AS patient_created_at, p.updated_at AS patient_updated_at, pdg.created_at AS disease_created_at, pdg.updated_at AS disease_updated_at 
       FROM patient AS p
       LEFT JOIN patient_disease_group AS pdg
         ON p.id = pdg.patient_id

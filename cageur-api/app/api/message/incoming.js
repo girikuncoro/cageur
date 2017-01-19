@@ -2,6 +2,7 @@ const router = require('express').Router();
 const db = require('../../config/db');
 const abort = require('../../util/abort');
 const IncomingMessage = require('../../model/message.js');
+const Line = require('../../util/line');
 
 /**
 * Incoming message from Line webhook
@@ -15,39 +16,41 @@ router.post('/', (req, res, next) => {
   }
 
   if (message.isFollow) {
-    return res.status(200).json({ msg: message.getResponse('addFriend') });
+    return Line.sendText(message.from, message.getResponse('addFriend'));
   }
 
   if (message.isMessage) {
-    message.isValidPhone()
-    .then((valid) => {
-      if (!valid) {
-        throw new Error('phoneTypo');
-      }
-      return db.any(`SELECT id FROM patient WHERE line_user_id = '${message.from}'`);
-    })
+    db.any(`SELECT id FROM patient WHERE line_user_id = '${message.from}'`)
     .then((data) => {
       if (data.length > 0) {
         throw new Error('exist');
       }
-      return db.any(`SELECT id, first_name, last_name FROM patient WHERE phone_number = '${message.text}'`);
+      return message.isValidPhone();
+    })
+    .then((valid) => {
+      if (!valid) {
+        throw new Error('phoneTypo');
+      }
+      return db.any(`
+        UPDATE patient
+        SET line_user_id = '${message.from}'
+        WHERE phone_number = '${message.text}'
+        RETURNING id
+      `);
     })
     .then((data) => {
-      if (typeof data === 'string') {
-        return data;
-      }
       if (data.length === 0) {
         return message.getResponse('phoneFailed');
       }
       return message.getResponse('phoneSucceed');
     })
-    .then((responseMessage) => res.status(200).json({ responseMessage }))
+    .then(responseMessage => Line.sendText(message.from, responseMessage))
     .catch((err) => {
       if (err.message === 'exist') {
-        return res.status(200).json({ msg: message.getResponse('exist') });
+        return Line.sendText(message.from, message.getResponse('exist'));
       }
       if (err.message === 'phoneTypo') {
-        return res.status(200).json({ msg: message.getResponse('phoneTypo') });
+        return Line.sendText(message.from, message.getResponse('phoneTypo'));
       }
       return next(err);
     });

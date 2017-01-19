@@ -116,15 +116,6 @@ export default class Outbox extends React.Component {
                           <Icon glyph='icon-fontello-edit-1'/>
                         </Button>
                       </ButtonGroup>
-                      <ButtonGroup>
-                        <Button outlined onlyOnHover bsStyle='darkgreen45'><Icon glyph='icon-fontello-reply'/></Button>
-                        <Button outlined onlyOnHover bsStyle='darkgreen45' className='hidden-xs'><Icon glyph='icon-fontello-reply-all-1'/></Button>
-                        <Button outlined onlyOnHover bsStyle='darkgreen45'><Icon glyph='icon-fontello-forward'/></Button>
-                      </ButtonGroup>
-                      <ButtonGroup className='hidden-xs'>
-                        <Button outlined onlyOnHover bsStyle='danger' className='text-center'><Icon glyph='icon-fontello-attention-alt'/></Button>
-                        <Button outlined onlyOnHover bsStyle='danger'><Icon glyph='icon-fontello-trash-1'/></Button>
-                      </ButtonGroup>
                     </ButtonToolbar>
                   </Col>
                   <Col xs={4} className='text-right'>
@@ -132,7 +123,7 @@ export default class Outbox extends React.Component {
                       <img src='/imgs/app/avatars/avatar0.png' width='40' height='40' />
                       <div className='inbox-avatar-name hidden-xs hidden-sm'>
                         <div>Anna Sanchez</div>
-                        <div><small>Mailbox</small></div>
+                        <div><small>Kotak Pesan</small></div>
                       </div>
                     </div>
                   </Col>
@@ -144,27 +135,17 @@ export default class Outbox extends React.Component {
                   <Grid>
                     <Row>
                       <Col xs={12}>
-                        <h6><small className='fg-darkgray'>MAILBOXES</small></h6>
+                        <h6><small className='fg-darkgray'>KOTAK PESAN</small></h6>
                         <ListGroup className='list-bg-blue'>
                           <ListGroupItem active>
                             <InboxNavItem glyph='icon-dripicons-return' title='Pesan Terkirim' />
                           </ListGroupItem>
                         </ListGroup>
                         <hr/>
-                        <h6><small className='fg-darkgray'>OTHERS</small></h6>
+                        <h6><small className='fg-darkgray'>LAINNYA</small></h6>
                         <ListGroup>
                           <ListGroupItem>
                             <InboxNavItem glyph='icon-fontello-trash-1' title='Trash' />
-                          </ListGroupItem>
-                        </ListGroup>
-                        <hr/>
-                        <h6><small className='fg-darkgray'>TAGS</small></h6>
-                        <ListGroup>
-                          <ListGroupItem>
-                            <OutboxNavTag title='#sometag' badgeClass='bg-green fg-white' />
-                          </ListGroupItem>
-                          <ListGroupItem>
-                            <OutboxNavTag title='#anothertag' badgeClass='bg-red fg-white' />
                           </ListGroupItem>
                         </ListGroup>
                       </Col>

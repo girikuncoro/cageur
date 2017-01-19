@@ -12,6 +12,7 @@ import {
   PanelContainer,
 } from '@sketchpixy/rubix';
 import {API_URL, API_HEADERS} from '../common/constant';
+import moment from 'moment';
 
 class PatientInfoTable extends Component {
   constructor(props) {
@@ -25,18 +26,24 @@ class PatientInfoTable extends Component {
   componentDidMount() {
 
     // Fetching Patient Information
-    fetch(API_URL+'/patient_disease_group', {
+    fetch(`${API_URL}/patient_disease_group/clinic/1`, {
       headers: API_HEADERS
     })
     .then((response) => response.json())
     .then((responseData) => {
       let patients = [];
       responseData.data.map(function(d,i) {
+        let patient_created = (d["patient_created_at"] !== null) ?
+                              moment(d["patient_created_at"]).locale("id").format("Do MMMM YY") : "";
+        let disease_created = (d["disease_created_at"] !== null) ?
+                              moment(d["disease_created_at"]).locale("id").format("Do MMMM YY") : "";
+
         patients.push(
           {
             name: `${d["first_name"]} ${d["last_name"]}`,
             group: d["disease_group_name"],
-            clinic: d["clinic_name"]
+            patient_created: patient_created,
+            disease_created: disease_created
           }
         );
       })
@@ -61,14 +68,16 @@ class PatientInfoTable extends Component {
           <tr>
             <th>Nama Pasien</th>
             <th>Penyakit</th>
-            <th>Klinik</th>
+            <th>Penyakit Muncul</th>
+            <th>Pasien Terdaftar</th>
           </tr>
         </thead>
         <tfoot>
           <tr>
             <th>Nama Pasien</th>
             <th>Penyakit</th>
-            <th>Klinik</th>
+            <th>Penyakit Muncul</th>
+            <th>Pasien Terdaftar</th>
           </tr>
         </tfoot>
         <tbody>
@@ -76,7 +85,8 @@ class PatientInfoTable extends Component {
             <tr key={i}>
               <td>{d.name}</td>
               <td>{d.group}</td>
-              <td>{d.clinic}</td>
+              <td>{d.disease_created}</td>
+              <td>{d.patient_created}</td>
             </tr>
           ))}
         </tbody>

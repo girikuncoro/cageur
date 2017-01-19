@@ -9,7 +9,8 @@ import Header from './common/header';
 import Sidebar from './common/sidebar';
 
 /* Pages */
-import Message from './routes/message';
+import Outbox from './routes/Outbox';
+import Compose from './routes/Compose';
 import PatientInfo from './routes/PatientInfo';
 
 class App extends React.Component {
@@ -35,8 +36,8 @@ class App extends React.Component {
 
 export default (
   <Route path="/" component={App}>
-    {/* <IndexRoute component={Message}/> */}
-    <Route path="pesan-grup" component={Message} />
-    <Route path="informasi-pasien" component={PatientInfo} />
+    <Route path='mailbox/outbox' component={Outbox} />
+    <Route path="mailbox/compose" component={Compose} />
+    <Route path="patient-information" component={PatientInfo} />
   </Route>
 );

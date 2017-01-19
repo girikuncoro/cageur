@@ -30,15 +30,15 @@ const ctl = {
 
   getAllPatientDiseaseGroup(req, res, next) {
     const sqlGetAllData = `
-      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, clinic_id, c.name AS clinic_name, pdg.id AS patient_disease_group_id, p.created_at AS patient_created_at, p.updated_at AS patient_updated_at, pdg.created_at AS disease_created_at, pdg.updated_at AS disease_updated_at
-      FROM patient AS p
-      LEFT JOIN patient_disease_group AS pdg
-        ON p.id = pdg.patient_id
-      LEFT JOIN disease_group AS dg
-        ON dg.id = pdg.disease_group_id
-      JOIN clinic AS c
-        ON p.clinic_id = c.id
-      ORDER BY p.id`;
+      SELECT json_build_object(
+          'patient',    row_to_json(p.*),
+          'disease_group', array_remove(array_agg(DISTINCT dg.*), NULL)) AS patient_disease_group
+      FROM patient p
+      LEFT OUTER JOIN patient_disease_group pdg
+        ON pdg.patient_id = p.id
+      LEFT OUTER JOIN disease_group dg
+        ON pdg.disease_group_id = dg.id
+      GROUP BY p.id`;
 
     db.any(sqlGetAllData)
     .then((data) => {
@@ -58,14 +58,16 @@ const ctl = {
     const clinicID = req.params.id;
 
     const sqlGetAllDataWithClinicID = `
-      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, pdg.id AS patient_disease_group_id, p.created_at AS patient_created_at, p.updated_at AS patient_updated_at, pdg.created_at AS disease_created_at, pdg.updated_at AS disease_updated_at
-      FROM patient AS p
-      LEFT JOIN patient_disease_group AS pdg
-        ON p.id = pdg.patient_id
-      LEFT JOIN disease_group AS dg
-        ON dg.id = pdg.disease_group_id
+      SELECT json_build_object(
+          'patient', row_to_json(p.*),
+          'disease_group', array_remove(array_agg(DISTINCT dg.*), NULL)) AS patient_disease_group
+      FROM patient p
+      LEFT OUTER JOIN patient_disease_group pdg
+        ON pdg.patient_id = p.id
+      LEFT OUTER JOIN disease_group dg
+        ON pdg.disease_group_id = dg.id
       WHERE p.clinic_id = ${clinicID}
-      ORDER BY p.id`;
+      GROUP BY p.id`;
 
     db.any(sqlGetAllDataWithClinicID)
     .then((data) => {
@@ -114,16 +116,16 @@ const ctl = {
     const patientID = req.params.id;
 
     const sqlGetOneData = `
-      SELECT p.id AS patient_id, p.first_name, p.last_name, p.phone_number, p.line_user_id, disease_group_id, dg.name AS disease_group_name, clinic_id, c.name AS clinic_name, pdg.id AS patient_disease_group_id, p.created_at AS patient_created_at, p.updated_at AS patient_updated_at, pdg.created_at AS disease_created_at, pdg.updated_at AS disease_updated_at
-      FROM patient AS p
-      LEFT JOIN patient_disease_group AS pdg
-        ON p.id = pdg.patient_id
-      LEFT JOIN disease_group AS dg
-        ON dg.id = pdg.disease_group_id
-      JOIN clinic AS c
-        ON p.clinic_id = c.id
+      SELECT json_build_object(
+          'patient',    row_to_json(p.*),
+          'disease_group', array_remove(array_agg(DISTINCT dg.*), NULL)) AS patient_disease_group
+      FROM patient p
+      LEFT OUTER JOIN patient_disease_group pdg
+        ON pdg.patient_id = p.id
+      LEFT OUTER JOIN disease_group dg
+        ON pdg.disease_group_id = dg.id
       WHERE p.id = ${patientID}
-      ORDER BY p.id`;
+      GROUP BY p.id`;
 
     db.any(sqlGetOneData)
     .then((data) => {

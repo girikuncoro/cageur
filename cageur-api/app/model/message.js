@@ -2,7 +2,7 @@ const response = require('../model/message-response');
 
 class IncomingMessage {
   constructor(args) {
-    let event = args.events[0] || { source: {}, message: {} };
+    const event = args.events[0] || { source: {}, message: {} };
     event.message = event.message || {};
 
     this.type = event.type || '';
@@ -17,7 +17,7 @@ class IncomingMessage {
     this.valid = this.replyToken && (this.isFollow || this.from);
   }
 
-  getResponse(option) {
+  static getResponse(option) {
     if (!(option in response)) {
       return 'Maaf sepertinya ada masalah teknis';
     }
@@ -25,7 +25,7 @@ class IncomingMessage {
   }
 
   isValidPhone() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve(
         this.isMessage &&
         this.text.length >= 10 &&

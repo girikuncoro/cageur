@@ -60,7 +60,7 @@ class OutboxItem extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    this.props.router.push('/ltr/mailbox/mail');
+    this.props.router.push('/mailbox/mail');
   }
   render() {
     var classes = classNames({
@@ -69,7 +69,7 @@ class OutboxItem extends React.Component {
     });
 
     var linkProps = {
-      href: '/ltr/mailbox/mail',
+      href: '/mailbox/mail',
       onClick: ::this.handleClick,
       className: classes,
     };

@@ -66,6 +66,7 @@ class PatientInfoTable extends Component {
       <Table ref={(c) => this.table = c} className='display' cellSpacing='0' width='100%'>
         <thead>
           <tr>
+            <th>No.</th>
             <th>Nama Pasien</th>
             <th>Penyakit</th>
             <th>Penyakit Muncul</th>
@@ -74,6 +75,7 @@ class PatientInfoTable extends Component {
         </thead>
         <tfoot>
           <tr>
+            <th>No.</th>
             <th>Nama Pasien</th>
             <th>Penyakit</th>
             <th>Penyakit Muncul</th>
@@ -83,6 +85,7 @@ class PatientInfoTable extends Component {
         <tbody>
           {patients.map((d,i) => (
             <tr key={i}>
+              <td>{i+1}</td>
               <td>{d.name}</td>
               <td>{d.group}</td>
               <td>{d.disease_created}</td>

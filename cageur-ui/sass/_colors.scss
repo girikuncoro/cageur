@@ -3,8 +3,6 @@
 @include generateColors("info", $brand-info, white);
 @include generateColors("warning", $brand-warning, white);
 @include generateColors("danger", $brand-danger, white);
-@include generateColors("white", #ffffff, white);
-@include generateColors("black", #000000, white);
 
 @include generateColors("deepred", #D71F4B, white);
 @include generateColors("red", #EA7882, white);
@@ -65,6 +63,8 @@
 @include generateColors("darkgray25", #DCDBD8, white);
 @include generateColors("lightgray", #EEEDEB, white);
 @include generateColors("lightgray50", #F1F0EE, white);
+@include generateColors("white", #ffffff, white);
+@include generateColors("black", #000000, white);
 @include generateColors("black75", #3F3F3B, white);
 @include generateColors("black50", #3B4648, white);
 @include generateColors("davygray", #555555, white);

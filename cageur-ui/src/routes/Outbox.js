@@ -147,7 +147,7 @@ export default class Outbox extends React.Component {
                         <h6><small className='fg-darkgray'>MAILBOXES</small></h6>
                         <ListGroup className='list-bg-blue'>
                           <ListGroupItem active>
-                            <InboxNavItem glyph='icon-dripicons-return' title='Pesan Terkirim' labelClass='bg-white fg-blue' labelValue={1} />
+                            <InboxNavItem glyph='icon-dripicons-return' title='Pesan Terkirim' />
                           </ListGroupItem>
                         </ListGroup>
                         <hr/>
@@ -175,7 +175,7 @@ export default class Outbox extends React.Component {
                   <Grid>
                     <Row>
                       <Col xs={12}>
-                        <OutboxItem itemId={1} unread src='/imgs/app/avatars/avatar5.png' imgClass='border-green' name='Jordyn Ouellet (8)' labelValue='SOME LABEL' labelClass='bg-green fg-white' description={<span><strong>Early access: </strong><span><LoremIpsum query='1s'/></span></span>} date='Aug 20th' />
+                        <OutboxItem itemId={1} src='/imgs/app/avatars/avatar5.png' imgClass='border-green' name='Jordyn Ouellet (8)' labelValue='SOME LABEL' labelClass='bg-green fg-white' description={<span><strong>Early access: </strong><span><LoremIpsum query='1s'/></span></span>} date='Aug 20th' />
                         <OutboxItem itemId={5} src='/imgs/app/avatars/avatar11.png' imgClass='border-purple' name='Crystal Ford' labelValue='SOME LABEL' labelClass='bg-purple fg-white' description={<span><LoremIpsum query='1s'/></span>} date='Aug 16th' />
                       </Col>
                     </Row>

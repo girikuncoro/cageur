@@ -4,14 +4,18 @@ import {
   Sidebar, SidebarNav, SidebarNavItem,
   SidebarControls, SidebarControlBtn,
   LoremIpsum, Grid, Row, Col,
-  Progress, Icon
+  Progress, Icon, Label
 } from '@sketchpixy/rubix';
 
 import { Link, withRouter } from 'react-router';
 
 @withRouter
 class ApplicationSidebar extends React.Component {
-
+  getPath(path) {
+    var dir = this.props.location.pathname.search('rtl') !== -1 ? 'rtl' : 'ltr';
+    path = `/${path}`;
+    return path;
+  }
   render() {
     return (
       <div>
@@ -20,7 +24,13 @@ class ApplicationSidebar extends React.Component {
             <Col xs={12}>
               <div className='sidebar-nav-container'>
                 <SidebarNav style={{marginBottom: 0}} ref={(c) => this._nav = c}>
-                  <SidebarNavItem glyph='icon-fontello-mail' name='Group Message' href='/' />
+                <SidebarNavItem glyph='icon-feather-mail' name={<span>Kotak Pesan <Label className='bg-darkgreen45 fg-white'>3</Label></span>}>
+                  <SidebarNav>
+                    <SidebarNavItem glyph='icon-feather-inbox' name='Pesan Terkirim' href={::this.getPath('mailbox/outbox')} />
+                    <SidebarNavItem glyph='icon-dripicons-message' name='Tulis Pesan' href={::this.getPath('mailbox/compose')} />
+                  </SidebarNav>
+                </SidebarNavItem>
+                  <SidebarNavItem glyph='icon-simple-line-icons-users' name='Informasi Pasien' href='/patient-information' />
                 </SidebarNav>
               </div>
             </Col>
@@ -43,7 +53,7 @@ export default class SidebarContainer extends React.Component {
                 <img src='/imgs/app/avatars/avatar0.png' width='40' height='40' />
               </Col>
               <Col xs={8} collapseLeft id='avatar-col'>
-                <div style={{top: 23, fontSize: 16, lineHeight: 1, position: 'relative'}}>Anna Sanchez</div>
+                <div style={{top: 23, fontSize: 16, lineHeight: 1, position: 'relative'}}>Teteh Cageur</div>
                 <div>
                   <Progress id='demo-progress' value={30} color='#ffffff'/>
                   <a href='#'>

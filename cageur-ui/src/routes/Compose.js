@@ -13,7 +13,7 @@ const API_HEADERS = {
   'Content-Type': 'application/json'
 }
 
-export default class Message extends React.Component {
+export default class Compose extends React.Component {
   constructor(props) {
     super(props);
 
@@ -32,7 +32,7 @@ export default class Message extends React.Component {
     };
   }
 
- componentDidMount() {
+  componentDidMount() {
     // Fetching Disease Group Data
     fetch(API_URL+'/disease_group', {
       headers: API_HEADERS

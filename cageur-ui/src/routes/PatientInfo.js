@@ -37,7 +37,9 @@ class PatientInfoTable extends Component {
         let patient = d["patient_disease_group"]["patient"],
             last_name = (patient["last_name"] !== null) ? patient["last_name"] : "",
             patient_created = (patient["patient_created_at"] !== null) ?
-                              moment(patient["patient_created_at"]).locale("id").format("Do MMMM YY") : "";
+                              moment(patient["patient_created_at"]).locale("id").format("Do MMMM YY") : "",
+            phone_number = patient["phone_number"],
+            line_id = patient["line_user_id"];
 
         let disease_group = d["patient_disease_group"]["disease_group"],
             disease_created = [],
@@ -56,7 +58,9 @@ class PatientInfoTable extends Component {
             name: `${patient["first_name"]} ${last_name}`,
             group: group,
             patient_created: patient_created,
-            disease_created: disease_created
+            disease_created: disease_created,
+            phone_number: phone_number,
+            line_id: line_id
           }
         );
 
@@ -85,6 +89,8 @@ class PatientInfoTable extends Component {
             <th>Penyakit</th>
             <th>Penyakit Muncul</th>
             <th>Pasien Terdaftar</th>
+            <th>No. Telp</th>
+            <th>LineID</th>
           </tr>
         </thead>
         <tfoot>
@@ -94,6 +100,8 @@ class PatientInfoTable extends Component {
             <th>Penyakit</th>
             <th>Penyakit Muncul</th>
             <th>Pasien Terdaftar</th>
+            <th>No. Telp</th>
+            <th>LineID</th>
           </tr>
         </tfoot>
         <tbody>
@@ -112,6 +120,8 @@ class PatientInfoTable extends Component {
                 )}
               </td>
               <td>{d.patient_created}</td>
+              <td>{d.phone_number}</td>
+              <td>{d.line_id}</td>
             </tr>
           ))}
         </tbody>

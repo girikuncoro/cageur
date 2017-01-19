@@ -13,6 +13,7 @@ import {
 } from '@sketchpixy/rubix';
 import {API_URL, API_HEADERS} from '../common/constant';
 import moment from 'moment';
+import {toTitleCase} from '../utilities/util';
 
 class PatientInfoTable extends Component {
   constructor(props) {
@@ -33,19 +34,36 @@ class PatientInfoTable extends Component {
     .then((responseData) => {
       let patients = [];
       responseData.data.map(function(d,i) {
-        let patient_created = (d["patient_created_at"] !== null) ?
-                              moment(d["patient_created_at"]).locale("id").format("Do MMMM YY") : "";
-        let disease_created = (d["disease_created_at"] !== null) ?
-                              moment(d["disease_created_at"]).locale("id").format("Do MMMM YY") : "";
+        let patient = d["patient_disease_group"]["patient"],
+            last_name = (patient["last_name"] !== null) ? patient["last_name"] : "",
+            patient_created = (patient["patient_created_at"] !== null) ?
+                              moment(patient["patient_created_at"]).locale("id").format("Do MMMM YY") : "",
+            phone_number = patient["phone_number"],
+            line_id = patient["line_user_id"];
+
+        let disease_group = d["patient_disease_group"]["disease_group"],
+            disease_created = [],
+            group = [];
+
+        if(disease_group.length > 0) {
+          disease_group.map(function(d,i) {
+            disease_created.push(moment(d["disease_created_at"]).locale("id").format("Do MMMM YY"));
+            group.push(toTitleCase(d["name"]));
+          })
+        }
+
 
         patients.push(
           {
-            name: `${d["first_name"]} ${d["last_name"]}`,
-            group: d["disease_group_name"],
+            name: `${patient["first_name"]} ${last_name}`,
+            group: group,
             patient_created: patient_created,
-            disease_created: disease_created
+            disease_created: disease_created,
+            phone_number: phone_number,
+            line_id: line_id
           }
         );
+
       })
       this.setState({patients: patients});
       $(ReactDOM.findDOMNode(this.table))
@@ -71,6 +89,8 @@ class PatientInfoTable extends Component {
             <th>Penyakit</th>
             <th>Penyakit Muncul</th>
             <th>Pasien Terdaftar</th>
+            <th>No. Telp</th>
+            <th>LineID</th>
           </tr>
         </thead>
         <tfoot>
@@ -80,6 +100,8 @@ class PatientInfoTable extends Component {
             <th>Penyakit</th>
             <th>Penyakit Muncul</th>
             <th>Pasien Terdaftar</th>
+            <th>No. Telp</th>
+            <th>LineID</th>
           </tr>
         </tfoot>
         <tbody>
@@ -87,9 +109,19 @@ class PatientInfoTable extends Component {
             <tr key={i}>
               <td>{i+1}</td>
               <td>{d.name}</td>
-              <td>{d.group}</td>
-              <td>{d.disease_created}</td>
+              <td>
+                {d.group.map((d) =>
+                  (<p>{d}</p>)
+                )}
+              </td>
+              <td>
+                {d.disease_created.map((d) =>
+                  (<p>{d}</p>)
+                )}
+              </td>
               <td>{d.patient_created}</td>
+              <td>{d.phone_number}</td>
+              <td>{d.line_id}</td>
             </tr>
           ))}
         </tbody>

@@ -179,17 +179,21 @@ describe('Patient Disease Group API Test', () => {
         expect(r.status).to.equal('success');
         expect(r.message).to.equal('Retrieved all patient data with disease group');
 
-        r.data.forEach((data, i) => {
-          expect(data['patient_id']).to.equal(validPatients[i].patientID);
-          expect(data['first_name']).to.equal(validPatients[i].firstName);
-          expect(data['last_name']).to.equal(null);
-          expect(data['phone_number']).to.equal(validPatients[i].phoneNumber);
-          expect(data['line_user_id']).to.equal(validPatients[i].lineUserID);
-          expect(data['disease_group_id']).to.equal(validPatients[i].diseaseGroupID);
-          expect(data['disease_group_name']).to.equal(validPatients[i].diseaseGroupName);
-          expect(data['clinic_id']).to.equal(validPatients[i].clinicID);
-          expect(data['clinic_name']).to.equal(validPatients[i].clinicName);
-          expect(data['patient_disease_group_id']).to.equal(validPatients[i].patientDiseaseGroupID);
+        r.data.forEach((d, i) => {
+          const data = d['patient_disease_group'];
+
+          expect(data['patient']['id']).to.equal(validPatients[i].patientID);
+          expect(data['patient']['first_name']).to.equal(validPatients[i].firstName);
+          expect(data['patient']['last_name']).to.equal(null);
+          expect(data['patient']['phone_number']).to.equal(validPatients[i].phoneNumber);
+          expect(data['patient']['line_user_id']).to.equal(validPatients[i].lineUserID);
+          expect(data['patient']['clinic_id']).to.equal(validPatients[i].clinicID);
+          expect(data['disease_group']).to.be.instanceof(Array);
+
+          if (data['disease_group'].length > 0) {
+            expect(data['disease_group'][0]['id']).to.equal(validPatients[i].diseaseGroupID);
+            expect(data['disease_group'][0]['name']).to.equal(validPatients[i].diseaseGroupName);
+          }
 
           if (i === r.data.length - 1) done();
         });
@@ -232,15 +236,21 @@ describe('Patient Disease Group API Test', () => {
         expect(r.status).to.equal('success');
         expect(r.message).to.equal('Retrieved all patient data with disease group');
 
-        r.data.forEach((data, i) => {
-          expect(data['patient_id']).to.equal(validPatients[i].patientID);
-          expect(data['first_name']).to.equal(validPatients[i].firstName);
-          expect(data['last_name']).to.equal(null);
-          expect(data['phone_number']).to.equal(validPatients[i].phoneNumber);
-          expect(data['line_user_id']).to.equal(validPatients[i].lineUserID);
-          expect(data['disease_group_id']).to.equal(validPatients[i].diseaseGroupID);
-          expect(data['disease_group_name']).to.equal(validPatients[i].diseaseGroupName);
-          expect(data['patient_disease_group_id']).to.equal(validPatients[i].patientDiseaseGroupID);
+        r.data.forEach((d, i) => {
+          const data = d['patient_disease_group'];
+
+          expect(data['patient']['id']).to.equal(validPatients[i].patientID);
+          expect(data['patient']['first_name']).to.equal(validPatients[i].firstName);
+          expect(data['patient']['last_name']).to.equal(null);
+          expect(data['patient']['phone_number']).to.equal(validPatients[i].phoneNumber);
+          expect(data['patient']['line_user_id']).to.equal(validPatients[i].lineUserID);
+          expect(data['patient']['clinic_id']).to.equal(validPatients[i].clinicID);
+          expect(data['disease_group']).to.be.instanceof(Array);
+
+          if (data['disease_group'].length > 0) {
+            expect(data['disease_group'][0]['id']).to.equal(validPatients[i].diseaseGroupID);
+            expect(data['disease_group'][0]['name']).to.equal(validPatients[i].diseaseGroupName);
+          }
 
           if (i === r.data.length - 1) done();
         });
@@ -297,21 +307,21 @@ describe('Patient Disease Group API Test', () => {
       .get(`/api/v1/patient_disease_group/patient/${currPatientIDs[0]}`)
       .then((res) => {
         const r = res.body;
+        const data = r.data['patient_disease_group'];
 
         expect(res.status).to.equal(200);
         expect(r.status).to.equal('success');
         expect(r.message).to.equal('Retrieved one patient data with disease group');
 
-        expect(r.data['patient_id']).to.equal(currPatientIDs[0]);
-        expect(r.data['first_name']).to.equal('Ujang');
-        expect(r.data['last_name']).to.equal(null);
-        expect(r.data['phone_number']).to.equal('666');
-        expect(r.data['line_user_id']).to.equal('ujang123');
-        expect(r.data['clinic_id']).to.equal(currClinicID);
-        expect(r.data['clinic_name']).to.equal('klinik lebak bulus');
-        expect(r.data['disease_group_id']).to.equal(currDiseaseGroupID);
-        expect(r.data['disease_group_name']).to.equal('ginjal');
-        expect(r.data['patient_disease_group_id']).to.equal(currPatientDiseaseGroupID);
+        expect(data['patient']['id']).to.equal(currPatientIDs[0]);
+        expect(data['patient']['first_name']).to.equal('Ujang');
+        expect(data['patient']['last_name']).to.equal(null);
+        expect(data['patient']['phone_number']).to.equal('666');
+        expect(data['patient']['line_user_id']).to.equal('ujang123');
+        expect(data['patient']['clinic_id']).to.equal(currClinicID);
+        expect(data['disease_group']).to.be.instanceof(Array);
+        expect(data['disease_group'][0]['id']).to.equal(currDiseaseGroupID);
+        expect(data['disease_group'][0]['name']).to.equal('ginjal');
 
         done();
       });

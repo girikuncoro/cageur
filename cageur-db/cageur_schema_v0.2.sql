@@ -65,6 +65,27 @@ DROP INDEX IF EXISTS distinct_content_null;
 CREATE UNIQUE INDEX distinct_content_null ON template (content)
   WHERE disease_group_id IS NULL;
 
+DROP TYPE IF EXISTS message_status;
+CREATE TYPE message_status AS ENUM ('pending', 'failed', 'delivered');
+DROP TABLE IF EXISTS sent_message;
+CREATE TABLE sent_message (
+  id SERIAL NOT NULL,
+  clinic_id INT NOT NULL,
+  disease_group_id INT,
+  patient_id INT,  -- patient_id is for future use when individual message comes
+  title VARCHAR(64) NOT NULL,
+  content TEXT NOT NULL,
+  processed message_status DEFAULT 'pending',
+  processed_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  PRIMARY KEY (id),
+  FOREIGN KEY (clinic_id) REFERENCES clinic(id) ON DELETE CASCADE,
+  FOREIGN KEY (disease_group_id) REFERENCES disease_group(id) ON DELETE CASCADE,
+  FOREIGN KEY (patient_id) REFERENCES patient(id) ON DELETE CASCADE,
+  CHECK (patient_id IS NOT NULL OR disease_group_id IS NOT NULL)
+);
+
 -- In Postgres, updated timestamp
 -- must be performed manually through trigger
 CREATE OR REPLACE FUNCTION update_column_updated_at()
@@ -98,4 +119,9 @@ CREATE TRIGGER update_updated_at BEFORE UPDATE
 DROP TRIGGER IF EXISTS update_updated_at ON template;
 CREATE TRIGGER update_updated_at BEFORE UPDATE
   ON template FOR EACH ROW EXECUTE PROCEDURE
+  update_column_updated_at();
+
+DROP TRIGGER IF EXISTS update_updated_at ON sent_message;
+CREATE TRIGGER update_updated_at BEFORE UPDATE
+  ON sent_message FOR EACH ROW EXECUTE PROCEDURE
   update_column_updated_at();

@@ -72,8 +72,8 @@ CREATE TABLE sent_message (
   id SERIAL NOT NULL,
   clinic_id INT NOT NULL,
   disease_group_id INT,
-  patient_id INT,
-  title VARCHAR(32) NOT NULL,
+  patient_id INT,  -- patient_id is for future use when individual message comes
+  title VARCHAR(64) NOT NULL,
   content TEXT NOT NULL,
   processed message_status DEFAULT 'pending',
   processed_at TIMESTAMP,

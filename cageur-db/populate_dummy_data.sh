@@ -12,3 +12,6 @@ python tools/insert_patient_disease_group_data.py
 
 # Generate random content template
 python tools/insert_template_data.py
+
+# Generate random sent message
+python tools/insert_sent_message_data.py

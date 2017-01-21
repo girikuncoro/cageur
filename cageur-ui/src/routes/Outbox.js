@@ -96,7 +96,7 @@ export default class Outbox extends React.Component {
   componentDidMount() {
 
     // Fetching Sent Messages Information
-    fetch(`${API_URL}/message/sent`, {
+    fetch(`${API_URL}/message/sent/clinic/1`, {
       headers: API_HEADERS
     })
     .then((response) => response.json())

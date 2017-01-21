@@ -172,9 +172,6 @@ export default class Outbox extends React.Component {
                         <hr/>
                         <h6><small className='fg-darkgray'>LAINNYA</small></h6>
                         <ListGroup>
-                          <ListGroupItem>
-                            <InboxNavItem glyph='icon-fontello-trash-1' title='Trash' />
-                          </ListGroupItem>
                         </ListGroup>
                       </Col>
                     </Row>

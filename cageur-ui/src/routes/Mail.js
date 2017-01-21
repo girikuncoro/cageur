@@ -43,6 +43,21 @@ export default class Mail extends React.Component {
 
   render() {
     let {group_name, status, title, content, date} = this.props.params;
+    let labelValue, labelColor;
+    switch(status) {
+      case "delivered":
+        labelValue = "terkirim";
+        labelColor = "green";
+        break;
+      case "pending":
+        labelValue = "tertunda";
+        labelColor = "yellow";
+        break;
+      case "failed":
+        labelValue = "gagal";
+        labelColor = "red";
+        break;
+    }
 
     return (
       <PanelContainer className='inbox' controls={false}>
@@ -83,8 +98,8 @@ export default class Mail extends React.Component {
                         </div>
                         <div className='inbox-date fg-darkgray40 text-right hidden-xs'>
                           <div style={{position: 'relative', top: 5}}>
-                            <Badge className='bg-blue fg-white'>
-                              {status}
+                            <Badge className={`bg-${labelColor} fg-white`}>
+                              {labelValue}
                             </Badge>
                           </div>
                           <div style={{position: 'relative'}}><small>

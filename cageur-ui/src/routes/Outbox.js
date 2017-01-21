@@ -184,18 +184,35 @@ export default class Outbox extends React.Component {
                   <Grid>
                     <Row>
                       <Col xs={12}>
-                        {sent_messages.map((d,i) => (
-                          <OutboxItem key={i}
-                                      itemId={i}
-                                      name={d.group_name}
-                                      labelValue={d.status}
-                                      labelClass='bg-green fg-white'
-                                      description={<span><strong>Judul : </strong> {d.title}</span>}
-                                      status={d.status}
-                                      content={d.content}
-                                      title={d.title}
-                                      date={d.date} />
-                        ))}
+                        {sent_messages.map(function(d,i) {
+                          let labelValue, labelColor;
+                          switch(d.status) {
+                            case "delivered":
+                              labelValue = "terkirim";
+                              labelColor = "green";
+                              break;
+                            case "pending":
+                              labelValue = "tertunda";
+                              labelColor = "yellow";
+                              break;
+                            case "failed":
+                              labelValue = "gagal";
+                              labelColor = "red";
+                              break;
+                          }
+                          return (
+                            <OutboxItem key={i}
+                                        itemId={i}
+                                        name={d.group_name}
+                                        labelValue={labelValue}
+                                        labelClass={`bg-${labelColor} fg-white`}
+                                        description={<span><strong>Judul : </strong> {d.title}</span>}
+                                        status={d.status}
+                                        content={d.content}
+                                        title={d.title}
+                                        date={d.date} />
+                          )
+                        })}
                       </Col>
                     </Row>
                   </Grid>

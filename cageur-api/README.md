@@ -117,3 +117,5 @@ DELETE : http://localhost:5000/api/v1/disease_group/:id
 - Notes :
 `db installation`, please running the query that i push to this branch. 
 named `clinic.sql` , `patient.sql` , and `disease_group.sql`.
+
+update new branch to online git storage

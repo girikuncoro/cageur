@@ -183,7 +183,7 @@ export default class Outbox extends React.Component {
                     <Row>
                       <Col xs={12}>
                         {sent_messages.map((d,i) => (
-                          <OutboxItem key={i} itemId={i} name={d.group_name} labelValue={d.status} labelClass='bg-green fg-white' description={<strong>{d.title}</strong>} date={d.date} />
+                          <OutboxItem key={i} itemId={i} name={d.group_name} labelValue={d.status} labelClass='bg-green fg-white' description={<span><strong>Judul : </strong> {d.title}</span>} date={d.date} />
                         ))}
                       </Col>
                     </Row>

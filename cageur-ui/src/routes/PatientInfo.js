@@ -110,13 +110,13 @@ class PatientInfoTable extends Component {
               <td>{i+1}</td>
               <td>{d.name}</td>
               <td>
-                {d.group.map((d) =>
-                  (<p>{d}</p>)
+                {d.group.map((d,i) =>
+                  (<p key={i}>{d}</p>)
                 )}
               </td>
               <td>
-                {d.disease_created.map((d) =>
-                  (<p>{d}</p>)
+                {d.disease_created.map((d,i) =>
+                  (<p key={i}>{d}</p>)
                 )}
               </td>
               <td>{d.patient_created}</td>

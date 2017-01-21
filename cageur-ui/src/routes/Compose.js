@@ -3,7 +3,8 @@ import Select from 'react-select';
 import 'whatwg-fetch';
 import {
   Form, FormGroup, FormControl, Col,
-  Button, ControlLabel, Modal, Alert
+  Button, ControlLabel, Modal, Alert,
+  PanelContainer, Panel, PanelBody
 } from '@sketchpixy/rubix';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
@@ -193,60 +194,66 @@ export default class Compose extends React.Component {
 
     return (
       <div>
-        <Form horizontal>
-          <FormGroup controlId="alert">
-            <Col sm={2}>
-            </Col>
-            <Col sm={10}>
-              {alertGroupSelect}
-              {alertMessage}
-            </Col>
-          </FormGroup>
-        	<FormGroup controlId="formHorizontalEmail">
-        	  <Col componentClass={ControlLabel} sm={2}>
-        		  Grup Penyakit
-        	  </Col>
-        	  <Col sm={10}>
-              <Select
-                  ref="groupDiseaseSelect"
-                  matchProp="label"
-                  name="select-group-disease"
-                  value={selectedGroup}
-                  options={group}
-                  onChange={::this.setGroup}
-                  placeholder="Pilih Grup Penyakit"
-                  autofocus={true}
-              />
-        	  </Col>
-        	</FormGroup>
+        <PanelContainer controls={false}>
+          <Panel>
+            <PanelBody>
+              <Form horizontal>
+                <FormGroup controlId="alert">
+                  <Col sm={2}>
+                  </Col>
+                  <Col sm={9}>
+                    {alertGroupSelect}
+                    {alertMessage}
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="formHorizontalEmail">
+                  <Col componentClass={ControlLabel} sm={2}>
+                    Grup Penyakit
+                  </Col>
+                  <Col sm={9}>
+                    <Select
+                        ref="groupDiseaseSelect"
+                        matchProp="label"
+                        name="select-group-disease"
+                        value={selectedGroup}
+                        options={group}
+                        onChange={::this.setGroup}
+                        placeholder="Pilih Grup Penyakit"
+                        autofocus={true}
+                    />
+                  </Col>
+                </FormGroup>
 
-          <FormGroup controlId="formControlsTextarea">
-            <Col componentClass={ControlLabel} sm={2}>
-              Pesan
-            </Col>
-            <Col sm={10}>
-        	    <FormControl style={{height: 200}} componentClass="textarea"
-                placeholder="Isi Pesan ..."
-                value={this.state.text}
-                onChange={::this.handleChange}
-              />
-            </Col>
-        	</FormGroup>
+                <FormGroup controlId="formControlsTextarea">
+                  <Col componentClass={ControlLabel} sm={2}>
+                    Pesan
+                  </Col>
+                  <Col sm={9}>
+                    <FormControl style={{height: 200}} componentClass="textarea"
+                      placeholder="Isi Pesan ..."
+                      value={this.state.text}
+                      onChange={::this.handleChange}
+                    />
+                  </Col>
+                </FormGroup>
 
-        	<FormGroup>
-            <Col smOffset={2} sm={10}>
-          		<Button>
-          		  BERKALA
-          		</Button>
-              <Button bsStyle="primary" onClick={::this.open}>
-                TEMPLATE
-              </Button>
-              <Button bsStyle="success" onClick={::this.sendMessage}>
-                KIRIM PESAN
-              </Button>
-            </Col>
-        	</FormGroup>
-        </Form>
+                <FormGroup>
+                  <Col smOffset={2} sm={9}>
+                    <Button>
+                      BERKALA
+                    </Button>
+                    <Button bsStyle="primary" onClick={::this.open}>
+                      TEMPLATE
+                    </Button>
+                    <Button bsStyle="success" onClick={::this.sendMessage}>
+                      KIRIM PESAN
+                    </Button>
+                  </Col>
+                </FormGroup>
+              </Form>
+            </PanelBody>
+          </Panel>
+        </PanelContainer>
 
         {/*  Template Modal */}
         <Template

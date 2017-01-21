@@ -1,25 +1,15 @@
 import React from 'react';
 import classNames from 'classnames';
 import { withRouter } from 'react-router';
-
 import {
-  Row,
-  Col,
-  Icon,
-  Grid,
-  Label,
-  Badge,
-  Panel,
-  Button,
-  PanelLeft,
-  PanelBody,
-  ListGroup,
-  LoremIpsum,
-  ButtonGroup,
-  ButtonToolbar,
-  ListGroupItem,
-  PanelContainer,
+  Row,Col,Icon,Grid,Label,Badge,Panel,
+  Button,PanelLeft,PanelBody,ListGroup,
+  LoremIpsum,ButtonGroup,ButtonToolbar,
+  ListGroupItem,PanelContainer,
 } from '@sketchpixy/rubix';
+import {API_URL, API_HEADERS} from '../common/constant';
+import {toTitleCase} from '../utilities/util';
+import moment from 'moment';
 
 class InboxNavItem extends React.Component {
   render() {
@@ -60,7 +50,9 @@ class OutboxItem extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    this.props.router.push('/ltr/mailbox/mail');
+    let {name,status,content,date} = this.props;
+    let group_name = name;
+    this.props.router.push(`/mailbox/mail/${group_name}/${status}/${content}/${date}`);
   }
   render() {
     var classes = classNames({
@@ -69,7 +61,7 @@ class OutboxItem extends React.Component {
     });
 
     var linkProps = {
-      href: '/ltr/mailbox/mail',
+      href: '/mailbox/mail',
       onClick: ::this.handleClick,
       className: classes,
     };
@@ -77,7 +69,6 @@ class OutboxItem extends React.Component {
     return (
       <a {...linkProps}>
         <div className='inbox-avatar'>
-          <img src={this.props.src} width='40' height='40' className={this.props.imgClass + ' hidden-xs'} />
           <div className='inbox-avatar-name'>
             <div className='fg-darkgrayishblue75'>{this.props.name}</div>
             <div><small><Badge className={this.props.labelClass} style={{marginRight: 5, display: this.props.labelValue ? 'inline':'none'}}>{this.props.labelValue}</Badge><span>{this.props.description}</span></small></div>
@@ -94,6 +85,42 @@ class OutboxItem extends React.Component {
 
 @withRouter
 export default class Outbox extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sent_messages: []
+    };
+  }
+
+  componentDidMount() {
+
+    // Fetching Sent Messages Information
+    fetch(`${API_URL}/message/sent/clinic/1`, {
+      headers: API_HEADERS
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      let sent_messages = [];
+      responseData.data.map(function(d,i) {
+        sent_messages.push(
+          {
+            group_name: toTitleCase(d["disease_group"]["name"]),
+            title: d["title"],
+            status: d["processed"],
+            content: d["content"],
+            date: moment(d["updated_at"]).locale("id").format("Do MMMM YY")
+          }
+        );
+      })
+      this.setState({sent_messages: sent_messages});
+    })
+    .catch((error) => {
+      console.log('Error fetching and parsing data', error);
+    })
+  }
+
   handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -102,6 +129,7 @@ export default class Outbox extends React.Component {
   }
 
   render() {
+    let {sent_messages} = this.state;
     return (
       <div>
         <PanelContainer className='inbox' collapseBottom controls={false}>
@@ -116,23 +144,14 @@ export default class Outbox extends React.Component {
                           <Icon glyph='icon-fontello-edit-1'/>
                         </Button>
                       </ButtonGroup>
-                      <ButtonGroup>
-                        <Button outlined onlyOnHover bsStyle='darkgreen45'><Icon glyph='icon-fontello-reply'/></Button>
-                        <Button outlined onlyOnHover bsStyle='darkgreen45' className='hidden-xs'><Icon glyph='icon-fontello-reply-all-1'/></Button>
-                        <Button outlined onlyOnHover bsStyle='darkgreen45'><Icon glyph='icon-fontello-forward'/></Button>
-                      </ButtonGroup>
-                      <ButtonGroup className='hidden-xs'>
-                        <Button outlined onlyOnHover bsStyle='danger' className='text-center'><Icon glyph='icon-fontello-attention-alt'/></Button>
-                        <Button outlined onlyOnHover bsStyle='danger'><Icon glyph='icon-fontello-trash-1'/></Button>
-                      </ButtonGroup>
                     </ButtonToolbar>
                   </Col>
                   <Col xs={4} className='text-right'>
                     <div className='inbox-avatar'>
                       <img src='/imgs/app/avatars/avatar0.png' width='40' height='40' />
                       <div className='inbox-avatar-name hidden-xs hidden-sm'>
-                        <div>Anna Sanchez</div>
-                        <div><small>Mailbox</small></div>
+                        <div>LINEID</div>
+                        <div><small>Kotak Pesan</small></div>
                       </div>
                     </div>
                   </Col>
@@ -144,28 +163,15 @@ export default class Outbox extends React.Component {
                   <Grid>
                     <Row>
                       <Col xs={12}>
-                        <h6><small className='fg-darkgray'>MAILBOXES</small></h6>
+                        <h6><small className='fg-darkgray'>KOTAK PESAN</small></h6>
                         <ListGroup className='list-bg-blue'>
                           <ListGroupItem active>
-                            <InboxNavItem glyph='icon-dripicons-return' title='Pesan Terkirim' labelClass='bg-white fg-blue' labelValue={1} />
+                            <InboxNavItem glyph='icon-dripicons-return' title='Pesan Keluar' />
                           </ListGroupItem>
                         </ListGroup>
                         <hr/>
-                        <h6><small className='fg-darkgray'>OTHERS</small></h6>
+                        <h6><small className='fg-darkgray'>LAINNYA</small></h6>
                         <ListGroup>
-                          <ListGroupItem>
-                            <InboxNavItem glyph='icon-fontello-trash-1' title='Trash' />
-                          </ListGroupItem>
-                        </ListGroup>
-                        <hr/>
-                        <h6><small className='fg-darkgray'>TAGS</small></h6>
-                        <ListGroup>
-                          <ListGroupItem>
-                            <OutboxNavTag title='#sometag' badgeClass='bg-green fg-white' />
-                          </ListGroupItem>
-                          <ListGroupItem>
-                            <OutboxNavTag title='#anothertag' badgeClass='bg-red fg-white' />
-                          </ListGroupItem>
                         </ListGroup>
                       </Col>
                     </Row>
@@ -175,8 +181,34 @@ export default class Outbox extends React.Component {
                   <Grid>
                     <Row>
                       <Col xs={12}>
-                        <OutboxItem itemId={1} unread src='/imgs/app/avatars/avatar5.png' imgClass='border-green' name='Jordyn Ouellet (8)' labelValue='SOME LABEL' labelClass='bg-green fg-white' description={<span><strong>Early access: </strong><span><LoremIpsum query='1s'/></span></span>} date='Aug 20th' />
-                        <OutboxItem itemId={5} src='/imgs/app/avatars/avatar11.png' imgClass='border-purple' name='Crystal Ford' labelValue='SOME LABEL' labelClass='bg-purple fg-white' description={<span><LoremIpsum query='1s'/></span>} date='Aug 16th' />
+                        {sent_messages.map(function(d,i) {
+                          let labelValue, labelColor;
+                          switch(d.status) {
+                            case "delivered":
+                              labelValue = "terkirim";
+                              labelColor = "green";
+                              break;
+                            case "pending":
+                              labelValue = "tertunda";
+                              labelColor = "yellow";
+                              break;
+                            case "failed":
+                              labelValue = "gagal";
+                              labelColor = "red";
+                              break;
+                          }
+                          return (
+                            <OutboxItem key={i}
+                                        itemId={i}
+                                        name={d.group_name}
+                                        labelValue={labelValue}
+                                        labelClass={`bg-${labelColor} fg-white`}
+                                        description={<strong>{`${d.title} ...`}</strong>}
+                                        status={d.status}
+                                        content={d.content}
+                                        date={d.date} />
+                          )
+                        })}
                       </Col>
                     </Row>
                   </Grid>

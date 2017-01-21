@@ -50,7 +50,9 @@ class OutboxItem extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    this.props.router.push('/mailbox/mail');
+    let {name,status,title,content,date} = this.props;
+    let group_name = name;
+    this.props.router.push(`/mailbox/mail/${group_name}/${status}/${title}/${content}/${date}`);
   }
   render() {
     var classes = classNames({
@@ -67,7 +69,6 @@ class OutboxItem extends React.Component {
     return (
       <a {...linkProps}>
         <div className='inbox-avatar'>
-          <img src={this.props.src} width='40' height='40' className={this.props.imgClass + ' hidden-xs'} />
           <div className='inbox-avatar-name'>
             <div className='fg-darkgrayishblue75'>{this.props.name}</div>
             <div><small><Badge className={this.props.labelClass} style={{marginRight: 5, display: this.props.labelValue ? 'inline':'none'}}>{this.props.labelValue}</Badge><span>{this.props.description}</span></small></div>
@@ -108,6 +109,7 @@ export default class Outbox extends React.Component {
             group_name: toTitleCase(d["disease_group"]["name"]),
             title: d["title"],
             status: d["processed"],
+            content: d["content"],
             date: moment(d["updated_at"]).locale("id").format("Do MMMM YY")
           }
         );
@@ -148,7 +150,7 @@ export default class Outbox extends React.Component {
                     <div className='inbox-avatar'>
                       <img src='/imgs/app/avatars/avatar0.png' width='40' height='40' />
                       <div className='inbox-avatar-name hidden-xs hidden-sm'>
-                        <div>Anna Sanchez</div>
+                        <div>Teteh Cageur</div>
                         <div><small>Kotak Pesan</small></div>
                       </div>
                     </div>
@@ -183,7 +185,16 @@ export default class Outbox extends React.Component {
                     <Row>
                       <Col xs={12}>
                         {sent_messages.map((d,i) => (
-                          <OutboxItem key={i} itemId={i} name={d.group_name} labelValue={d.status} labelClass='bg-green fg-white' description={<span><strong>Judul : </strong> {d.title}</span>} date={d.date} />
+                          <OutboxItem key={i}
+                                      itemId={i}
+                                      name={d.group_name}
+                                      labelValue={d.status}
+                                      labelClass='bg-green fg-white'
+                                      description={<span><strong>Judul : </strong> {d.title}</span>}
+                                      status={d.status}
+                                      content={d.content}
+                                      title={d.title}
+                                      date={d.date} />
                         ))}
                       </Col>
                     </Row>

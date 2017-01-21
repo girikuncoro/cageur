@@ -42,6 +42,8 @@ export default class Mail extends React.Component {
   }
 
   render() {
+    let {group_name, status, title, content, date} = this.props.params;
+
     return (
       <PanelContainer className='inbox' controls={false}>
         <Panel>
@@ -61,8 +63,8 @@ export default class Mail extends React.Component {
                   <div className='inbox-avatar'>
                     <img src='/imgs/app/avatars/avatar0.png' width='40' height='40' />
                     <div className='inbox-avatar-name hidden-xs hidden-sm'>
-                      <div>Anna Sanchez</div>
-                      <div><small>Compose</small></div>
+                      <div>Teteh Cageur</div>
+                      <div><small>Rincian Pesan</small></div>
                     </div>
                   </div>
                 </Col>
@@ -75,19 +77,18 @@ export default class Mail extends React.Component {
                   <Row>
                     <Col xs={12}>
                       <div className='inbox-avatar'>
-                        <img src='/imgs/app/avatars/avatar5.png' width='40' height='40' className='border-green hidden-xs' />
                         <div className='inbox-avatar-name'>
-                          <div className='fg-darkgrayishblue75'><strong>Kepada: </strong>Jordyn Ouellet - <em>jordyn_ouellet@example.com</em></div>
-                          <div className='fg-darkgray40'><strong>Judul: </strong>Regd financial projections for the next five years</div>
+                          <div className='fg-darkgrayishblue75'><strong>Grup Penyakit: </strong>{group_name}</div>
+                          <div className='fg-darkgray40'><strong>Judul: </strong>{title}</div>
                         </div>
                         <div className='inbox-date fg-darkgray40 text-right hidden-xs'>
                           <div style={{position: 'relative', top: 5}}>
                             <Badge className='bg-blue fg-white'>
-                              DIABETES
+                              {status}
                             </Badge>
                           </div>
                           <div style={{position: 'relative'}}><small>
-                              Aug 21st, 11:30 PM
+                              {date}
                             </small>
                           </div>
                         </div>
@@ -100,30 +101,8 @@ export default class Mail extends React.Component {
                   <Row>
                     <Col xs={12}>
                       <p>
-                        <strong>Hi Anna,</strong>
+                        {content}
                       </p>
-                      <p>
-                        <LoremIpsum query='4s' />
-                      </p>
-                      <p>
-                        <LoremIpsum query='2s' /><span>Bibendum est ultricies integer quis :</span>
-                      </p>
-                      <div>
-                        <ul>
-                          <li><LoremIpsum query='1s' /></li>
-                          <li><LoremIpsum query='1s' /></li>
-                          <li><LoremIpsum query='1s' /></li>
-                          <li><LoremIpsum query='1s' /></li>
-                        </ul>
-                        <blockquote>
-                          <LoremIpsum query='2s' />
-                        </blockquote>
-                      </div>
-                      <p>
-                        <LoremIpsum query='2s'/>
-                      </p>
-                      <div><strong>Regards,</strong></div>
-                      <div><strong>Jordyn</strong></div>
                     </Col>
                   </Row>
                 </Grid>

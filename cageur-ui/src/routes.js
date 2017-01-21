@@ -41,7 +41,7 @@ class App extends React.Component {
 export default (
   <Route path="/" component={App}>
     <Route path='mailbox/outbox' component={Outbox} />
-    <Route path='mailbox/mail' component={Mail} />
+    <Route path='mailbox/mail/:group_name/:status/:title/:content/:date' component={Mail} />
     <Route path="mailbox/compose" component={Compose} />
     <Route path="patient-information" component={PatientInfo} />
   </Route>

@@ -1,25 +1,15 @@
 import React from 'react';
 import classNames from 'classnames';
 import { withRouter } from 'react-router';
-
 import {
-  Row,
-  Col,
-  Icon,
-  Grid,
-  Label,
-  Badge,
-  Panel,
-  Button,
-  PanelLeft,
-  PanelBody,
-  ListGroup,
-  LoremIpsum,
-  ButtonGroup,
-  ButtonToolbar,
-  ListGroupItem,
-  PanelContainer,
+  Row,Col,Icon,Grid,Label,Badge,Panel,
+  Button,PanelLeft,PanelBody,ListGroup,
+  LoremIpsum,ButtonGroup,ButtonToolbar,
+  ListGroupItem,PanelContainer,
 } from '@sketchpixy/rubix';
+import {API_URL, API_HEADERS} from '../common/constant';
+import {toTitleCase} from '../utilities/util';
+import moment from 'moment';
 
 class InboxNavItem extends React.Component {
   render() {
@@ -94,6 +84,41 @@ class OutboxItem extends React.Component {
 
 @withRouter
 export default class Outbox extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sent_messages: []
+    };
+  }
+
+  componentDidMount() {
+
+    // Fetching Sent Messages Information
+    fetch(`${API_URL}/message/sent`, {
+      headers: API_HEADERS
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      let sent_messages = [];
+      responseData.data.map(function(d,i) {
+        sent_messages.push(
+          {
+            group_name: toTitleCase(d["disease_group"]["name"]),
+            title: d["title"],
+            status: d["processed"],
+            date: moment(d["updated_at"]).locale("id").format("Do MMMM YY")
+          }
+        );
+      })
+      this.setState({sent_messages: sent_messages});
+    })
+    .catch((error) => {
+      console.log('Error fetching and parsing data', error);
+    })
+  }
+
   handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -102,6 +127,7 @@ export default class Outbox extends React.Component {
   }
 
   render() {
+    let {sent_messages} = this.state;
     return (
       <div>
         <PanelContainer className='inbox' collapseBottom controls={false}>
@@ -138,7 +164,7 @@ export default class Outbox extends React.Component {
                         <h6><small className='fg-darkgray'>KOTAK PESAN</small></h6>
                         <ListGroup className='list-bg-blue'>
                           <ListGroupItem active>
-                            <InboxNavItem glyph='icon-dripicons-return' title='Pesan Terkirim' />
+                            <InboxNavItem glyph='icon-dripicons-return' title='Pesan Keluar' />
                           </ListGroupItem>
                         </ListGroup>
                         <hr/>
@@ -156,8 +182,9 @@ export default class Outbox extends React.Component {
                   <Grid>
                     <Row>
                       <Col xs={12}>
-                        <OutboxItem itemId={1} src='/imgs/app/avatars/avatar5.png' imgClass='border-green' name='Jordyn Ouellet (8)' labelValue='SOME LABEL' labelClass='bg-green fg-white' description={<span><strong>Early access: </strong><span><LoremIpsum query='1s'/></span></span>} date='Aug 20th' />
-                        <OutboxItem itemId={5} src='/imgs/app/avatars/avatar11.png' imgClass='border-purple' name='Crystal Ford' labelValue='SOME LABEL' labelClass='bg-purple fg-white' description={<span><LoremIpsum query='1s'/></span>} date='Aug 16th' />
+                        {sent_messages.map((d,i) => (
+                          <OutboxItem key={i} itemId={i} name={d.group_name} labelValue={d.status} labelClass='bg-green fg-white' description={<strong>{d.title}</strong>} date={d.date} />
+                        ))}
                       </Col>
                     </Row>
                   </Grid>

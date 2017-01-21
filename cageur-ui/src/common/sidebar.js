@@ -26,7 +26,7 @@ class ApplicationSidebar extends React.Component {
                 <SidebarNav style={{marginBottom: 0}} ref={(c) => this._nav = c}>
                 <SidebarNavItem glyph='icon-feather-mail' name={<span>Kotak Pesan <Label className='bg-darkgreen45 fg-white'></Label></span>}>
                   <SidebarNav>
-                    <SidebarNavItem glyph='icon-dripicons-return' name='Pesan Terkirim' href={::this.getPath('mailbox/outbox')} />
+                    <SidebarNavItem glyph='icon-dripicons-return' name='Pesan Keluar' href={::this.getPath('mailbox/outbox')} />
                     <SidebarNavItem glyph='icon-outlined-mail-open' name='Pesan' href={::this.getPath('mailbox/mail')} />
                     <SidebarNavItem glyph='icon-dripicons-message' name='Tulis Pesan' href={::this.getPath('mailbox/compose')} />
                   </SidebarNav>

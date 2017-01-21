@@ -13,4 +13,10 @@ router.get('/', ctl.getAllSent);
 */
 router.get('/clinic/:id', ctl.getAllSentWithClinicID);
 
+/**
+* Retrieve all sent message data
+* GET /api/v1/message/sent
+*/
+router.get('/:id', ctl.getSingleSent);
+
 module.exports = router;

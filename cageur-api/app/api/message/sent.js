@@ -7,4 +7,10 @@ const ctl = require('../message/sent-controller');
 */
 router.get('/', ctl.getAllSent);
 
+/**
+* Retrieve all sent message data from clinicID
+* GET /api/v1/message/sent/clinic/:id
+*/
+router.get('/clinic/:id', ctl.getAllSentWithClinicID);
+
 module.exports = router;

@@ -50,9 +50,9 @@ class OutboxItem extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    let {name,status,title,content,date} = this.props;
+    let {name,status,content,date} = this.props;
     let group_name = name;
-    this.props.router.push(`/mailbox/mail/${group_name}/${status}/${title}/${content}/${date}`);
+    this.props.router.push(`/mailbox/mail/${group_name}/${status}/${content}/${date}`);
   }
   render() {
     var classes = classNames({
@@ -206,10 +206,9 @@ export default class Outbox extends React.Component {
                                         name={d.group_name}
                                         labelValue={labelValue}
                                         labelClass={`bg-${labelColor} fg-white`}
-                                        description={<span><strong>Judul : </strong> {d.title}</span>}
+                                        description={<strong>{`${d.title} ...`}</strong>}
                                         status={d.status}
                                         content={d.content}
-                                        title={d.title}
                                         date={d.date} />
                           )
                         })}

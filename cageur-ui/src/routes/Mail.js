@@ -42,7 +42,7 @@ export default class Mail extends React.Component {
   }
 
   render() {
-    let {group_name, status, title, content, date} = this.props.params;
+    let {group_name, status, content, date} = this.props.params;
     let labelValue, labelColor;
     switch(status) {
       case "delivered":
@@ -94,7 +94,6 @@ export default class Mail extends React.Component {
                       <div className='inbox-avatar'>
                         <div className='inbox-avatar-name'>
                           <div className='fg-darkgrayishblue75'><strong>Grup Penyakit: </strong>{group_name}</div>
-                          <div className='fg-darkgray40'><strong>Judul: </strong>{title}</div>
                         </div>
                         <div className='inbox-date fg-darkgray40 text-right hidden-xs'>
                           <div style={{position: 'relative', top: 5}}>

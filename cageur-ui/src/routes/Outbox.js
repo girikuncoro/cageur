@@ -150,7 +150,7 @@ export default class Outbox extends React.Component {
                     <div className='inbox-avatar'>
                       <img src='/imgs/app/avatars/avatar0.png' width='40' height='40' />
                       <div className='inbox-avatar-name hidden-xs hidden-sm'>
-                        <div>Teteh Cageur</div>
+                        <div>LINEID</div>
                         <div><small>Kotak Pesan</small></div>
                       </div>
                     </div>

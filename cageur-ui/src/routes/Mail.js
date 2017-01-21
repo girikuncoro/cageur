@@ -22,7 +22,7 @@ import {
 @withRouter
 export default class Mail extends React.Component {
   handleClick(e) {
-    this.props.router.push('/mailbox/compose');
+    this.props.router.push('/mailbox/outbox');
   }
 
   handleBackClick(e) {
@@ -69,7 +69,7 @@ export default class Mail extends React.Component {
                   <ButtonToolbar className='inbox-toolbar'>
                     <ButtonGroup>
                       <Button bsStyle='blue' onClick={::this.handleClick}>
-                        <Icon glyph='icon-fontello-edit-1'/>
+                        <Icon glyph='icon-dripicons-arrow-thin-left'/>
                       </Button>
                     </ButtonGroup>
                   </ButtonToolbar>

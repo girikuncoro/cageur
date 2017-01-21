@@ -10,6 +10,7 @@ const db = require('../../../app/config/db');
 describe('Message Sent API Test', () => {
   let currClinicID;
   let currDiseaseGroupID;
+  let currSentID;
 
   const sqlInsertClinic = `
     INSERT INTO clinic(name, address, phone_number)
@@ -24,7 +25,7 @@ describe('Message Sent API Test', () => {
   const sqlInsertSentMessage = (data) => {
     return `
       INSERT INTO sent_message(clinic_id, disease_group_id, title, content, processed, processed_at)
-      VALUES(${data.clinicID}, ${data.diseaseGroupID}, '${data.title}', '${data.content}', '${data.processed}', now())
+      VALUES(${data.clinicID}, ${data.diseaseGroupID}, '${data.title}', '${data.content}', '${data.processed}', ${data.processedAt})
       RETURNING id`;
   };
 
@@ -34,6 +35,28 @@ describe('Message Sent API Test', () => {
       currClinicID = data.id;
       return db.one(sqlInsertDiseaseGroup);
     })
+    .then((data) => {
+      currDiseaseGroupID = data.id;
+      return db.one(sqlInsertSentMessage({
+        clinicID: currClinicID,
+        diseaseGroupID: currDiseaseGroupID,
+        title: 'Some title',
+        content: 'Some content',
+        processed: 'delivered',
+        processedAt: 'now()',
+      }));
+    })
+    .then((data) => {
+      currSentID = data.id;
+      return db.one(sqlInsertSentMessage({
+        clinicID: currClinicID,
+        diseaseGroupID: currDiseaseGroupID,
+        title: 'Another title',
+        content: 'Another content',
+        processed: 'pending',
+        processedAt: 'NULL',
+      }));
+    })
     .then(_ => done());
   });
 
@@ -41,6 +64,7 @@ describe('Message Sent API Test', () => {
   after((done) => {
     db.none('DELETE FROM clinic')
     .then(_ => db.none('DELETE FROM disease_group'))
+    .then(_ => db.none('DELETE FROM sent_message'))
     .then(_ => done());
   });
 
@@ -50,49 +74,43 @@ describe('Message Sent API Test', () => {
       .get('/api/v1/message/sent')
       .then((res) => {
         const r = res.body;
-        const validPatients = [
+        const validSentMsg = [
           {
-            patientID: currPatientIDs[0],
-            firstName: 'Ujang',
-            lineUserID: 'ujang123',
-            phoneNumber: '666',
-            diseaseGroupID: currDiseaseGroupID,
-            diseaseGroupName: 'ginjal',
             clinicID: currClinicID,
-            clinicName: 'klinik lebak bulus',
-            patientDiseaseGroupID: currPatientDiseaseGroupID,
+            diseaseGroupID: currDiseaseGroupID,
+            diseaseGroupName: 'hipertensi',
+            patientID: null,
+            title: 'Some title',
+            content: 'Some content',
+            processed: 'delivered',
           },
           {
-            patientID: currPatientIDs[1],
-            firstName: 'Budi',
-            lineUserID: 'budi123',
-            phoneNumber: '777',
-            diseaseGroupID: null,
-            diseaseGroupName: null,
             clinicID: currClinicID,
-            clinicName: 'klinik lebak bulus',
-            patientDiseaseGroupID: null,
+            diseaseGroupID: currDiseaseGroupID,
+            diseaseGroupName: 'hipertensi',
+            patientID: null,
+            title: 'Another title',
+            content: 'Another content',
+            processed: 'pending',
           },
         ];
 
         expect(res.status).to.equal(200);
         expect(r.status).to.equal('success');
-        expect(r.message).to.equal('Retrieved all patient data with disease group');
+        expect(r.message).to.equal('Retrieved all sent message');
 
-        r.data.forEach((d, i) => {
-          const data = d['patient_disease_group'];
+        r.data.forEach((data, i) => {
+          expect(data['clinic_id']).to.equal(validSentMsg[i].clinicID);
+          expect(data['disease_group_id']).to.equal(validSentMsg[i].diseaseGroupID);
+          expect(data['patient_id']).to.equal(null);
+          expect(data['title']).to.equal(validSentMsg[i].title);
+          expect(data['content']).to.equal(validSentMsg[i].content);
+          expect(data['processed']).to.equal(validSentMsg[i].processed);
 
-          expect(data['patient']['id']).to.equal(validPatients[i].patientID);
-          expect(data['patient']['first_name']).to.equal(validPatients[i].firstName);
-          expect(data['patient']['last_name']).to.equal(null);
-          expect(data['patient']['phone_number']).to.equal(validPatients[i].phoneNumber);
-          expect(data['patient']['line_user_id']).to.equal(validPatients[i].lineUserID);
-          expect(data['patient']['clinic_id']).to.equal(validPatients[i].clinicID);
-          expect(data['disease_group']).to.be.instanceof(Array);
-
-          if (data['disease_group'].length > 0) {
-            expect(data['disease_group'][0]['id']).to.equal(validPatients[i].diseaseGroupID);
-            expect(data['disease_group'][0]['name']).to.equal(validPatients[i].diseaseGroupName);
+          if (i === 0) {
+            expect(data['processed_at']).to.not.equal(null);
+          } else {
+            expect(data['processed_at']).to.equal(null);
           }
 
           if (i === r.data.length - 1) done();
@@ -102,60 +120,119 @@ describe('Message Sent API Test', () => {
   });
 
   describe('GET /api/v1/message/sent/clinic/:id', () => {
-    it('should retrieve all patient from clinic with disease group info', (done) => {
+    it('should retrieve sent messages by clinic id', (done) => {
       chai.request(app)
-      .get(`/api/v1/patient_disease_group/clinic/${currClinicID}`)
+      .get(`/api/v1/message/sent/clinic/${currClinicID}`)
       .then((res) => {
         const r = res.body;
-        const validPatients = [
+        const validSentMsg = [
           {
-            patientID: currPatientIDs[0],
-            firstName: 'Ujang',
-            lineUserID: 'ujang123',
-            phoneNumber: '666',
-            diseaseGroupID: currDiseaseGroupID,
-            diseaseGroupName: 'ginjal',
             clinicID: currClinicID,
-            clinicName: 'klinik lebak bulus',
-            patientDiseaseGroupID: currPatientDiseaseGroupID,
+            diseaseGroupID: currDiseaseGroupID,
+            diseaseGroupName: 'hipertensi',
+            patientID: null,
+            title: 'Some title',
+            content: 'Some content',
+            processed: 'delivered',
           },
           {
-            patientID: currPatientIDs[1],
-            firstName: 'Budi',
-            lineUserID: 'budi123',
-            phoneNumber: '777',
-            diseaseGroupID: null,
-            diseaseGroupName: null,
             clinicID: currClinicID,
-            clinicName: 'klinik lebak bulus',
-            patientDiseaseGroupID: null,
+            diseaseGroupID: currDiseaseGroupID,
+            diseaseGroupName: 'hipertensi',
+            patientID: null,
+            title: 'Another title',
+            content: 'Another content',
+            processed: 'pending',
           },
         ];
 
         expect(res.status).to.equal(200);
         expect(r.status).to.equal('success');
-        expect(r.message).to.equal('Retrieved all patient data with disease group');
+        expect(r.message).to.equal('Retrieved all sent message by clinicID');
 
-        r.data.forEach((d, i) => {
-          const data = d['patient_disease_group'];
+        r.data.forEach((data, i) => {
+          expect(data['clinic_id']).to.equal(validSentMsg[i].clinicID);
+          expect(data['disease_group_id']).to.equal(validSentMsg[i].diseaseGroupID);
+          expect(data['patient_id']).to.equal(null);
+          expect(data['title']).to.equal(validSentMsg[i].title);
+          expect(data['content']).to.equal(validSentMsg[i].content);
+          expect(data['processed']).to.equal(validSentMsg[i].processed);
 
-          expect(data['patient']['id']).to.equal(validPatients[i].patientID);
-          expect(data['patient']['first_name']).to.equal(validPatients[i].firstName);
-          expect(data['patient']['last_name']).to.equal(null);
-          expect(data['patient']['phone_number']).to.equal(validPatients[i].phoneNumber);
-          expect(data['patient']['line_user_id']).to.equal(validPatients[i].lineUserID);
-          expect(data['patient']['clinic_id']).to.equal(validPatients[i].clinicID);
-          expect(data['disease_group']).to.be.instanceof(Array);
-
-          if (data['disease_group'].length > 0) {
-            expect(data['disease_group'][0]['id']).to.equal(validPatients[i].diseaseGroupID);
-            expect(data['disease_group'][0]['name']).to.equal(validPatients[i].diseaseGroupName);
+          if (i === 0) {
+            expect(data['processed_at']).to.not.equal(null);
+          } else {
+            expect(data['processed_at']).to.equal(null);
           }
 
           if (i === r.data.length - 1) done();
         });
       });
     });
+
+    it('should return 404 for invalid clinicID', (done) => {
+      const invalidClinicID = currClinicID + 999;
+
+      chai.request(app)
+      .get(`/api/v1/message/sent/${invalidClinicID}`)
+      .then((_) => {}, (err) => {
+        const data = err.response.body;
+
+        expect(err.status).to.equal(404);
+        expect(data.status).to.equal('error');
+        expect(data.message).to.equal('No sent message found');
+
+        done();
+      });
+    });
   });
 
+  describe('GET /api/v1/message/sent/:id', () => {
+    it('should retrieve single sent message', (done) => {
+      chai.request(app)
+      .get(`/api/v1/message/sent/${currSentID}`)
+      .then((res) => {
+        const r = res.body;
+        const validSentMsg = {
+          clinicID: currClinicID,
+          diseaseGroupID: currDiseaseGroupID,
+          diseaseGroupName: 'hipertensi',
+          patientID: null,
+          title: 'Some title',
+          content: 'Some content',
+          processed: 'delivered',
+        };
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+        expect(r.message).to.equal('Retrieved single sent message');
+
+        const data = r.data;
+        expect(data['clinic_id']).to.equal(validSentMsg.clinicID);
+        expect(data['disease_group_id']).to.equal(validSentMsg.diseaseGroupID);
+        expect(data['patient_id']).to.equal(null);
+        expect(data['title']).to.equal(validSentMsg.title);
+        expect(data['content']).to.equal(validSentMsg.content);
+        expect(data['processed']).to.equal(validSentMsg.processed);
+        expect(data['processed_at']).to.not.equal(null);
+
+        done();
+      });
+    });
+
+    it('should return 404 for invalid sentID', (done) => {
+      const invalidSentID = currSentID + 999;
+
+      chai.request(app)
+      .get(`/api/v1/message/sent/${invalidSentID}`)
+      .then((_) => {}, (err) => {
+        const data = err.response.body;
+
+        expect(err.status).to.equal(404);
+        expect(data.status).to.equal('error');
+        expect(data.message).to.equal('No sent message found');
+
+        done();
+      });
+    });
+  });
 });

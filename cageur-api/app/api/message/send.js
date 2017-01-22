@@ -42,6 +42,7 @@ router.post('/', (req, res, next) => {
     const tasks = lineUserIds.map(lineUserId => ({
       lineUserId: lineUserId['line_user_id'],
       body: message.body,
+      sentMessageID: 1,  // hack
     }));
     taskQueue.produce(tasks);
 

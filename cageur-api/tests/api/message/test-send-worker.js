@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-expressions */
+/* eslint-disable no-unused-expressions, arrow-body-style */
 const chai = require('chai');
-const sinon = require('sinon');
 const mockery = require('mockery');
 
 const expect = chai.expect;
@@ -12,7 +11,14 @@ describe('Message Send Worker Test', () => {
 
     before(() => {
       // mocking line API
-      sendTextSpy = sinon.spy();
+      sendTextSpy = (lineUserId, body) => {
+        return new Promise((resolve) => {
+          expect(lineUserId).to.be.equal('ucok123');
+          expect(body).to.be.equal('hello ucok');
+          resolve(true);
+        });
+      };
+
       const lineStub = { sendText: sendTextSpy };
       mockery.enable();
       mockery.warnOnUnregistered(false);
@@ -21,38 +27,25 @@ describe('Message Send Worker Test', () => {
       workerModule = require('../../../app/api/message/send-worker');
     });
 
-    afterEach(() => sendTextSpy.reset());
-
     after(() => {
       mockery.deregisterAll();
       mockery.disable();
     });
 
     it('should successfully process single user id', () => {
-      const singleData = [{ lineUserId: 'ucok123', body: 'hello ucok' }];
+      const singleData = [{ lineUserId: 'ucok123', body: 'hello ucok', sentMessageID: 1 }];
 
       workerModule(singleData);
-      expect(sendTextSpy.calledOnce).to.be.true;
-
-      const data = singleData[0];
-      expect(sendTextSpy.calledWith(data.lineUserId, data.body)).to.be.true;
     });
 
     it('should successfully process multiple user ids', () => {
       const multipleData = [
-        { lineUserId: 'ucok123', body: 'hello ucok' },
-        { lineUserId: 'budi456', body: 'hello budi' },
-        { lineUserId: 'bambang789', body: 'hello bambang' },
+        { lineUserId: 'ucok123', body: 'hello ucok', sentMessageID: 1 },
+        { lineUserId: 'ucok123', body: 'hello ucok', sentMessageID: 1 },
+        { lineUserId: 'ucok123', body: 'hello ucok', sentMessageID: 1 },
       ];
 
       workerModule(multipleData);
-      expect(sendTextSpy.callCount).to.be.equal(3);
-
-      let spyCall;
-      multipleData.forEach((data, i) => {
-        spyCall = sendTextSpy.getCall(i);
-        expect(spyCall.calledWith(data.lineUserId, data.body)).to.be.true;
-      });
     });
   });
 });

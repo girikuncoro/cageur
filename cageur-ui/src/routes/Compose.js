@@ -8,11 +8,7 @@ import {
 } from '@sketchpixy/rubix';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
-
-const API_URL = 'http://localhost:5000/api/v1';
-const API_HEADERS = {
-  'Content-Type': 'application/json'
-}
+import {API_URL, API_HEADERS} from '../common/constant';
 
 export default class Compose extends React.Component {
   constructor(props) {

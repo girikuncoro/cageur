@@ -10,9 +10,7 @@ module.exports = {
       return conn.createChannel();
     })
     .then((ch) => {
-      const ok = ch.assertQueue(queue);
-
-      ok.then(() => {
+      ch.assertQueue(queue).then(() => {
         const serializedTasks = JSON.stringify(tasks);
         return ch.sendToQueue(queue, new Buffer(serializedTasks));
       })

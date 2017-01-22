@@ -47486,7 +47486,8 @@ require('source-map-support').install({environment: 'node'});
 /* 582 */
 /***/ function(module, exports) {
 
-	'use strict';exports.__esModule=true;var API_URL=exports.API_URL=process.env.CAGEUR_API_URL||'http://localhost:5000/api/v1';var API_HEADERS=exports.API_HEADERS={'Content-Type':'application/json'};
+	'use strict';exports.__esModule=true;// export const API_URL = 'http://localhost:5000/api/v1';
+	var API_URL=exports.API_URL='https://cageur-staging.herokuapp.com/api/v1';var API_HEADERS=exports.API_HEADERS={'Content-Type':'application/json'};console.log('ENV: ',process.env.CAGEUR_API_URL);
 
 /***/ },
 /* 583 */

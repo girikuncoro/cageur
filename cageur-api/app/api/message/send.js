@@ -94,17 +94,21 @@ router.post('/clinic/:id', (req, res, next) => {
     if (!lineUserIds.length) {
       throw abort(404, 'No Line User Ids found', `Group ${message.diseaseGroup} in clinic ${clinicID} not found`);
     }
-    const tasks = lineUserIds.map(lineUserId => ({
-      lineUserId: lineUserId['line_user_id'],
-      body: message.body,
-    }));
-    taskQueue.produce(tasks);
 
-    const bodyShorten = message.body.split(/[ ]+/).slice(0,5).join(' ');
-    db.any(`
+    const bodyShorten = message.body.split(/[ ]+/).slice(0, 5).join(' ');
+    db.one(`
       INSERT INTO sent_message(clinic_id, disease_group_id, title, content)
       VALUES(${clinicID}, ${message.diseaseGroup}, '${bodyShorten}', '${message.body}')
-    `);
+      RETURNING id
+    `)
+    .then((data) => {
+      const tasks = lineUserIds.map(lineUserId => ({
+        lineUserId: lineUserId['line_user_id'],
+        body: message.body,
+        sentMessageID: data.id,
+      }));
+      taskQueue.produce(tasks);
+    });
 
     return lineUserIds.length;
   })

@@ -4,7 +4,7 @@ import 'whatwg-fetch';
 import {
   Form, FormGroup, FormControl, Col,
   Button, ControlLabel, Modal, Alert,
-  PanelContainer, Panel, PanelBody
+  PanelContainer, Panel, PanelBody, Progress
 } from '@sketchpixy/rubix';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
@@ -29,7 +29,8 @@ export default class Compose extends React.Component {
       messageError: 1,
       responseMessage: '',
       template: [],
-      selectedTemplate: null
+      selectedTemplate: null,
+      progressTime: 0
     };
   }
 
@@ -123,7 +124,7 @@ export default class Compose extends React.Component {
       body: text
     };
 
-    fetch(API_URL+'/message/send', {
+    fetch(API_URL+'/message/send/clinic/1', {
       method: 'post',
       headers: API_HEADERS,
       body: JSON.stringify(message)
@@ -131,11 +132,22 @@ export default class Compose extends React.Component {
     .then((response) => response.json())
     .then((responseData) => {
       this.setState({
-        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${toTitleCase(selectedGroup.value)}`,
+        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${toTitleCase(selectedGroup.value)}. Mengarahkan ke kotak keluar ...`,
         messageAlert: true,
         showMessageAlert: true,
         messageError: 3,
       });
+
+      // redirect to outbox
+      let self = this,
+          showProgressBar = setInterval(() => (this.setState({progressTime: this.state.progressTime + 10})), 100);
+
+      let redirect = function () {
+        clearInterval(showProgressBar);
+        return self.props.router.push("/mailbox/outbox");
+      }
+
+      setTimeout(redirect, 1000);
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
@@ -192,6 +204,9 @@ export default class Compose extends React.Component {
         <span>{message}</span>
     </Alert>) : "";
 
+    let progressBar = (showMessageAlert && alertStyle === "success") ?
+    (<Progress active bsStyle="success" value={this.state.progressTime} />) : "";
+
     return (
       <div>
         <PanelContainer controls={false}>
@@ -204,6 +219,7 @@ export default class Compose extends React.Component {
                   <Col sm={9}>
                     {alertGroupSelect}
                     {alertMessage}
+                    {progressBar}
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="formHorizontalEmail">

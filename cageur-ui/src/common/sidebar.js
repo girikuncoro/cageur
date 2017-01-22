@@ -12,7 +12,6 @@ import { Link, withRouter } from 'react-router';
 @withRouter
 class ApplicationSidebar extends React.Component {
   getPath(path) {
-    var dir = this.props.location.pathname.search('rtl') !== -1 ? 'rtl' : 'ltr';
     path = `/${path}`;
     return path;
   }

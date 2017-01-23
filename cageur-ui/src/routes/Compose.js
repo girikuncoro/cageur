@@ -26,7 +26,8 @@ export default class Compose extends React.Component {
       responseMessage: '',
       template: [],
       selectedTemplate: null,
-      progressTime: 0
+      progressTime: 0,
+      showDialogueBox: false
     };
   }
 
@@ -94,27 +95,18 @@ export default class Compose extends React.Component {
     this.setState({text: e.target.value});
   }
 
+  handleHideDialoge() {
+    this.setState({showDialogueBox: false})
+  }
+
+  handleContinue() {
+    this.setState({showDialogueBox: false})
+    this.sendMessage();
+  }
+
   sendMessage() {
     let {selectedGroup, text} = this.state;
-
-    // Alert user to select group first before sending a message
-    if(selectedGroup === null) {
-      this.setState({
-        showGroupSelectAlert: true
-      })
-      return;
-    }
-
-    // Alert user to at least write something in message body
-    if(text === '') {
-      this.setState({
-        showMessageAlert: true,
-        messageAlert: false,
-        messageError: 1
-      })
-      return;
-    }
-
+    
     let message = {
       diseaseGroup: selectedGroup.id,
       body: text
@@ -156,6 +148,31 @@ export default class Compose extends React.Component {
     });
   }
 
+  handleSendMessage() {
+    let {selectedGroup, text} = this.state;
+
+    // Alert user to select group first before sending a message
+    if(selectedGroup === null) {
+      this.setState({
+        showGroupSelectAlert: true
+      })
+      return;
+    }
+
+    // Alert user to at least write something in message body
+    if(text === '') {
+      this.setState({
+        showMessageAlert: true,
+        messageAlert: false,
+        messageError: 1
+      })
+      return;
+    }
+
+    // Show dialogue box ensuring user to proceed
+    this.setState({showDialogueBox: true});
+  }
+
   handleAlertGroupSelectDismiss() {
     this.setState({showGroupSelectAlert: false})
   }
@@ -175,7 +192,7 @@ export default class Compose extends React.Component {
   render() {
     let {group, selectedGroup, showGroupSelectAlert, showMessageAlert,
          messageAlert, responseMessage, messageError,
-         template} = this.state;
+         template, showDialogueBox} = this.state;
 
     let alertGroupSelect = (showGroupSelectAlert) ?
     (<Alert bsStyle="danger" onDismiss={::this.handleAlertGroupSelectDismiss}>
@@ -220,7 +237,7 @@ export default class Compose extends React.Component {
                   <Col componentClass={ControlLabel} xsOffset={0} xs={10} smOffset={0} sm={2} mdOffset={1} md={2} lgOffset={2} lg={1} style={{marginLeft: "20px"}}>
                     Grup Penyakit
                   </Col>
-                  <Col sOffset={1} xs={10} sm={8} md={8} lg={10} style={{marginLeft: "20px"}}>
+                  <Col xsOffset={1} xs={10} sm={8} md={8} lg={10} style={{marginLeft: "20px"}}>
                     <Select
                         ref="groupDiseaseSelect"
                         matchProp="label"
@@ -238,7 +255,7 @@ export default class Compose extends React.Component {
                   <Col componentClass={ControlLabel} xsOffset={0} xs={10} smOffset={0} sm={2} mdOffset={1} md={2} lgOffset={2} lg={1} style={{marginLeft: "20px"}}>
                     Pesan
                   </Col>
-                  <Col sOffset={1} xs={10} sm={8} md={8} lg={10} style={{marginLeft: "20px"}}>
+                  <Col xsOffset={1} xs={10} sm={8} md={8} lg={10} style={{marginLeft: "20px"}}>
                     <FormControl style={{height: 200}} componentClass="textarea"
                       placeholder="Isi Pesan ..."
                       value={this.state.text}
@@ -262,7 +279,7 @@ export default class Compose extends React.Component {
 
                 <FormGroup>
                   <Col xsOffset={4} xs={2} smOffset={9} sm={2} md={2} lgOffset={10} lg={1} style={{paddingLeft: 0}}>
-                    <Button bsStyle="success" onClick={::this.sendMessage}>
+                    <Button bsStyle="success" onClick={::this.handleSendMessage}>
                       KIRIM PESAN
                     </Button>
                   </Col>
@@ -281,6 +298,16 @@ export default class Compose extends React.Component {
           group={(this.state.selectedGroup!==null) ? this.state.selectedGroup.value : ""}
           handleUse={::this.handleUse}
           />
+
+        <Modal show={showDialogueBox} bsSize="small">
+          <Modal.Body>
+            <h1>Apakah anda yakin?</h1>
+          </Modal.Body>
+          <Modal.Footer>
+             <Button onClick={::this.handleHideDialoge}>Tidak</Button>
+             <Button onClick={::this.handleContinue}>Ya</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }

@@ -54,7 +54,7 @@ const ctl = {
     `)
     .then((data) => {
       if (data.length === 0) {
-        throw abort(404, 'No bank data found', `Clinic ${bankID} not found`);
+        throw abort(404, 'No bank data found', `Bank ${bankID} not found`);
       }
       return res.status(200).json({
         status: 'success',

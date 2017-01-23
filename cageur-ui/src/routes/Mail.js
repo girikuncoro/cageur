@@ -114,7 +114,7 @@ export default class Mail extends React.Component {
                 <Grid>
                   <Row>
                     <Col xs={12}>
-                      <p>
+                      <p style={{marginLeft: "10px"}}>
                         {content}
                       </p>
                     </Col>

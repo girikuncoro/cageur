@@ -110,7 +110,7 @@ export default class Outbox extends React.Component {
             title: d["title"],
             status: d["processed"],
             content: d["content"],
-            date: moment(d["updated_at"]).locale("id").format("Do MMMM YY")
+            date: moment(d["updated_at"]).locale("id").format("Do MMMM YY, h:mm:ss")
           }
         );
       })

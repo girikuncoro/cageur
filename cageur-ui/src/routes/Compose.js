@@ -210,19 +210,17 @@ export default class Compose extends React.Component {
             <PanelBody>
               <Form horizontal>
                 <FormGroup controlId="alert">
-                  <Col sm={2}>
-                  </Col>
-                  <Col sm={9}>
+                  <Col mdOffset={2} md={9}>
                     {alertGroupSelect}
                     {alertMessage}
                     {progressBar}
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="formHorizontalEmail">
-                  <Col componentClass={ControlLabel} sm={2}>
+                  <Col componentClass={ControlLabel} xsOffset={0} xs={10} smOffset={0} sm={2} mdOffset={1} md={2} lgOffset={2} lg={1} style={{marginLeft: "20px"}}>
                     Grup Penyakit
                   </Col>
-                  <Col sm={9}>
+                  <Col sOffset={1} xs={10} sm={8} md={8} lg={10} style={{marginLeft: "20px"}}>
                     <Select
                         ref="groupDiseaseSelect"
                         matchProp="label"
@@ -237,10 +235,10 @@ export default class Compose extends React.Component {
                 </FormGroup>
 
                 <FormGroup controlId="formControlsTextarea">
-                  <Col componentClass={ControlLabel} sm={2}>
+                  <Col componentClass={ControlLabel} xsOffset={0} xs={10} smOffset={0} sm={2} mdOffset={1} md={2} lgOffset={2} lg={1} style={{marginLeft: "20px"}}>
                     Pesan
                   </Col>
-                  <Col sm={9}>
+                  <Col sOffset={1} xs={10} sm={8} md={8} lg={10} style={{marginLeft: "20px"}}>
                     <FormControl style={{height: 200}} componentClass="textarea"
                       placeholder="Isi Pesan ..."
                       value={this.state.text}
@@ -250,18 +248,26 @@ export default class Compose extends React.Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <Col smOffset={2} sm={9}>
+                  <Col xsOffset={2} xs={4} smOffset={7} sm={2} mdOffset={7} md={2} lgOffset={9} lg={1}>
                     <Button>
                       BERKALA
                     </Button>
+                  </Col>
+                  <Col xs={2} sm={1} md={2} lg={2} style={{paddingLeft: 0}}>
                     <Button bsStyle="primary" onClick={::this.open}>
                       TEMPLATE
                     </Button>
+                  </Col>
+                </FormGroup>
+
+                <FormGroup>
+                  <Col xsOffset={4} xs={2} smOffset={9} sm={2} md={2} lgOffset={10} lg={1} style={{paddingLeft: 0}}>
                     <Button bsStyle="success" onClick={::this.sendMessage}>
                       KIRIM PESAN
                     </Button>
                   </Col>
                 </FormGroup>
+
               </Form>
             </PanelBody>
           </Panel>

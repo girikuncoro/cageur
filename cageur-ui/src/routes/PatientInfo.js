@@ -1,16 +1,10 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Row,
-  Col,
-  Grid,
-  Panel,
-  Table,
-  PanelBody,
-  PanelHeader,
-  FormControl,
-  PanelContainer,
+  Row, Col, Grid, Panel, Table, PanelBody,
+  PanelHeader, FormControl, PanelContainer
 } from '@sketchpixy/rubix';
+import Spinner from 'react-spinner';
 import {API_URL, API_HEADERS} from '../common/constant';
 import moment from 'moment';
 import {toTitleCase} from '../utilities/util';
@@ -20,11 +14,15 @@ class PatientInfoTable extends Component {
     super(props);
 
     this.state = {
-      patients: []
+      patients: [],
+      showSpinner: false
     };
   }
 
   componentDidMount() {
+
+    // Showing spinner while waiting response from DB
+    this.setState({showSpinner: true});
 
     // Fetching Patient Information
     fetch(`${API_URL}/patient_disease_group/clinic/1`, {
@@ -65,7 +63,10 @@ class PatientInfoTable extends Component {
         );
 
       })
-      this.setState({patients: patients});
+      this.setState({
+        patients: patients,
+        showSpinner: false
+      });
       $(ReactDOM.findDOMNode(this.table))
         .addClass('nowrap')
         .dataTable({
@@ -79,7 +80,7 @@ class PatientInfoTable extends Component {
   }
 
   render() {
-    let {patients} = this.state;
+    let {patients, showSpinner} = this.state;
     return (
       <Table ref={(c) => this.table = c} className='display' cellSpacing='0' width='100%'>
         <thead>
@@ -92,6 +93,7 @@ class PatientInfoTable extends Component {
             <th>No. Telp</th>
             <th>LineID</th>
           </tr>
+          {(showSpinner) ? <tr><Spinner style={{left: "700%", marginTop: "50px"}}/> </tr> : ""}
         </thead>
         <tfoot>
           <tr>

@@ -35,15 +35,13 @@ const ctl = {
     db.any(`
       SELECT time, json_agg(
         json_build_object(
-          'clinic_id', ma.clinic_id,
-          'disease_group', json_build_object('id', dg.id, 'name', dg.name),
-          'pending', ma.pending,
-          'failed', ma.failed,
-          'delivered', ma.delivered)) AS message
-      FROM message_analytics ma
-      JOIN disease_group dg
-        ON ma.disease_group_id = dg.id
-      WHERE ma.clinic_id = ${clinicID}
+          'clinic_id', clinic_id,
+          'disease_group_id', disease_group_id,
+          'pending', pending,
+          'failed', failed,
+          'delivered', delivered)) AS message
+      FROM message_analytics
+      WHERE clinic_id = ${clinicID}
       GROUP BY time
       ORDER BY time ASC
     `)

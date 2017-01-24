@@ -2,7 +2,7 @@ const db = require('../../config/db');
 const abort = require('../../util/abort');
 
 const ctl = {
-  getAllMessageWithClinicID(req, res, next) {
+  getAllMessage(req, res, next) {
     db.any(`
       SELECT time, json_agg(
         json_build_object(
@@ -12,7 +12,8 @@ const ctl = {
           'failed', failed,
           'delivered', delivered)) AS message
       FROM message_analytics
-      GROUP BY time;
+      GROUP BY time
+      ORDER BY time ASC
     `)
     .then((data) => {
       if (data.length === 0) {
@@ -39,7 +40,8 @@ const ctl = {
           'delivered', delivered)) AS message
       FROM message_analytics
       WHERE clinic_id = ${clinicID}
-      GROUP BY time;
+      GROUP BY time
+      ORDER BY time ASC
     `)
     .then((data) => {
       if (data.length === 0) {

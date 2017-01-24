@@ -1,6 +1,8 @@
 -- Use cageur_db for database
 \c cageur_db;
 
+SET timezone = 'UTC';
+
 DROP TABLE IF EXISTS disease_group;
 CREATE TABLE disease_group (
   id SERIAL NOT NULL,

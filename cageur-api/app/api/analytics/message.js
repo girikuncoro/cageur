@@ -5,7 +5,7 @@ const ctl = require('../analytics/message-controller');
 * Retrieve all message analytics data
 * GET /api/v1/analytics/message
 */
-// router.get('/', ctl.getAllMessage);
+router.get('/', ctl.getAllMessage);
 
 /**
 * Retrieve all message analytics data from clinicID

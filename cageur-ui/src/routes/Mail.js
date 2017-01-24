@@ -102,7 +102,7 @@ export default class Mail extends React.Component {
                             </Badge>
                           </div>
                           <div style={{position: 'relative'}}><small>
-                              {date}
+                              {`${date} WIB`}
                             </small>
                           </div>
                         </div>

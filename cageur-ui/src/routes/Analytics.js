@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  Row, Col, Panel,
-  PanelBody, PanelContainer, Button
+  Row, Col, Panel, PanelBody,
+  PanelContainer, Button, ButtonGroup
 } from '@sketchpixy/rubix';
 import {API_URL, API_HEADERS} from '../common/constant';
 import moment from 'moment';
@@ -27,9 +27,8 @@ export default class Analytics extends React.Component {
 
     this.state = {
       data: [],
-      pending: [],
-      failed: [],
-      delivered: []
+      start: 0,
+      end: 4
     };
   }
 
@@ -61,96 +60,82 @@ export default class Analytics extends React.Component {
         ])
       })
 
-      this.setState({
-        data: data
-      })
+      this.setState({data: data});
+
+      let pending = [],
+          failed = [],
+          delivered = [];
+
+      // transform response data to status data
+      for(let i = 0; i < 4; i++) {
+        pending.push(data[i][0]);
+        failed.push(data[i][1]);
+        delivered.push(data[i][2]);
+      }
+      (() => {
+        let chart = new Rubix('#stacked-multi-series-column-chart', {
+          title: 'Angka Kontak',
+          subtitle: '',
+          titleColor: '#EA7882',
+          subtitleColor: '#EA7882',
+          height: 300,
+          axis: {
+            x: {
+              type: 'ordinal'
+            },
+            y:  {
+              type: 'linear',
+              tickFormat: 'd',
+              label: 'Jumlah Pasien'
+            }
+          },
+          tooltip: {
+            color: 'white',
+            format: {
+              y: '.0f'
+            }
+          },
+          show_markers: true
+        });
+
+        let tertunda = chart.column_series({
+          name: 'tertunda',
+          color: '#EA7882'
+        });
+
+        tertunda.addData(pending);
+
+        let gagal = chart.column_series({
+          name: 'gagal',
+          color: '#79B0EC',
+          marker: 'square'
+        });
+
+        gagal.addData(failed);
+
+        let terkirim = chart.column_series({
+          name: 'terkirim',
+          color: '#55C9A6',
+          marker: 'diamond'
+        });
+
+        terkirim.addData(delivered);
+      })();
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
     });
   }
 
-  transformData(start, end) {
-    let {data} = this.state;
-    let pending = [],
-        failed = [],
-        delivered = [];
-
-    // transform response data to status data
-    for(let i = start; i < end; i++) {
-      pending.push(data[i][0]);
-      failed.push(data[i][1]);
-      delivered.push(data[i][2]);
-    }
-
-    this.setState({
-      pending: pending,
-      failed: failed,
-      delivered: delivered
-    })
-
-    this.renderChart();
-  }
-
-  renderChart() {
-    // (() => {
-      let chart = new Rubix('#stacked-multi-series-column-chart', {
-        title: 'Angka Kontak',
-        subtitle: '',
-        titleColor: '#EA7882',
-        subtitleColor: '#EA7882',
-        height: 300,
-        axis: {
-          x: {
-            type: 'ordinal'
-          },
-          y:  {
-            type: 'linear',
-            tickFormat: 'd',
-            label: 'Jumlah Pasien'
-          }
-        },
-        tooltip: {
-          color: 'white',
-          format: {
-            y: '.0f'
-          }
-        },
-        show_markers: true
-      });
-
-      let pending = chart.column_series({
-        name: 'tertunda',
-        color: '#EA7882'
-      });
-
-      pending.addData(this.state.pending);
-
-      let failed = chart.column_series({
-        name: 'gagal',
-        color: '#79B0EC',
-        marker: 'square'
-      });
-
-      failed.addData(this.state.failed);
-
-      let delivered = chart.column_series({
-        name: 'terkirim',
-        color: '#55C9A6',
-        marker: 'diamond'
-      });
-
-      delivered.addData(this.state.delivered);
-    // })();
-  }
-
   render() {
-
     return (
       <div>
-      <Button bsStyle="success" onClick={this.transformData.bind(this, 1, 4)}>
-        Plot
-      </Button>
+        <div className='text-center'>
+          <ButtonGroup>
+            <Button outlined bsStyle='darkblue' >Mundur</Button>
+            <Button outlined bsStyle='darkblue' >Maju</Button>
+          </ButtonGroup>
+        </div>
         <Row>
           <Col sm={12}>
             <Chart id='stacked-multi-series-column-chart' />

@@ -7,6 +7,7 @@ import {
   LoremIpsum,ButtonGroup,ButtonToolbar,
   ListGroupItem,PanelContainer,
 } from '@sketchpixy/rubix';
+import Spinner from 'react-spinner';
 import {API_URL, API_HEADERS} from '../common/constant';
 import {toTitleCase} from '../utilities/util';
 import moment from 'moment';
@@ -74,8 +75,7 @@ class OutboxItem extends React.Component {
             <div><small><Badge className={this.props.labelClass} style={{marginRight: 5, display: this.props.labelValue ? 'inline':'none'}}>{this.props.labelValue}</Badge><span>{this.props.description}</span></small></div>
           </div>
           <div className='inbox-date hidden-sm hidden-xs fg-darkgray40 text-right'>
-            <div style={{position: 'relative', top: 5}}>{this.props.date}</div>
-            <div style={{position: 'relative', top: -5}}><small>#{this.props.itemId}</small></div>
+            <div style={{position: 'relative', top: 5}}>{`${this.props.date} WIB`}</div>
           </div>
         </div>
       </a>
@@ -90,11 +90,14 @@ export default class Outbox extends React.Component {
     super(props);
 
     this.state = {
-      sent_messages: []
+      sentMessages: [],
+      showSpinner: false
     };
   }
 
   componentDidMount() {
+    // Showing spinner while waiting response from DB
+    this.setState({showSpinner: true});
 
     // Fetching Sent Messages Information
     fetch(`${API_URL}/message/sent/clinic/1`, {
@@ -102,19 +105,22 @@ export default class Outbox extends React.Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      let sent_messages = [];
+      let sentMessages = [];
       responseData.data.map(function(d,i) {
-        sent_messages.push(
+        sentMessages.push(
           {
             group_name: toTitleCase(d["disease_group"]["name"]),
             title: d["title"],
             status: d["processed"],
             content: d["content"],
-            date: moment(d["updated_at"]).locale("id").format("Do MMMM YY, h:mm:ss")
+            date: moment(d["updated_at"]).locale("id").format("Do MMMM YY, HH:mm")
           }
         );
       })
-      this.setState({sent_messages: sent_messages});
+      this.setState({
+          sentMessages: sentMessages,
+          showSpinner: false,
+      });
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
@@ -129,7 +135,7 @@ export default class Outbox extends React.Component {
   }
 
   render() {
-    let {sent_messages} = this.state;
+    let {sentMessages, showSpinner} = this.state;
     return (
       <div>
         <PanelContainer className='inbox' collapseBottom controls={false}>
@@ -181,7 +187,8 @@ export default class Outbox extends React.Component {
                   <Grid>
                     <Row>
                       <Col xs={12}>
-                        {sent_messages.map(function(d,i) {
+                        {(showSpinner) ? <Spinner/> : ""}
+                        {sentMessages.map(function(d,i) {
                           let labelValue, labelColor;
                           switch(d.status) {
                             case "delivered":

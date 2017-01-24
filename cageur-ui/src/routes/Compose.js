@@ -6,6 +6,7 @@ import {
   Button, ControlLabel, Modal, Alert,
   PanelContainer, Panel, PanelBody, Progress
 } from '@sketchpixy/rubix';
+import Spinner from 'react-spinner';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
 import {API_URL, API_HEADERS} from '../common/constant';
@@ -27,7 +28,9 @@ export default class Compose extends React.Component {
       template: [],
       selectedTemplate: null,
       progressTime: 0,
-      showDialogueBox: false
+      showDialogueBox: false,
+      showSpinner: false,
+      showSendSpinner: false
     };
   }
 
@@ -51,7 +54,10 @@ export default class Compose extends React.Component {
   }
 
   close() {
-    this.setState({ showModal: false });
+    this.setState({
+        showModal: false,
+        template: []
+    });
   }
 
   open() {
@@ -68,7 +74,10 @@ export default class Compose extends React.Component {
     this.setState({ showModal: true });
 
     if (selectedGroup !== null) {
-      // Fetching Disease Group Data
+      // Showing spinner while waiting response from DB
+      this.setState({showSpinner: true});
+
+      // Fetching message template for selected disease group
       fetch(`${API_URL}/template/disease_group/${selectedGroup.id}`, {headers: API_HEADERS})
       .then((response) => response.json())
       .then((responseData) => {
@@ -76,7 +85,10 @@ export default class Compose extends React.Component {
         responseData.data.map(function(d,i) {
           template.push({id: d.id, disease_group: d.disease_group, title: d.title, content: d.content});
         })
-        this.setState({template: template});
+        this.setState({
+            template: template,
+            showSpinner: false
+        });
       })
       .catch((error) => {
         console.log('Error fetching and parsing data', error);
@@ -112,6 +124,10 @@ export default class Compose extends React.Component {
       body: text
     };
 
+    // Showing spinner while waiting response from DB
+    this.setState({showSendSpinner: true});
+
+    // Fetching ...
     fetch(API_URL+'/message/send/clinic/1', {
       method: 'post',
       headers: API_HEADERS,
@@ -124,6 +140,7 @@ export default class Compose extends React.Component {
         messageAlert: true,
         showMessageAlert: true,
         messageError: 3,
+        showSendSpinner: false
       });
 
       // redirect to outbox
@@ -144,6 +161,7 @@ export default class Compose extends React.Component {
         messageAlert: true,
         showMessageAlert: true,
         messageError: 2,
+        showSendSpinner: false
       });
     });
   }
@@ -192,7 +210,7 @@ export default class Compose extends React.Component {
   render() {
     let {group, selectedGroup, showGroupSelectAlert, showMessageAlert,
          messageAlert, responseMessage, messageError,
-         template, showDialogueBox} = this.state;
+         template, showDialogueBox, showSendSpinner} = this.state;
 
     let alertGroupSelect = (showGroupSelectAlert) ?
     (<Alert bsStyle="danger" onDismiss={::this.handleAlertGroupSelectDismiss}>
@@ -294,8 +312,10 @@ export default class Compose extends React.Component {
           template={this.state.template}
           group={(this.state.selectedGroup!==null) ? this.state.selectedGroup.value : ""}
           handleUse={::this.handleUse}
+          showSpinner={this.state.showSpinner}
           />
 
+        {/*  Dialog Modal */}
         <Modal show={showDialogueBox} bsSize="small">
           <Modal.Body>
             <h1>Apakah anda yakin?</h1>
@@ -304,6 +324,11 @@ export default class Compose extends React.Component {
              <Button onClick={::this.handleHideDialoge}>Tidak</Button>
              <Button onClick={::this.handleContinue}>Ya</Button>
           </Modal.Footer>
+        </Modal>
+
+        {/*  Spinner Modal */}
+        <Modal show={showSendSpinner} bsSize="small">
+            <Spinner style={{marginTop: "50px"}}/>
         </Modal>
       </div>
     );

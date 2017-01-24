@@ -106,7 +106,7 @@ export default class Compose extends React.Component {
 
   sendMessage() {
     let {selectedGroup, text} = this.state;
-    
+
     let message = {
       diseaseGroup: selectedGroup.id,
       body: text
@@ -227,17 +227,19 @@ export default class Compose extends React.Component {
             <PanelBody>
               <Form horizontal>
                 <FormGroup controlId="alert">
-                  <Col mdOffset={2} md={9}>
+                  <Col sm={2}>
+                  </Col>
+                  <Col sm={9}>
                     {alertGroupSelect}
                     {alertMessage}
                     {progressBar}
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="formHorizontalEmail">
-                  <Col componentClass={ControlLabel} xsOffset={0} xs={10} smOffset={0} sm={2} mdOffset={1} md={2} lgOffset={2} lg={1} style={{marginLeft: "20px"}}>
+                  <Col componentClass={ControlLabel} sm={2}>
                     Grup Penyakit
                   </Col>
-                  <Col xsOffset={1} xs={10} sm={8} md={8} lg={10} style={{marginLeft: "20px"}}>
+                  <Col sm={9}>
                     <Select
                         ref="groupDiseaseSelect"
                         matchProp="label"
@@ -252,10 +254,10 @@ export default class Compose extends React.Component {
                 </FormGroup>
 
                 <FormGroup controlId="formControlsTextarea">
-                  <Col componentClass={ControlLabel} xsOffset={0} xs={10} smOffset={0} sm={2} mdOffset={1} md={2} lgOffset={2} lg={1} style={{marginLeft: "20px"}}>
+                  <Col componentClass={ControlLabel} sm={2}>
                     Pesan
                   </Col>
-                  <Col xsOffset={1} xs={10} sm={8} md={8} lg={10} style={{marginLeft: "20px"}}>
+                  <Col sm={9}>
                     <FormControl style={{height: 200}} componentClass="textarea"
                       placeholder="Isi Pesan ..."
                       value={this.state.text}
@@ -265,21 +267,16 @@ export default class Compose extends React.Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <Col xsOffset={2} xs={4} smOffset={7} sm={2} mdOffset={7} md={2} lgOffset={9} lg={1}>
-                    <Button>
+                  <Col sm={7}>
+                  </Col>
+                  <Col sm={4}>
+                    <Button style={{margin: '10px'}}>
                       BERKALA
                     </Button>
-                  </Col>
-                  <Col xs={2} sm={1} md={2} lg={2} style={{paddingLeft: 0}}>
-                    <Button bsStyle="primary" onClick={::this.open}>
+                    <Button bsStyle="primary" onClick={::this.open} style={{margin: '10px'}}>
                       TEMPLATE
                     </Button>
-                  </Col>
-                </FormGroup>
-
-                <FormGroup>
-                  <Col xsOffset={4} xs={2} smOffset={9} sm={2} md={2} lgOffset={10} lg={1} style={{paddingLeft: 0}}>
-                    <Button bsStyle="success" onClick={::this.handleSendMessage}>
+                    <Button bsStyle="success" onClick={::this.handleSendMessage} style={{margin: '10px'}}>
                       KIRIM PESAN
                     </Button>
                   </Col>

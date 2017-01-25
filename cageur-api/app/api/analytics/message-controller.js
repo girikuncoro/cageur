@@ -3,8 +3,6 @@ const abort = require('../../util/abort');
 
 const ctl = {
   getAllMessage(req, res, next) {
-    // 'disease_group_id', dg.id,
-    // 'disease_group_name', dg.name,
     db.any(`
       SELECT time, json_agg(
         json_build_object(
@@ -21,7 +19,7 @@ const ctl = {
     `)
     .then((data) => {
       if (data.length === 0) {
-        throw abort(404, 'No sent message found', 'Empty sent_message table');
+        throw abort(404, 'No message analytics found', 'Empty message_analytics table');
       }
       res.status(200).json({
         status: 'success',
@@ -51,12 +49,12 @@ const ctl = {
     `)
     .then((data) => {
       if (data.length === 0) {
-        throw abort(404, 'No sent message found', 'Empty sent_message table');
+        throw abort(404, 'No message analytics found', 'Empty message_analytics table');
       }
       res.status(200).json({
         status: 'success',
         data,
-        message: 'Retrieved all message analytics',
+        message: 'Retrieved all message analytics by clinic id',
       });
     })
     .catch(err => next(err));

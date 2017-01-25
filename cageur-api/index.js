@@ -34,6 +34,7 @@ app.use('/api/v1/template', require('./app/api/template'));
 app.use('/api/v1/message/send', require('./app/api/message/send'));
 app.use('/api/v1/message/sent', require('./app/api/message/sent'));
 app.use('/api/v1/message/incoming', require('./app/api/message/incoming'));
+app.use('/api/v1/analytics/message', require('./app/api/analytics/message'));
 
 /**
  * Error handler routes.

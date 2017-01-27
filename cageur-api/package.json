@@ -29,7 +29,10 @@
     "pg-promise": "5.5.0",
     "sinon": "1.17.7",
     "superagent": "3.3.1",
-    "superagent-promise": "1.1.0"
+    "superagent-promise": "1.1.0",
+    "jwt-simple": "^0.5.1",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1"
   },
   "devDependencies": {
     "eslint": "^3.6.0",

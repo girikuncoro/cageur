@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import StackedBar from '../common/stacked-bar';
 import {API_URL, API_HEADERS} from '../common/constant';
-import moment from 'moment';
+import _ from 'underscore';
 import 'whatwg-fetch';
 
 export default class Analytics extends Component {
@@ -10,11 +10,7 @@ export default class Analytics extends Component {
 
     this.state = {
       data: [],
-      start: 0,
-      end: 4,
-      pending: [],
-      failed: [],
-      delivered: []
+      groupedByYear: []
     };
   }
 
@@ -26,43 +22,17 @@ export default class Analytics extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      let data = [];
+      let data = responseData.data;
 
-      // save response data
-      responseData.data.map(function(d,i) {
-        data.push([
-          {
-            x: moment(d.time).locale("id").format("Do MMMM YY"),
-            y: d.message[0]["pending"]
-          },
-          {
-            x: moment(d.time).locale("id").format("Do MMMM YY"),
-            y: d.message[0]["failed"]
-          },
-          {
-            x: moment(d.time).locale("id").format("Do MMMM YY"),
-            y: d.message[0]["delivered"]
-          }
-        ])
-      })
+      let groupedByYear = _.groupBy(data, function(item) {
+        return item.time.substring(0,4);
+      });
 
-      this.setState({data: data});
-
-      let pending = [],
-          failed = [],
-          delivered = [];
-
-      // transform response data to status data
-      for(let i = 0; i < 4; i++) {
-        pending.push(data[i][0]);
-        failed.push(data[i][1]);
-        delivered.push(data[i][2]);
-      }
       this.setState({
-        pending: pending,
-        failed: failed,
-        delivered: delivered
+        data: responseData,
+        groupedByYear: groupedByYear
       })
+
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
@@ -70,14 +40,24 @@ export default class Analytics extends Component {
   }
 
   render() {
-    let {pending, failed, delivered} = this.state;
-    let renderStackedBar = (pending != 0) ?
-                            <StackedBar pending={pending}
-                                        failed={failed}
-                                        delivered={delivered}/> : "";
+    let {groupedByYear} = this.state;
+    let renderMonthly = (groupedByYear != 0) ?
+                         <StackedBar data={groupedByYear}
+                                    id='Bulanan'
+                                    year={'2015'}
+                          /> : "";
+
+    let renderDaily = (groupedByYear != 0) ?
+                      <StackedBar data={groupedByYear}
+                                 id='Harian'
+                                 year={'2015'}
+                                 month={'01'}
+                       /> : "";
+
     return (
       <div>
-        {renderStackedBar}
+        {renderMonthly}
+        {renderDaily}
       </div>
     );
   }

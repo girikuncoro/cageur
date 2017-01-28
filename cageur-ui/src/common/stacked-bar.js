@@ -8,7 +8,7 @@ import _ from 'underscore';
 class Chart extends Component {
   render() {
     return (
-      <PanelContainer>
+      <PanelContainer controls={false}>
         <Panel>
           <PanelBody style={{padding: 25}}>
             <div id={this.props.id}></div>
@@ -27,6 +27,13 @@ export default class Analytics extends Component {
     data = this.dataAggregation();
     this.renderChart(data['failed'], data['pending'], data['delivered']);
   }
+
+  // componentDidUpdate() {
+  //   let data;
+  //
+  //   data = this.dataAggregation();
+  //   this.renderChart(data['failed'], data['pending'], data['delivered']);
+  // }
 
   dataAggregation() {
     let data = this.props.data[this.props.year],
@@ -76,8 +83,6 @@ export default class Analytics extends Component {
         delivered.push({x: index+1, y: deliveredVal});
       })
     }
-    // console.log(groupedByMonth);
-
 
     return {
       failed: failed,

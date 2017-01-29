@@ -4,20 +4,7 @@ import {
   PanelContainer, Button, ButtonGroup
 } from '@sketchpixy/rubix';
 import _ from 'underscore';
-
-class Chart extends Component {
-  render() {
-    return (
-      <PanelContainer controls={false}>
-        <Panel>
-          <PanelBody style={{padding: 25}}>
-            <div id={this.props.id}></div>
-          </PanelBody>
-        </Panel>
-      </PanelContainer>
-    );
-  }
-}
+import moment from 'moment';
 
 export default class Analytics extends Component {
 
@@ -28,16 +15,16 @@ export default class Analytics extends Component {
     this.renderChart(data['failed'], data['pending'], data['delivered']);
   }
 
-  // componentDidUpdate() {
-  //   let data;
-  //
-  //   data = this.dataAggregation();
-  //   this.renderChart(data['failed'], data['pending'], data['delivered']);
-  // }
+  componentDidUpdate() {
+    let data;
+
+    data = this.dataAggregation();
+    this.renderChart(data['failed'], data['pending'], data['delivered']);
+  }
 
   dataAggregation() {
     let data = this.props.data[this.props.year],
-        failed = [], pending = [], delivered = [];
+        failed = ['gagal'], pending = ['tunda'], delivered = ['terkirim'];
 
     let groupedByMonth = _.groupBy(data, function(item) {
       return item.time.substring(5,7);
@@ -45,7 +32,7 @@ export default class Analytics extends Component {
 
     if (this.props.month) {
       // daily data
-      groupedByMonth['01'].map(function(d,i) {
+      groupedByMonth[this.props.month].map(function(d,i) {
 
         let failedVal = 0,
             pendingVal = 0,
@@ -59,9 +46,9 @@ export default class Analytics extends Component {
           })
         })
 
-        failed.push({x: i+1, y: failedVal});
-        pending.push({x: i+1, y: pendingVal});
-        delivered.push({x: i+1, y: deliveredVal});
+        failed.push(failedVal);
+        pending.push(pendingVal);
+        delivered.push(deliveredVal);
       })
 
     } else {
@@ -78,9 +65,9 @@ export default class Analytics extends Component {
           })
         })
 
-        failed.push({x: index+1, y: failedVal});
-        pending.push({x: index+1, y: pendingVal});
-        delivered.push({x: index+1, y: deliveredVal});
+        failed.push(failedVal);
+        pending.push(pendingVal);
+        delivered.push(deliveredVal);
       })
     }
 
@@ -92,57 +79,51 @@ export default class Analytics extends Component {
   }
 
   renderChart(failed, pending, delivered) {
-    let xlabel = (this.props.month) ? 'Hari' : 'Bulan',
-        title = (this.props.month) ? 'Harian' : 'Bulanan';
+    let months = ['x'],
+        days = ['x'];
 
-    let chart = new Rubix(`#${this.props.id}`, {
-      title: `Angka Kontak (${title})`,
-      subtitle: '',
-      titleColor: '#EA7882',
-      subtitleColor: '#EA7882',
-      height: 300,
-      axis: {
-        x: {
-          type: 'datetime',
-          label: `${xlabel}`,
-          tickFormat: '%B'
-        },
-        y:  {
-          type: 'linear',
-          tickFormat: 'd',
-          label: 'Jumlah Pasien'
-        }
+    if(this.props.months) {
+      Object.keys(this.props.months).sort().forEach(function(key, index) {
+        months.push(index);
+      })
+    }
+
+    failed.map(function(d,i) {
+      days.push(i+1);
+    })
+
+    let x = (this.props.month) ?
+            days : months;
+
+    let formatFunc = (this.props.month) ?
+                      '%d' :
+                      (function (x) {
+                        return moment(new Date(2014, x, 1)).locale("id").format("MMMM");
+                      });
+
+    this.chart = c3.generate({
+      bindto: `#${this.props.id}`,
+      data: {
+        x: 'x',
+        columns: [
+          x,
+          failed,
+          pending,
+          delivered
+        ],
+        type: 'bar',
+        groups: [
+          ['gagal', 'tunda','terkirim']
+        ]
       },
-      tooltip: {
-        color: 'white',
-        format: {
-          y: '.0f'
-        }
+      axis: {
+          x: {
+              tick: {
+                  format: formatFunc
+              }
+          }
       }
     });
-
-    let tertunda = chart.column_series({
-      name: 'tertunda',
-      color: '#EA7882'
-    });
-
-    tertunda.addData(pending);
-
-    let gagal = chart.column_series({
-      name: 'gagal',
-      color: '#79B0EC',
-      marker: 'square'
-    });
-
-    gagal.addData(failed);
-
-    let terkirim = chart.column_series({
-      name: 'terkirim',
-      color: '#55C9A6',
-      marker: 'diamond'
-    });
-
-    terkirim.addData(delivered);
   }
 
   render() {
@@ -150,7 +131,13 @@ export default class Analytics extends Component {
       <div>
         <Row>
           <Col sm={12}>
-            <Chart id={this.props.id} />
+          <PanelContainer controls={false}>
+            <Panel>
+              <PanelBody style={{padding: 25}}>
+                <div id={this.props.id}></div>
+              </PanelBody>
+            </Panel>
+          </PanelContainer>
           </Col>
         </Row>
       </div>

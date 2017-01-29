@@ -44,7 +44,7 @@ export default class Analytics extends Component {
                     'Okt', 'Nov', 'Des'];
 
       monthName.map(function(d,i) {
-        let value = (i<9) ? `0${i}` : `${i}`;
+        let value = (i<8) ? `0${i+1}` : `${i+1}`;
         months.push({id: i, value: value, label: d});
       })
 
@@ -65,8 +65,31 @@ export default class Analytics extends Component {
 
   setYear(val) {
     let year = (val) ? val.value : null;
+    let months = [];
+    let data = this.state.groupedByYear[`${year}`];
 
-    this.setState({year: year});
+    let groupedByMonth = _.groupBy(data, function(item) {
+      return item.time.substring(5,7);
+    });
+
+    let monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agus', 'Sep',
+                  'Okt', 'Nov', 'Des'];
+
+    Object.keys(groupedByMonth).forEach(function(d,i) {
+      let value = (i<8) ? `0${i+1}` : `${i+1}`;
+      months.push({id: i, value: value, label: monthName[i]});
+    })
+
+    this.setState({
+      year: year,
+      months: months,
+    });
+
+    if (this.state.month > months.length-1) {
+      this.setState({
+        month: months[months.length-1].value
+      })
+    }
   }
 
   setMonth(val) {
@@ -76,41 +99,24 @@ export default class Analytics extends Component {
   }
 
   render() {
-    let {groupedByYear, year, month} = this.state;
-    console.log(month);
-
-    let renderMonthly = (groupedByYear != 0) ?
-                         <StackedBar data={groupedByYear}
-                                    id='Bulanan'
-                                    year={'2015'}
-                          /> : "";
+    let {groupedByYear, year, month, months} = this.state;
 
     let renderDaily = (groupedByYear != 0) ?
                       <StackedBar data={groupedByYear}
                                  id='Harian'
-                                 year={'2015'}
-                                 month={'01'}
+                                 year={year}
+                                 month={month}
                        /> : "";
+
+    let renderMonthly = (groupedByYear != 0) ?
+                         <StackedBar data={groupedByYear}
+                                    id='Bulanan'
+                                    year={year}
+                                    months={months}
+                          /> : "";
 
     return (
       <div>
-        <Row>
-          <Col sm={2}>
-          <Select
-              ref="year-selection"
-              matchProp="label"
-              name="year-selection"
-              value={this.state.year}
-              options={this.state.years}
-              onChange={::this.setYear}
-              placeholder="tahun"
-              clearable={false}
-              autofocus={true}
-          />
-          </Col>
-        </Row>
-        {renderMonthly}
-
         <Row>
           <Col sm={2}>
           <Select
@@ -127,6 +133,22 @@ export default class Analytics extends Component {
           </Col>
         </Row>
         {renderDaily}
+        <Row>
+          <Col sm={2}>
+          <Select
+              ref="year-selection"
+              matchProp="label"
+              name="year-selection"
+              value={this.state.year}
+              options={this.state.years}
+              onChange={::this.setYear}
+              placeholder="tahun"
+              clearable={false}
+              autofocus={true}
+          />
+          </Col>
+        </Row>
+        {renderMonthly}
       </div>
     );
   }

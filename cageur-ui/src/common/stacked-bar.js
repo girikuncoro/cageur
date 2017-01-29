@@ -100,9 +100,13 @@ export default class Analytics extends Component {
                       (function (x) {
                         return moment(new Date(2014, x, 1)).locale("id").format("MMMM");
                       });
+    let title = (this.props.month) ? `Angka Kontak Harian (${this.props.year})` : 'Angka Kontak Bulanan'
 
     this.chart = c3.generate({
       bindto: `#${this.props.id}`,
+      title: {
+        text: title
+      },
       data: {
         x: 'x',
         columns: [
@@ -121,6 +125,12 @@ export default class Analytics extends Component {
               tick: {
                   format: formatFunc
               }
+          },
+          y: {
+            label: {
+              text: 'Jumlah Pasien',
+              position: 'outer-middle'
+            }
           }
       }
     });

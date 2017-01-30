@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import _ from 'underscore';
 import moment from 'moment';
 
-export default class Analytics extends Component {
+export default class StackedBar extends Component {
 
   componentDidMount() {
     let data;
@@ -35,11 +35,9 @@ export default class Analytics extends Component {
             deliveredVal = 0;
 
         d.message.map(function(item,index) {
-          d.message.map(function(item) {
             failedVal = failedVal + item.failed;
             pendingVal = pendingVal + item.pending;
             deliveredVal = deliveredVal + item.delivered;
-          })
         })
 
         failed.push(failedVal);

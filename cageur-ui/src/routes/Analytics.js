@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
 import StackedBar from '../common/stacked-bar';
+import PieChart from '../common/pie-chart';
 import {
   Row, Col, Panel, PanelBody,
   PanelContainer
@@ -13,7 +14,7 @@ import 'whatwg-fetch';
 class ChartContainer extends React.Component {
   render() {
     return (
-      <PanelContainer>
+      <PanelContainer controls={false}>
         <Panel>
           <PanelBody style={{padding: 25}}>
             {this.props.children}
@@ -123,19 +124,33 @@ export default class Analytics extends Component {
   render() {
     let {groupedByYear, year, month, months, showSpinner} = this.state;
 
-    let renderDaily = (groupedByYear != 0) ?
+    let renderBarDaily = (groupedByYear != 0) ?
                       <StackedBar data={groupedByYear}
-                                 id='Harian'
+                                 id='bar-month'
                                  year={year}
                                  month={month}
                        /> : "";
 
-    let renderMonthly = (groupedByYear != 0) ?
+    let renderBarMonthly = (groupedByYear != 0) ?
                          <StackedBar data={groupedByYear}
-                                    id='Bulanan'
+                                    id='bar-year'
                                     year={year}
                                     months={months}
                           /> : "";
+
+    let renderPieMonth = (groupedByYear != 0) ?
+                    <PieChart data={groupedByYear}
+                               id='pie-month'
+                               year={year}
+                               month={month}
+                     /> : "";
+
+    let renderPieYear = (groupedByYear != 0) ?
+                    <PieChart data={groupedByYear}
+                              id='pie-year'
+                              year={year}
+                              months={months}
+                    /> : "";
 
     return (
       <div>
@@ -154,10 +169,21 @@ export default class Analytics extends Component {
           />
           </Col>
         </Row>
-        <ChartContainer>
-            {(showSpinner) ? <Spinner/> : ""}
-            {renderDaily}
-        </ChartContainer>
+        <Row>
+            <Col sm={8}>
+                <ChartContainer>
+                  {(showSpinner) ? <Spinner/> : ""}
+                  {renderBarDaily}
+                </ChartContainer>
+            </Col>
+            <Col sm={3}>
+                <ChartContainer>
+                  {(showSpinner) ? <Spinner/> : ""}
+                  {renderPieMonth}
+                </ChartContainer>
+            </Col>
+        </Row>
+
         <Row>
           <Col sm={2}>
           <Select
@@ -173,10 +199,20 @@ export default class Analytics extends Component {
           />
           </Col>
         </Row>
-        <ChartContainer>
-            {(showSpinner) ? <Spinner/> : ""}
-            {renderMonthly}
-        </ChartContainer>
+        <Row>
+            <Col sm={8}>
+                <ChartContainer>
+                    {(showSpinner) ? <Spinner/> : ""}
+                    {renderBarMonthly}
+                </ChartContainer>
+            </Col>
+            <Col sm={3}>
+                <ChartContainer>
+                    {(showSpinner) ? <Spinner/> : ""}
+                    {renderPieYear}
+                </ChartContainer>
+            </Col>
+        </Row>
       </div>
     );
   }

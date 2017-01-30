@@ -13,6 +13,7 @@ import Sidebar from './common/sidebar';
 import Outbox from './routes/Outbox';
 import Mail from './routes/Mail';
 import Compose from './routes/Compose';
+import Analytics from './routes/Analytics';
 
 // Patient Information
 import PatientInfo from './routes/PatientInfo';
@@ -44,5 +45,6 @@ export default (
     <Route path='mailbox/mail/:group_name/:status/:content/:date' component={Mail} />
     <Route path="mailbox/compose" component={Compose} />
     <Route path="patient-information" component={PatientInfo} />
+    <Route path="analytics" component={Analytics} />
   </Route>
 );

@@ -5,6 +5,7 @@ import {
   Row, Col, Panel, PanelBody,
   PanelContainer
 } from '@sketchpixy/rubix';
+import Spinner from 'react-spinner';
 import {API_URL, API_HEADERS} from '../common/constant';
 import _ from 'underscore';
 import 'whatwg-fetch';
@@ -33,11 +34,14 @@ export default class Analytics extends Component {
       years: [],
       year: null,
       months: [],
-      month: null
+      month: null,
+      showSpinner: false,
     };
   }
 
   componentDidMount() {
+    // Showing spinner while waiting response from DB
+    this.setState({showSpinner: true});
 
     // Fetching analytics data
     fetch(API_URL+'/analytics/message/clinic/1', {
@@ -72,6 +76,7 @@ export default class Analytics extends Component {
         year: years[0].value,
         months: months,
         month: months[0].value,
+        showSpinner: false,
       })
 
     })
@@ -116,7 +121,7 @@ export default class Analytics extends Component {
   }
 
   render() {
-    let {groupedByYear, year, month, months} = this.state;
+    let {groupedByYear, year, month, months, showSpinner} = this.state;
 
     let renderDaily = (groupedByYear != 0) ?
                       <StackedBar data={groupedByYear}
@@ -150,6 +155,7 @@ export default class Analytics extends Component {
           </Col>
         </Row>
         <ChartContainer>
+            {(showSpinner) ? <Spinner/> : ""}
             {renderDaily}
         </ChartContainer>
         <Row>
@@ -168,6 +174,7 @@ export default class Analytics extends Component {
           </Col>
         </Row>
         <ChartContainer>
+            {(showSpinner) ? <Spinner/> : ""}
             {renderMonthly}
         </ChartContainer>
       </div>

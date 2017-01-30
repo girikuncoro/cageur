@@ -1,7 +1,7 @@
 """
-    This worker will be run daily (midnight batch processing)
+    This worker will be run daily (midnight batch processing) or every X hours
     It will aggregate the total messages sent at that day.
-    Example: at 1/23 00:00, the worker will aggregate messages for 1/22
+    Example: at 1/22 23:00, the worker will aggregate all messages in 1/22
 """
 import psycopg2 as psql
 import os

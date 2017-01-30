@@ -1,10 +1,27 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
 import StackedBar from '../common/stacked-bar';
-import {Row, Col} from '@sketchpixy/rubix';
+import {
+  Row, Col, Panel, PanelBody,
+  PanelContainer
+} from '@sketchpixy/rubix';
 import {API_URL, API_HEADERS} from '../common/constant';
 import _ from 'underscore';
 import 'whatwg-fetch';
+
+class ChartContainer extends React.Component {
+  render() {
+    return (
+      <PanelContainer>
+        <Panel>
+          <PanelBody style={{padding: 25}}>
+            {this.props.children}
+          </PanelBody>
+        </Panel>
+      </PanelContainer>
+    );
+  }
+}
 
 export default class Analytics extends Component {
   constructor(props) {
@@ -132,7 +149,9 @@ export default class Analytics extends Component {
           />
           </Col>
         </Row>
-        {renderDaily}
+        <ChartContainer>
+            {renderDaily}
+        </ChartContainer>
         <Row>
           <Col sm={2}>
           <Select
@@ -148,7 +167,9 @@ export default class Analytics extends Component {
           />
           </Col>
         </Row>
-        {renderMonthly}
+        <ChartContainer>
+            {renderMonthly}
+        </ChartContainer>
       </div>
     );
   }

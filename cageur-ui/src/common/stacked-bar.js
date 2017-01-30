@@ -1,8 +1,4 @@
 import React, {Component} from 'react';
-import {
-  Row, Col, Panel, PanelBody,
-  PanelContainer, Button, ButtonGroup
-} from '@sketchpixy/rubix';
 import _ from 'underscore';
 import moment from 'moment';
 
@@ -138,19 +134,7 @@ export default class Analytics extends Component {
 
   render() {
     return (
-      <div>
-        <Row>
-          <Col sm={12}>
-          <PanelContainer controls={false}>
-            <Panel>
-              <PanelBody style={{padding: 25}}>
-                <div id={this.props.id}></div>
-              </PanelBody>
-            </Panel>
-          </PanelContainer>
-          </Col>
-        </Row>
-      </div>
+        <div id={this.props.id}></div>
     );
   }
 }

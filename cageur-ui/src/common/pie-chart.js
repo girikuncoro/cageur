@@ -1,108 +1,53 @@
 import React, {Component} from 'react';
 import _ from 'underscore';
-import moment from 'moment';
 
 export default class PieChart extends Component {
 
   componentDidMount() {
-    let data;
-
-    data = this.dataAggregation();
-    this.renderChart(data['failed'], data['pending'], data['delivered']);
+    let pieData = this.dataAggregation();
+    this.renderPieChart(pieData);
   }
 
   componentDidUpdate() {
-    let data;
-
-    data = this.dataAggregation();
-    this.renderChart(data['failed'], data['pending'], data['delivered']);
+    let pieData = this.dataAggregation();
+    this.renderPieChart(pieData);
   }
 
   dataAggregation() {
     let data = this.props.data[this.props.year],
-        failed = ['gagal'], pending = ['tunda'], delivered = ['terkirim'];
-
-    let groupedByMonth = _.groupBy(data, function(item) {
-      return item.time.substring(5,7);
-    });
-
-    let failedVal = 0,
-        pendingVal = 0,
-        deliveredVal = 0;
+        pieData = [], groupByDisease;
 
     if (this.props.month) {
+        let groupedByMonth = _.groupBy(data, function(item) {
+          return item.time.substring(5,7);
+        });
 
-      // daily data
-      groupedByMonth[this.props.month].map(function(d,i) {
-        d.message.map(function(item,index) {
-            failedVal = failedVal + item.failed;
-            pendingVal = pendingVal + item.pending;
-            deliveredVal = deliveredVal + item.delivered;
-        })
-
-      })
+        groupByDisease = _.groupBy(_.flatten(_.pluck(groupedByMonth[this.props.month], 'message')), msg => msg.disease_group.name);
 
     } else {
+        groupByDisease = _.groupBy(_.flatten(_.pluck(data, 'message')), msg => msg.disease_group.name);
+    }
 
-      // monthly data
-      Object.keys(groupedByMonth).sort().forEach(function(key, index) {
+    Object.keys(groupByDisease).forEach(function(key,i) {
 
-        groupedByMonth[key].map(function(d,i) {
-
-          d.message.map(function(item) {
-            failedVal = failedVal + item.failed;
-            pendingVal = pendingVal + item.pending;
-            deliveredVal = deliveredVal + item.delivered;
-          })
-
+        let diseaseVal = 0;
+        groupByDisease[key].map(function(d,i) {
+            diseaseVal = diseaseVal + d['delivered'] + d['pending'] + d['failed'];
         })
 
-      })
-    }
+        pieData.push([key, diseaseVal])
 
-    failed.push(failedVal);
-    pending.push(pendingVal);
-    delivered.push(deliveredVal);
-
-    return {
-      failed: failed,
-      pending: pending,
-      delivered: delivered
-    }
-  }
-
-  renderChart(failed, pending, delivered) {
-    let months = ['x'],
-        days = ['x'];
-
-    if(this.props.months) {
-      Object.keys(this.props.months).sort().forEach(function(key, index) {
-        months.push(index);
-      })
-    }
-
-    failed.map(function(d,i) {
-      days.push(i+1);
     })
 
-    let x = (this.props.month) ?
-            days : months;
+    return pieData;
+  }
 
-    let formatFunc = (this.props.month) ?
-                      '%d' :
-                      (function (x) {
-                        return moment(new Date(2014, x, 1)).locale("id").format("MMMM");
-                      });
-    let title = (this.props.month) ? `Angka Kontak Harian (${this.props.year})` : 'Angka Kontak Bulanan'
+  renderPieChart(pieData) {
 
     this.chart = c3.generate({
       bindto: `#${this.props.id}`,
       data: {
-            // iris data from R
-            columns: [
-               ['data1', 30],
-               ['data2', 120],
-            ],
+            columns: pieData,
             type : 'pie'
         }
     });

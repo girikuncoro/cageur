@@ -11,6 +11,9 @@ import {API_URL, API_HEADERS} from '../common/constant';
 import _ from 'underscore';
 import 'whatwg-fetch';
 
+const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
 class ChartContainer extends React.Component {
   render() {
     return (
@@ -69,11 +72,8 @@ export default class Analytics extends Component {
         });
 
         // Push list of month to select for current year
-        let monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agus', 'Sep',
-                    'Okt', 'Nov', 'Des'];
-
         Object.keys(groupedByMonth).forEach(function(d,i) {
-            let value = (i<8) ? `0${i+1}` : `${i+1}`;
+            let value = (i<9) ? `0${i+1}` : `${i+1}`;
             months.push({id: i, value: value, label: monthName[i]});
         })
 
@@ -103,11 +103,8 @@ export default class Analytics extends Component {
       return item.time.substring(5,7);
     });
 
-    let monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agus', 'Sep',
-                  'Okt', 'Nov', 'Des'];
-
     Object.keys(groupedByMonth).forEach(function(d,i) {
-      let value = (i<8) ? `0${i+1}` : `${i+1}`;
+      let value = (i<9) ? `0${i+1}` : `${i+1}`;
       months.push({id: i, value: value, label: monthName[i]});
     })
 

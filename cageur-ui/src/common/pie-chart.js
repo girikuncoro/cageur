@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import _ from 'underscore';
+import moment from 'moment';
 
 export default class PieChart extends Component {
 
@@ -43,16 +44,24 @@ export default class PieChart extends Component {
   }
 
   renderPieChart(pieData) {
+    let {month} = this.props;
+    let monthName = moment(new Date(2014, Number(month)-1, 1)).locale("id").format("MMM");
+    let title = (this.props.month) ?
+    `% pasien dan grup penyakit ${monthName} ${this.props.year}`:
+    `% pasien dan grup penyakit ${this.props.year}`;
 
     this.chart = c3.generate({
         bindto: `#${this.props.id}`,
+        title: {
+          text: title
+        },
         data: {
             columns: pieData,
             type : 'pie'
         },
         tooltip: {
             position: function(data, width, height, element) {
-                return {top: 0, left: 0}
+                return {top: height, left: 0}
             }
         }
 

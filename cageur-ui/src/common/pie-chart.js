@@ -45,11 +45,17 @@ export default class PieChart extends Component {
   renderPieChart(pieData) {
 
     this.chart = c3.generate({
-      bindto: `#${this.props.id}`,
-      data: {
+        bindto: `#${this.props.id}`,
+        data: {
             columns: pieData,
             type : 'pie'
+        },
+        tooltip: {
+            position: function(data, width, height, element) {
+                return {top: 0, left: 0}
+            }
         }
+
     });
   }
 

@@ -50,35 +50,43 @@ export default class Analytics extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      let data = responseData.data,
+        let data = responseData.data,
           years = [],
           months = [];
 
-      let groupedByYear = _.groupBy(data, function(item) {
-        return item.time.substring(0,4);
-      });
+        // Group by year response data
+        let groupedByYear = _.groupBy(data, function(item) {
+            return item.time.substring(0,4);
+        });
 
-      Object.keys(groupedByYear).forEach(function(d,i) {
-        years.push({id: i, value: d, label: d});
-      })
+        Object.keys(groupedByYear).forEach(function(d,i) {
+            years.push({id: i, value: d, label: d});
+        })
 
-      let monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agus', 'Sep',
+        // Group by month of the latest yearly data
+        let groupedByMonth = _.groupBy(groupedByYear[years[years.length-1].value], function(item) {
+            return item.time.substring(5,7);
+        });
+
+        // Push list of month to select for current year
+        let monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agus', 'Sep',
                     'Okt', 'Nov', 'Des'];
 
-      monthName.map(function(d,i) {
-        let value = (i<8) ? `0${i+1}` : `${i+1}`;
-        months.push({id: i, value: value, label: d});
-      })
+        Object.keys(groupedByMonth).forEach(function(d,i) {
+            let value = (i<8) ? `0${i+1}` : `${i+1}`;
+            months.push({id: i, value: value, label: monthName[i]});
+        })
 
-      this.setState({
-        data: responseData,
-        groupedByYear: groupedByYear,
-        years: years,
-        year: years[0].value,
-        months: months,
-        month: months[0].value,
-        showSpinner: false,
-      })
+        // Set state with the latest year and month
+        this.setState({
+            data: responseData,
+            groupedByYear: groupedByYear,
+            years: years,
+            year: years[years.length-1].value,
+            months: months,
+            month: months[months.length-1].value,
+            showSpinner: false,
+        })
 
     })
     .catch((error) => {

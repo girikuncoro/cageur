@@ -81,8 +81,8 @@ export default class Analytics extends Component {
         this.setState({
             data: responseData,
             groupedByYear: groupedByYear,
-            years: years,
-            year: years[years.length-1].value,
+            years: years.reverse(),
+            year: years[0].value,
             months: months,
             month: months[months.length-1].value,
             showSpinner: false,

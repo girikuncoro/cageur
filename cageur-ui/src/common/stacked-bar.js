@@ -109,10 +109,16 @@ export default class StackedBar extends Component {
           pending,
           delivered
         ],
+        colors: {
+            gagal: '#EA7882',
+            terkirim: '#55C9A6',
+            tunda: '#FADD7F'
+        },
         type: 'bar',
         groups: [
-          ['gagal', 'tunda','terkirim']
-        ]
+          ['terkirim', 'tunda','gagal']
+        ],
+        order: false
       },
       axis: {
           x: {

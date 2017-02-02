@@ -1,7 +1,13 @@
 // auth.js
 var passport = require("passport");  
 var passportJWT = require("passport-jwt");  
-var users = require("./users.js");  
+// var users = require("./users.js");  
+
+
+const login = require('./app/api/users/login.js');
+const users = login.getAllUser()
+
+
 var cfg = require("./config.js");  
 var ExtractJwt = passportJWT.ExtractJwt;  
 var Strategy = passportJWT.Strategy;  
@@ -12,14 +18,25 @@ var params = {
 
 module.exports = function() {  
     var strategy = new Strategy(params, function(payload, done) {
-        var user = users[payload.id] || null;
-        if (user) {
+        // var user = users[payload.id] || null;
+        // if (user) {
+        //     return done(null, {
+        //         id: user.id
+        //     });
+        // } else {
+        //     return done(new Error("User not found"), null);
+        // }
+        users.getAllUser().then(data => {
+            let found = data.find(user => user.id == payload.id);
+
+            if (!found) {
+                return done(new Error("User not found"), null);
+            }
+
             return done(null, {
-                id: user.id
+                id: found.id
             });
-        } else {
-            return done(new Error("User not found"), null);
-        }
+        })
     });
     passport.use(strategy);
     return {

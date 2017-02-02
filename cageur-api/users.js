@@ -1,15 +1,19 @@
-// users.js
-// Fake list of users to be used in the authentication
-var users = [{  
-    id: 1,
-    name: "gutasaputra",
-    email: "gutasaputra@gmail.com",
-    password: "123456"
-}, {
-    id: 2,
-    name: "Jamie Cullum",
-    email: "j.cullum@gmail.com",
-    password: "123456"
-}];
+// var users = [{  
+//     id: 1,
+//     name: "indra.gunawan",
+//     email: "indra.gunawan@gmail.com",
+//     password: "123456"
+// }, {
+//     id: 2,
+//     name: "Jamie Christian",
+//     email: "j.cullum@gmail.com",
+//     password: "123456"
+// }];
 
-module.exports = users;  
+// console.log(users)
+// module.exports = users;  
+
+const users = require('./app/api/users/login.js');
+const hasil = users.getAllUser().then(data => console.log(data))
+
+module.exports = hasil;  

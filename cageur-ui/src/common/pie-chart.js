@@ -46,25 +46,31 @@ export default class PieChart extends Component {
   renderPieChart(pieData) {
     let {month} = this.props;
     let monthName = moment(new Date(2014, Number(month)-1, 1)).locale("id").format("MMM");
-    let title = (this.props.month) ?
-    `% pasien dan grup penyakit ${monthName} ${this.props.year}`:
-    `% pasien dan grup penyakit ${this.props.year}`;
+    let subtitle = (this.props.month) ?
+                    `${monthName} ${this.props.year}`:
+                    `${this.props.year}`;
 
     this.chart = c3.generate({
         bindto: `#${this.props.id}`,
         title: {
-          text: title
+          text: `Grup penyakit dan % Pasien`,
         },
         data: {
             columns: pieData,
-            type : 'pie'
+            type : 'donut'
         },
         tooltip: {
             position: function(data, width, height, element) {
                 return {top: height, left: 0}
             }
+        },
+        color: {
+            pattern: ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5']
+        },
+        donut: {
+            width: 50,
+            title: subtitle
         }
-
     });
   }
 

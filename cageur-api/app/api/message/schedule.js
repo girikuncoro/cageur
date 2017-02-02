@@ -19,4 +19,16 @@ router.get('/', ctl.getAllScheduledMessages);
 */
 router.get('/clinic/:id', ctl.getScheduledMessagesByClinicID);
 
+/**
+* Fetch one scheduled message
+* GET /api/v1/message/schedule/:id
+*/
+router.get('/:id', ctl.getSingleScheduledMessage);
+
+/**
+* Remove scheduled message
+* GET /api/v1/message/schedule/:id
+*/
+router.delete('/:id', ctl.removeScheduledMessage);
+
 module.exports = router;

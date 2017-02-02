@@ -35,15 +35,19 @@ app.use(auth.initialize());
 
 /**
 * API routes
+* how to make restricted pages 
+* app.get("/url", auth.authenticate(), function(x, y) 
 */
+
 app.use('/', require('./app/api'));
-app.use('/api/v1/clinic', require('./app/api/clinic'));
-app.use('/api/v1/disease_group', require('./app/api/disease-group'));
-app.use('/api/v1/patient', require('./app/api/patient'));
-app.use('/api/v1/patient_disease_group', require('./app/api/patient-disease-group'));
-app.use('/api/v1/bank', require('./app/api/bank'));
-app.use('/api/v1/subscription', require('./app/api/subscription'));
-app.use('/api/v1/users', require('./app/api/users'));
+app.use('/api/v1/clinic',  auth.authenticate(), require('./app/api/clinic'));
+app.use('/api/v1/disease_group', auth.authenticate(), require('./app/api/disease-group'));
+app.use('/api/v1/patient', auth.authenticate(), require('./app/api/patient'));
+app.use('/api/v1/patient_disease_group', auth.authenticate(), require('./app/api/patient-disease-group'));
+app.use('/api/v1/bank', auth.authenticate(), require('./app/api/bank'));
+app.use('/api/v1/subscription', auth.authenticate(), require('./app/api/subscription'));
+app.use('/api/v1/users', auth.authenticate(), require('./app/api/users'));
+
 app.use('/api/v1/template', require('./app/api/template'));
 app.use('/api/v1/message/send', require('./app/api/message/send'));
 app.use('/api/v1/message/sent', require('./app/api/message/sent'));
@@ -52,7 +56,21 @@ app.use('/api/v1/message/incoming', require('./app/api/message/incoming'));
 app.use('/api/v1/analytics/message', require('./app/api/analytics/message'));
 
 
-// token 
+/**
+* API TOKEN JWT
+* generate token with your user credential that taken from db
+* if the condition match, it should return JWT code.
+* you need to use it everytime you want to access the restricted pages.
+*
+* HOW TO PASS JWT CODE
+* 
+* in headers, you need to pass this
+* Authorization : JWT token
+* Example :
+* Authorization : JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MX0.N0D7YmoU7HJQ9MSQ15QmSLhbPhCplNfaI8haFBfmu2s
+* 
+*/
+
 app.post("/api/v1/token", function(req, res) {  
     if (req.body.email && req.body.password) {
         let email = req.body.email;

@@ -7,6 +7,8 @@ import {
   PanelContainer, Panel, PanelBody, Progress
 } from '@sketchpixy/rubix';
 import Spinner from 'react-spinner';
+import Datetime from 'react-datetime';
+import moment from 'moment';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
 import {API_URL, API_HEADERS} from '../common/constant';
@@ -30,7 +32,9 @@ export default class Compose extends React.Component {
       progressTime: 0,
       showDialogueBox: false,
       showSpinner: false,
-      showSendSpinner: false
+      showSendSpinner: false,
+      schedulePanel: false,
+      scheduleOption: 'none'
     };
   }
 
@@ -117,18 +121,31 @@ export default class Compose extends React.Component {
   }
 
   sendMessage() {
-    let {selectedGroup, text} = this.state;
-
-    let message = {
-      diseaseGroup: selectedGroup.id,
-      body: text
-    };
+    let {selectedGroup, text,
+    scheduleOption, scheduleDate} = this.state;
 
     // Showing spinner while waiting response from DB
     this.setState({showSendSpinner: true});
 
     // Fetching ...
-    fetch(API_URL+'/message/send/clinic/1', {
+    const endpoint = (scheduleOption == 'none') ?
+                      '/message/send/clinic/1' :
+                      '/message/schedule/clinic/1';
+
+    const message = (scheduleOption == 'none') ?
+                {
+                  diseaseGroup: selectedGroup.id,
+                  body: text
+                } :
+                {
+                  clinic_id: 1,
+                  disease_group: selectedGroup.id,
+                  body: text,
+                  frequency: scheduleOption,
+                  scheduled_at: scheduleDate
+                };
+
+    fetch(`${API_URL}${endpoint}`, {
       method: 'post',
       headers: API_HEADERS,
       body: JSON.stringify(message)
@@ -207,10 +224,29 @@ export default class Compose extends React.Component {
     })
   }
 
+  openSchedulePanel() {
+    this.setState({
+      schedulePanel: !this.state.schedulePanel
+    })
+  }
+
+  handleOptionChange(e) {
+    this.setState({
+      scheduleOption: e.target.value
+    })
+  }
+
+  handleInputCalendar(datetime) {
+    this.setState({
+      scheduleDate: moment(datetime).format('YYYY-MM-DD HH:mm')
+    })
+  }
+
   render() {
-    let {group, selectedGroup, showGroupSelectAlert, showMessageAlert,
-         messageAlert, responseMessage, messageError,
-         template, showDialogueBox, showSendSpinner} = this.state;
+    let {group, selectedGroup, showGroupSelectAlert,
+         showMessageAlert, messageAlert, responseMessage,
+         messageError, template, showDialogueBox,
+         showSendSpinner, schedulePanel, scheduleOption} = this.state;
 
     let alertGroupSelect = (showGroupSelectAlert) ?
     (<Alert bsStyle="danger" onDismiss={::this.handleAlertGroupSelectDismiss}>
@@ -237,6 +273,39 @@ export default class Compose extends React.Component {
 
     let progressBar = (showMessageAlert && alertStyle === "success") ?
     (<Progress active bsStyle="success" value={this.state.progressTime} />) : "";
+
+    const inputCalendar = (scheduleOption === 'monthly') ? 'pilih bulan' : 'pilih hari';
+    const renderCalendar = (scheduleOption === 'monthly' || scheduleOption === 'daily') ?
+                            (<Datetime inputProps={{placeholder: inputCalendar}}
+                                       onChange={::this.handleInputCalendar}
+                              />) : '';
+
+    const renderSchedulePanel = (schedulePanel) ?
+            (<FormGroup>
+              <Col sm={2}>
+              </Col>
+              <Col sm={3}>
+                {renderCalendar}
+                <label>
+                  <input type="radio" value="none" style={{'marginRight': '10px'}}
+                                checked={this.state.scheduleOption === 'none'}
+                                onChange={::this.handleOptionChange} />
+                  Kirim sekali saja
+                </label>
+                <label>
+                  <input type="radio" value="daily" style={{'marginRight': '10px'}}
+                                checked={this.state.scheduleOption === 'daily'}
+                                onChange={::this.handleOptionChange} />
+                  Setiap hari
+                </label>
+                <label>
+                  <input type="radio" value="monthly" style={{'marginRight': '10px'}}
+                                checked={this.state.scheduleOption === 'monthly'}
+                                onChange={::this.handleOptionChange} />
+                  Setiap bulan
+                </label>
+              </Col>
+            </FormGroup>) : '';
 
     return (
       <div>
@@ -284,11 +353,14 @@ export default class Compose extends React.Component {
                   </Col>
                 </FormGroup>
 
+                {/* Shedule Panel */}
+                {renderSchedulePanel}
+
                 <FormGroup>
                   <Col sm={7}>
                   </Col>
                   <Col sm={4}>
-                    <Button style={{margin: '10px'}}>
+                    <Button onClick={::this.openSchedulePanel} style={{margin: '10px'}}>
                       BERKALA
                     </Button>
                     <Button bsStyle="primary" onClick={::this.open} style={{margin: '10px'}}>

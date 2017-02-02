@@ -16,7 +16,7 @@ const ctl = {
       subscription_end: req.body.subscription_end,
     };
 
-    console.log(req.body.clinic_id)
+    console.log(req.body.bank_id)
     console.log('test')
 
     if (!subscription.clinic_id) {

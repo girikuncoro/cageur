@@ -16,7 +16,7 @@ var auth = require("./auth.js")();
 var cfg = require("./config.js");  
 
 // still using static data
-var users = require("./users.js");  
+var users = require("./app/api/users/login.js");  
 
 const { port } = require('./app/config');
 
@@ -57,22 +57,41 @@ app.post("/api/v1/token", function(req, res) {
     if (req.body.email && req.body.password) {
         let email = req.body.email;
         let password = req.body.password;
-        let user = users.find(function(u) {
-            return u.email === email && u.password === password;
-        });
-        if (user) {
-            let payload = {
-                id: user.id
-            };
-            let token = jwt.encode(payload, cfg.jwtSecret);
-            res.json({
-                id: user.id,
-                token: token,
-                status:'success'
-            });
-        } else {
-            res.sendStatus(401);
-        }
+        // let user = users.find(function(u) {
+        //     return u.email === email && u.password === password;
+        // });
+        // if (user) {
+        //     let payload = {
+        //         id: user.id
+        //     };
+        //     let token = jwt.encode(payload, cfg.jwtSecret);
+        //     res.json({
+        //         id: user.id,
+        //         token: token,
+        //         status:'success'
+        //     });
+        // } else {
+        //     res.sendStatus(401);
+        // }
+        users.getAllUser().then(data => {
+            let found = data.find(user => user.email === email && user.password === password);
+
+            console.log(data, found);
+
+            if (found) {
+                let payload = {
+                    id: found.id
+                };
+                let token = jwt.encode(payload, cfg.jwtSecret);
+                res.json({
+                    id: found.id,
+                    token: token,
+                    status:'success'
+                });
+            } else {
+                res.sendStatus(401);
+            }
+        })
     } else {
         res.sendStatus(401);
     }

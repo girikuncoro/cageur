@@ -160,7 +160,7 @@ export default class Analytics extends Component {
     return (
       <div>
         <Row>
-          <Col sm={2}>
+          <Col xs={2} sm={2}>
           <Select
               ref="month-selection"
               matchProp="label"
@@ -175,13 +175,13 @@ export default class Analytics extends Component {
           </Col>
         </Row>
         <Row>
-            <Col sm={8}>
+            <Col sm={6} md={8}>
                 <ChartContainer>
                   {(showSpinner) ? <Spinner/> : ""}
                   {renderBarDaily}
                 </ChartContainer>
             </Col>
-            <Col sm={3}>
+            <Col sm={6} md={4}>
                 <ChartContainer>
                   {(showSpinner) ? <Spinner/> : ""}
                   {renderPieMonth}
@@ -190,7 +190,7 @@ export default class Analytics extends Component {
         </Row>
 
         <Row>
-          <Col sm={2}>
+          <Col xs={2} sm={2}>
           <Select
               ref="year-selection"
               matchProp="label"
@@ -205,13 +205,13 @@ export default class Analytics extends Component {
           </Col>
         </Row>
         <Row>
-            <Col sm={8}>
+            <Col sm={6} md={8}>
                 <ChartContainer>
                     {(showSpinner) ? <Spinner/> : ""}
                     {renderBarMonthly}
                 </ChartContainer>
             </Col>
-            <Col sm={3}>
+            <Col sm={6} md={4}>
                 <ChartContainer>
                     {(showSpinner) ? <Spinner/> : ""}
                     {renderPieYear}

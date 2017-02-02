@@ -26,7 +26,9 @@ module.exports = function() {
         // } else {
         //     return done(new Error("User not found"), null);
         // }
-        users.getAllUser().then(data => {
+        // users.getAllUser().then(data => {
+            
+        users.then(data => {
             let found = data.find(user => user.id == payload.id);
 
             if (!found) {

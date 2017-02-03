@@ -154,7 +154,7 @@ export default class Compose extends React.Component {
     .then((response) => response.json())
     .then((responseData) => {
       this.setState({
-        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${toTitleCase(selectedGroup.value)}. Mengarahkan ke kotak keluar ...`,
+        responseMessage: `Pesan dikirimkan ke grup penyakit ${toTitleCase(selectedGroup.value)}. Mengarahkan ke kotak keluar ...`,
         messageAlert: true,
         showMessageAlert: true,
         messageError: 3,
@@ -167,7 +167,10 @@ export default class Compose extends React.Component {
 
       let redirect = function () {
         clearInterval(showProgressBar);
-        return self.props.router.push("/mailbox/outbox");
+        const route = (scheduleOption == 'none') ?
+                      self.props.router.push("/mailbox/outbox") :
+                      self.props.router.push("/mailbox/scheduled");
+        return route
       }
 
       setTimeout(redirect, 1000);

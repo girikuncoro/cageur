@@ -184,14 +184,6 @@ describe('Message Schedule API Test', () => {
       .get(`/api/v1/message/schedule/${currScheduleID}`)
       .then((res) => {
         const r = res.body;
-        const validScheduledMsg = {
-          clinicID: currClinicID,
-          diseaseGroupID: currDiseaseGroupID,
-          patientID: null,
-          title: 'Some title',
-          content: 'Some content',
-          frequency: 'daily',
-        };
 
         expect(res.status).to.equal(200);
         expect(r.status).to.equal('success');

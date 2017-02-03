@@ -12,6 +12,7 @@ import moment from 'moment';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
 import {API_URL, API_HEADERS} from '../common/constant';
+require('moment/locale/id');
 
 export default class Compose extends React.Component {
   constructor(props) {
@@ -278,13 +279,15 @@ export default class Compose extends React.Component {
     const renderCalendar = (scheduleOption === 'monthly' || scheduleOption === 'daily') ?
                             (<Datetime inputProps={{placeholder: inputCalendar}}
                                        onChange={::this.handleInputCalendar}
+                                       locale="id"
+                                       viewMode={(scheduleOption === 'monthly') ? 'months' : 'days'}
                               />) : '';
 
     const renderSchedulePanel = (schedulePanel) ?
             (<FormGroup>
               <Col sm={2}>
               </Col>
-              <Col sm={3}>
+              <Col sm={2}>
                 {renderCalendar}
                 <label>
                   <input type="radio" value="none" style={{'marginRight': '10px'}}
@@ -367,7 +370,7 @@ export default class Compose extends React.Component {
                       TEMPLATE
                     </Button>
                     <Button bsStyle="success" onClick={::this.handleSendMessage} style={{margin: '10px'}}>
-                      KIRIM PESAN
+                      {(schedulePanel) ? `SIMPAN PESAN` : `KIRIM PESAN`}
                     </Button>
                   </Col>
                 </FormGroup>

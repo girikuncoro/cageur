@@ -49,7 +49,7 @@ const ctl = {
       return res.status(200).json({
         status: 'success',
         data,
-        message: 'Retrieved all scheduled message data',
+        message: 'Retrieved all scheduled message',
       });
     })
     .catch(err => next(err));
@@ -60,13 +60,13 @@ const ctl = {
     db.any(`SELECT * FROM scheduled_message WHERE clinic_id=${clinicID}`)
     .then((data) => {
       if (data.length === 0) {
-        throw abort(404, 'No scheduled message data yet', `Empty scheduled_message table for clinic ${clinicID}`);
+        throw abort(404, 'No scheduled message found', `Empty scheduled_message table for clinic ${clinicID}`);
       }
 
       return res.status(200).json({
         status: 'success',
         data,
-        message: 'Retrieved all scheduled message data',
+        message: 'Retrieved all scheduled message by clinic id',
       });
     })
     .catch(err => next(err));

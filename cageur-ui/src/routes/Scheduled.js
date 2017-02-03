@@ -76,6 +76,10 @@ export default class Scheduled extends React.Component {
     // Showing spinner while waiting response from DB
     this.setState({showSpinner: true});
 
+    this.handleFetching();
+  }
+
+  handleFetching() {
     // Fetching Sent Messages Information
     fetch(`${API_URL}/message/schedule/clinic/1`, {
       headers: API_HEADERS
@@ -83,25 +87,34 @@ export default class Scheduled extends React.Component {
     .then((response) => response.json())
     .then((responseData) => {
       let sentMessages = [], selectedMessage = {};
-      responseData.data.map(function(d,i) {
-        sentMessages.push(
-          {
-            group_name: d["disease_group_id"],
-            title: d["title"],
-            status: d["frequency"],
-            content: d["content"],
-            date: moment(d["schedule_at"]).locale("id").format("Do MMMM YY, HH:mm"),
-            message_id: d["id"]
-          }
-        );
 
-        selectedMessage[d["id"]] = false;
-      })
-      this.setState({
-          sentMessages: sentMessages,
-          showSpinner: false,
-          selectedMessage: selectedMessage
-      });
+      if (responseData.data !== undefined) {
+        responseData.data.map(function(d,i) {
+          sentMessages.push(
+            {
+              group_name: d["disease_group_id"],
+              title: d["title"],
+              status: d["frequency"],
+              content: d["content"],
+              date: moment(d["schedule_at"]).locale("id").format("Do MMMM YY, HH:mm"),
+              message_id: d["id"]
+            }
+          );
+
+          selectedMessage[d["id"]] = false;
+        })
+        this.setState({
+            sentMessages: sentMessages,
+            showSpinner: false,
+            selectedMessage: selectedMessage
+        });
+      } else {
+        this.setState({
+            sentMessages: sentMessages,
+            showSpinner: false
+        });
+      }
+
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
@@ -136,6 +149,7 @@ export default class Scheduled extends React.Component {
             .then((response) => response.json())
             .then((responseData) => {
                 console.log(responseData);
+                self.handleFetching();
             })
             .catch((error) => {
               console.log('Error fetching and parsing data', error);
@@ -155,6 +169,53 @@ export default class Scheduled extends React.Component {
                                     <Icon glyph='icon-fontello-trash-1'/>
                                 </Button>) :
                                 '';
+
+    const renderSentMessages = (sentMessages.map(function(d,i) {
+                                let labelValue, labelColor;
+                                switch(d.status) {
+                                  case "daily":
+                                    labelValue = "harian";
+                                    labelColor = "green";
+                                    break;
+                                  case "monthly":
+                                    labelValue = "bulanan";
+                                    labelColor = "yellow";
+                                    break;
+                                }
+
+                                const checked = selectedMessage[d.message_id];
+
+                                return (
+                                  <div key={i} className='inbox-avatar inbox-item' style={{'padding': '0'}}>
+                                      <input type='checkbox' checked={checked}
+                                                             onClick={self.handleSelectItem.bind(self,d.message_id)}
+                                                             style={{'width': '5%'}}/>
+                                      <ScheduledMessageItem
+                                                 itemId={d.message_id}
+                                                 name={d.group_name}
+                                                 labelValue={labelValue}
+                                                 labelClass={`bg-${labelColor} fg-white`}
+                                                 description={<strong>{`${d.title} ...`}</strong>}
+                                                 status={d.status}
+                                                 content={d.content}
+                                                 date={d.date}
+                                                 checked={checked}
+                                             />
+                                  </div>
+                                )
+                              }))
+
+    const emptyMessage = (<div className='inbox-avatar-name'
+                              style={{
+                                'width': '100%',
+                                'height': '100%',
+                                'display': 'inline-block',
+                                'paddingBottom': '10px',
+                                'paddingTop': '70px',
+                                'textAlign': 'center',
+                              }}>
+                              Tidak ada pesan terjadwal
+                          </div>)
 
     return (
       <div>
@@ -207,40 +268,7 @@ export default class Scheduled extends React.Component {
                     <Row>
                       <Col xs={12}>
                         {(showSpinner) ? <Spinner/> : ""}
-                        {sentMessages.map(function(d,i) {
-                          let labelValue, labelColor;
-                          switch(d.status) {
-                            case "daily":
-                              labelValue = "harian";
-                              labelColor = "green";
-                              break;
-                            case "monthly":
-                              labelValue = "bulanan";
-                              labelColor = "yellow";
-                              break;
-                          }
-
-                          const checked = selectedMessage[d.message_id];
-
-                          return (
-                            <div key={i} className='inbox-avatar inbox-item' style={{'padding': '0'}}>
-                                <input type='checkbox' checked={checked}
-                                                       onClick={self.handleSelectItem.bind(self,d.message_id)}
-                                                       style={{'width': '5%'}}/>
-                                <ScheduledMessageItem
-                                           itemId={d.message_id}
-                                           name={d.group_name}
-                                           labelValue={labelValue}
-                                           labelClass={`bg-${labelColor} fg-white`}
-                                           description={<strong>{`${d.title} ...`}</strong>}
-                                           status={d.status}
-                                           content={d.content}
-                                           date={d.date}
-                                           checked={checked}
-                                       />
-                            </div>
-                          )
-                        })}
+                        {(sentMessages.length !== 0) ? renderSentMessages : emptyMessage}
                       </Col>
                     </Row>
                   </Grid>

@@ -28,6 +28,7 @@ class ApplicationSidebar extends React.Component {
                     <SidebarNav>
                       <SidebarNavItem glyph='icon-dripicons-message' name='Tulis Pesan' href={::this.getPath('mailbox/compose')} />
                       <SidebarNavItem glyph='icon-dripicons-return' name='Pesan Keluar' href={::this.getPath('mailbox/outbox')} />
+                      <SidebarNavItem glyph='icon-dripicons-calendar' name='Terjadwal' href={::this.getPath('mailbox/scheduled')} />
                     </SidebarNav>
                   </SidebarNavItem>
 

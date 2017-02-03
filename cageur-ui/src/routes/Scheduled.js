@@ -11,8 +11,10 @@ import Spinner from 'react-spinner';
 import {API_URL, API_HEADERS} from '../common/constant';
 import {toTitleCase} from '../utilities/util';
 import moment from 'moment';
+import update from 'immutability-helper';
+import _ from 'underscore';
 
-class InboxNavItem extends React.Component {
+class ScheduledNavItem extends React.Component {
   render() {
     return (
       <Grid>
@@ -30,23 +32,8 @@ class InboxNavItem extends React.Component {
   }
 }
 
-class OutboxNavTag extends React.Component {
-  render() {
-    return (
-      <Grid>
-        <Row>
-          <Col xs={12} collapseLeft collapseRight>
-            <Badge className={this.props.badgeClass}>{' '}</Badge>
-            <span>{this.props.title}</span>
-          </Col>
-        </Row>
-      </Grid>
-    );
-  }
-}
-
 @withRouter
-class OutboxItem extends React.Component {
+class ScheduledMessageItem extends React.Component {
   handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -55,21 +42,10 @@ class OutboxItem extends React.Component {
     let group_name = name;
     this.props.router.push(`/mailbox/mail/${group_name}/${status}/${content}/${date}/scheduled`);
   }
+
   render() {
-    var classes = classNames({
-      'inbox-item': true,
-      'unread': this.props.unread
-    });
-
-    var linkProps = {
-      href: '/mailbox/mail',
-      onClick: ::this.handleClick,
-      className: classes,
-    };
-
     return (
-      <a {...linkProps}>
-        <div className='inbox-avatar'>
+      <a onClick={::this.handleClick} style={{'width': '90%', 'display': 'inline-block', 'paddingBottom': '10px', 'paddingTop': '10px'}}>
           <div className='inbox-avatar-name'>
             <div className='fg-darkgrayishblue75'>{this.props.name}</div>
             <div><small><Badge className={this.props.labelClass} style={{marginRight: 5, display: this.props.labelValue ? 'inline':'none'}}>{this.props.labelValue}</Badge><span>{this.props.description}</span></small></div>
@@ -78,7 +54,6 @@ class OutboxItem extends React.Component {
             <strong>Jadwal kiriman</strong>
             <div style={{position: 'relative', top: 5}}>{`${this.props.date} WIB`}</div>
           </div>
-        </div>
       </a>
     );
   }
@@ -92,7 +67,8 @@ export default class Scheduled extends React.Component {
 
     this.state = {
       sentMessages: [],
-      showSpinner: false
+      showSpinner: false,
+      selectedMessage: {}
     };
   }
 
@@ -106,7 +82,7 @@ export default class Scheduled extends React.Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      let sentMessages = [];
+      let sentMessages = [], selectedMessage = {};
       responseData.data.map(function(d,i) {
         sentMessages.push(
           {
@@ -114,13 +90,17 @@ export default class Scheduled extends React.Component {
             title: d["title"],
             status: d["frequency"],
             content: d["content"],
-            date: moment(d["schedule_at"]).locale("id").format("Do MMMM YY, HH:mm")
+            date: moment(d["schedule_at"]).locale("id").format("Do MMMM YY, HH:mm"),
+            message_id: d["id"]
           }
         );
+
+        selectedMessage[d["id"]] = false;
       })
       this.setState({
           sentMessages: sentMessages,
           showSpinner: false,
+          selectedMessage: selectedMessage
       });
     })
     .catch((error) => {
@@ -135,8 +115,47 @@ export default class Scheduled extends React.Component {
     this.props.router.push('/mailbox/compose');
   }
 
+  handleSelectItem(itemId) {
+      let {selectedMessage} = this.state;
+      this.setState({
+        selectedMessage: update(selectedMessage, {[itemId]: {$set: !selectedMessage[itemId]}})
+      })
+  }
+
+  handleDelete() {
+      const {selectedMessage} = this.state;
+      const self = this;
+      const endpoint = `${'/message/schedule/'}`;
+
+      Object.keys(selectedMessage).forEach(function(d,i) {
+          if(selectedMessage[d]) {
+            fetch(`${API_URL}${endpoint}${d}`, {
+              method: 'delete',
+              headers: API_HEADERS
+            })
+            .then((response) => response.json())
+            .then((responseData) => {
+                console.log(responseData);
+            })
+            .catch((error) => {
+              console.log('Error fetching and parsing data', error);
+            });
+          }
+      })
+  }
+
   render() {
-    let {sentMessages, showSpinner} = this.state;
+    let {sentMessages, showSpinner, selectedMessage} = this.state;
+    const {handleSelectItem} = this;
+    const self = this;
+
+    const renderDeleteButton = (_.findKey(selectedMessage, function(d) {return d === true}))
+                                ?
+                                (<Button bsStyle='danger' onClick={::this.handleDelete}>
+                                    <Icon glyph='icon-fontello-trash-1'/>
+                                </Button>) :
+                                '';
+
     return (
       <div>
         <PanelContainer className='inbox' collapseBottom controls={false}>
@@ -146,11 +165,10 @@ export default class Scheduled extends React.Component {
                 <Row>
                   <Col xs={8} style={{paddingTop: 12.5}}>
                     <ButtonToolbar className='inbox-toolbar'>
-                      <ButtonGroup>
                         <Button bsStyle='blue' onClick={::this.handleClick}>
                           <Icon glyph='icon-fontello-edit-1'/>
                         </Button>
-                      </ButtonGroup>
+                        {renderDeleteButton}
                     </ButtonToolbar>
                   </Col>
                   <Col xs={4} className='text-right'>
@@ -173,7 +191,7 @@ export default class Scheduled extends React.Component {
                         <h6><small className='fg-darkgray'>KOTAK PESAN</small></h6>
                         <ListGroup className='list-bg-blue'>
                           <ListGroupItem active>
-                            <InboxNavItem glyph='icon-dripicons-calendar' title='Pesan Terjadwal' />
+                            <ScheduledNavItem glyph='icon-dripicons-calendar' title='Pesan Terjadwal' />
                           </ListGroupItem>
                         </ListGroup>
                         <hr/>
@@ -201,16 +219,26 @@ export default class Scheduled extends React.Component {
                               labelColor = "yellow";
                               break;
                           }
+
+                          const checked = selectedMessage[d.message_id];
+
                           return (
-                            <OutboxItem key={i}
-                                        itemId={i}
-                                        name={d.group_name}
-                                        labelValue={labelValue}
-                                        labelClass={`bg-${labelColor} fg-white`}
-                                        description={<strong>{`${d.title} ...`}</strong>}
-                                        status={d.status}
-                                        content={d.content}
-                                        date={d.date} />
+                            <div key={i} className='inbox-avatar inbox-item' style={{'padding': '0'}}>
+                                <input type='checkbox' checked={checked}
+                                                       onClick={self.handleSelectItem.bind(self,d.message_id)}
+                                                       style={{'width': '5%'}}/>
+                                <ScheduledMessageItem
+                                           itemId={d.message_id}
+                                           name={d.group_name}
+                                           labelValue={labelValue}
+                                           labelClass={`bg-${labelColor} fg-white`}
+                                           description={<strong>{`${d.title} ...`}</strong>}
+                                           status={d.status}
+                                           content={d.content}
+                                           date={d.date}
+                                           checked={checked}
+                                       />
+                            </div>
                           )
                         })}
                       </Col>

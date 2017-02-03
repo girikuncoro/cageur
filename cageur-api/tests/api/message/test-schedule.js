@@ -29,6 +29,10 @@ describe('Message Schedule API Test', () => {
       RETURNING id`;
   };
 
+  const countRow = (table) => {
+    return db.one(`SELECT COUNT(*) FROM ${table}`);
+  };
+
   before((done) => {
     db.one(sqlInsertClinic)
     .then((data) => {
@@ -251,6 +255,86 @@ describe('Message Schedule API Test', () => {
         expect(err.status).to.equal(404);
         expect(data.status).to.equal('error');
         expect(data.message).to.equal('Scheduled message not exist or already removed');
+
+        done();
+      });
+    });
+  });
+
+  describe('POST /api/v1/message/schedule', () => {
+    it('should insert new scheduled message', (done) => {
+      const validRequest = {
+        disease_group: currDiseaseGroupID,
+        body: 'A new scheduled message with foo bar',
+        frequency: 'none',
+        scheduled_at: '2018-01-30 15:39',
+      };
+
+      chai.request(app)
+      .post(`/api/v1/message/schedule/clinic/${currClinicID}`)
+      .send(validRequest)
+      .then((res) => {
+        const r = res.body;
+
+        expect(res.status).to.equal(200);
+        expect(r.status).to.equal('success');
+
+        expect(r.data['clinic_id']).to.equal(currClinicID);
+        expect(r.data['disease_group_id']).to.equal(currDiseaseGroupID);
+        expect(r.data['title']).to.equal('A new scheduled message with');
+        expect(r.data['content']).to.equal('A new scheduled message with foo bar');
+        expect(r.data['frequency']).to.equal('none');
+        expect(r.data['scheduled_at']).to.equal('2018-01-30T15:39:00.000Z');
+
+        countRow('scheduled_message').then((row) => {
+          expect(parseInt(row.count, 10)).to.equal(2);
+          done();
+        });
+      });
+    });
+
+    it('should return 400 for missing parameters', (done) => {
+      const invalidRequests = [
+        {},
+        { disease_group_id: 5 },
+        { body: 'blah' },
+        { frequency: 'none' },
+        { scheduled_at: '2010-01-30 12:21' },
+      ];
+
+      invalidRequests.forEach((req, i) => {
+        chai.request(app)
+        .post(`/api/v1/message/schedule/clinic/${currClinicID}`)
+        .send(req)
+        .then((_) => {}, (err) => {
+          const data = err.response.body;
+
+          expect(err.status).to.equal(400);
+          expect(data.status).to.equal('error');
+          expect(data.message).to.equal('Missing required parameters "disease_group" or "body" or "frequency" or "scheduled_at"');
+
+          if (i === invalidRequests.length - 1) done();
+        });
+      });
+    });
+
+    it('should return 400 for bad time format', (done) => {
+      const invalidRequest = {
+        disease_group: currDiseaseGroupID,
+        body: 'A new scheduled message with foo bar',
+        frequency: 'none',
+        scheduled_at: 'foo',
+      };
+
+      chai.request(app)
+      .post(`/api/v1/message/schedule/clinic/${currClinicID}`)
+      .send(invalidRequest)
+      .then((_) => {}, (err) => {
+        const data = err.response.body;
+
+        expect(err.status).to.equal(400);
+        expect(data.status).to.equal('error');
+        expect(data.message).to.equal('Bad scheduled_at format, valid example: "2015-01-30 23:30" in UTC');
 
         done();
       });

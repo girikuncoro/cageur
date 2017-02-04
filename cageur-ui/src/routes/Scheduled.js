@@ -68,7 +68,8 @@ export default class Scheduled extends React.Component {
     this.state = {
       sentMessages: [],
       showSpinner: false,
-      selectedMessage: {}
+      selectedMessage: {},
+      checkedAll: false
     };
   }
 
@@ -135,6 +136,19 @@ export default class Scheduled extends React.Component {
       })
   }
 
+  handleSelectAll() {
+    const {checkedAll, selectedMessage} = this.state;
+    const newSelectedMessage = selectedMessage;
+    Object.keys(selectedMessage).forEach(function(key) {
+      newSelectedMessage[key] = !checkedAll;
+    })
+
+    this.setState({
+      selectedMessage: newSelectedMessage,
+      checkedAll: !checkedAll
+    })
+  }
+
   handleDelete() {
       const {selectedMessage} = this.state;
       const self = this;
@@ -159,7 +173,8 @@ export default class Scheduled extends React.Component {
   }
 
   render() {
-    let {sentMessages, showSpinner, selectedMessage} = this.state;
+    let {sentMessages, showSpinner,
+        selectedMessage, checkedAll} = this.state;
     const {handleSelectItem} = this;
     const self = this;
 
@@ -170,40 +185,61 @@ export default class Scheduled extends React.Component {
                                 </Button>) :
                                 '';
 
-    const renderSentMessages = (sentMessages.map(function(d,i) {
-                                let labelValue, labelColor;
-                                switch(d.status) {
-                                  case "daily":
-                                    labelValue = "harian";
-                                    labelColor = "green";
-                                    break;
-                                  case "monthly":
-                                    labelValue = "bulanan";
-                                    labelColor = "yellow";
-                                    break;
-                                }
-
-                                const checked = selectedMessage[d.message_id];
-
-                                return (
-                                  <div key={i} className='inbox-avatar inbox-item' style={{'padding': '0'}}>
-                                      <input type='checkbox' checked={checked}
-                                                             onClick={self.handleSelectItem.bind(self,d.message_id)}
-                                                             style={{'width': '5%'}}/>
-                                      <ScheduledMessageItem
-                                                 itemId={d.message_id}
-                                                 name={d.group_name}
-                                                 labelValue={labelValue}
-                                                 labelClass={`bg-${labelColor} fg-white`}
-                                                 description={<strong>{`${d.title} ...`}</strong>}
-                                                 status={d.status}
-                                                 content={d.content}
-                                                 date={d.date}
-                                                 checked={checked}
-                                             />
+    const renderSentMessages = (
+                                <div>
+                                  <div  className='inbox-avatar inbox-item'
+                                        style={{'padding': '0', 'backgroundColor': '#EEEDEB'}}>
+                                    <input  id='all'
+                                            type='checkbox'
+                                            checked={checkedAll}
+                                            onClick={::this.handleSelectAll}
+                                            />
+                                    <label  htmlFor='all'
+                                            style={{'marginBottom': '0', 'marginTop': '10px'}}>
+                                      Pilih semua
+                                    </label>
                                   </div>
+                                  {
+                                    sentMessages.map(function(d,i) {
+                                      let labelValue, labelColor;
+                                      switch(d.status) {
+                                    case "daily":
+                                      labelValue = "harian";
+                                      labelColor = "green";
+                                      break;
+                                    case "monthly":
+                                      labelValue = "bulanan";
+                                      labelColor = "yellow";
+                                      break;
+                                  }
+
+                                      const checked = selectedMessage[d.message_id];
+
+                                      return (
+                                        <div key={i} className='inbox-avatar inbox-item' style={{'padding': '0'}}>
+                                        <input  id={`checkbox${i}`}
+                                                type='checkbox'
+                                                checked={checked}
+                                                onClick={self.handleSelectItem.bind(self,d.message_id)}
+                                                />
+                                        <label  htmlFor={`checkbox${i}`}></label>
+                                        <ScheduledMessageItem
+                                                   itemId={d.message_id}
+                                                   name={d.group_name}
+                                                   labelValue={labelValue}
+                                                   labelClass={`bg-${labelColor} fg-white`}
+                                                   description={<strong>{`${d.title} ...`}</strong>}
+                                                   status={d.status}
+                                                   content={d.content}
+                                                   date={d.date}
+                                                   checked={checked}
+                                               />
+                                        </div>
+                                      )
+                                    })
+                                  }
+                                </div>
                                 )
-                              }))
 
     const emptyMessage = (<div className='inbox-avatar-name'
                               style={{
@@ -268,7 +304,7 @@ export default class Scheduled extends React.Component {
                     <Row>
                       <Col xs={12}>
                         {(showSpinner) ? <Spinner/> : ""}
-                        {(sentMessages.length !== 0) ? renderSentMessages : emptyMessage}
+                        {(sentMessages.length !== 0 || showSpinner) ? renderSentMessages : emptyMessage}
                       </Col>
                     </Row>
                   </Grid>

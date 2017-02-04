@@ -35,7 +35,9 @@ export default class Compose extends React.Component {
       showSpinner: false,
       showSendSpinner: false,
       schedulePanel: false,
-      scheduleOption: 'none'
+      scheduleOption: 'none',
+      scheduleDate: null,
+      showScheduledAlert: false
     };
   }
 
@@ -146,6 +148,11 @@ export default class Compose extends React.Component {
                   scheduled_at: scheduleDate
                 };
 
+    const responseMessage = (scheduleOption == 'none') ?
+                            'kotak keluar' :
+                            'daftar pesan terjadwal';
+
+
     fetch(`${API_URL}${endpoint}`, {
       method: 'post',
       headers: API_HEADERS,
@@ -154,7 +161,7 @@ export default class Compose extends React.Component {
     .then((response) => response.json())
     .then((responseData) => {
       this.setState({
-        responseMessage: `Pesan dikirimkan ke grup penyakit ${toTitleCase(selectedGroup.value)}. Mengarahkan ke kotak keluar ...`,
+        responseMessage: `Pesan dikirimkan ke grup penyakit ${toTitleCase(selectedGroup.value)}. Mengarahkan ke ${responseMessage} ...`,
         messageAlert: true,
         showMessageAlert: true,
         messageError: 3,
@@ -188,7 +195,8 @@ export default class Compose extends React.Component {
   }
 
   handleSendMessage() {
-    let {selectedGroup, text} = this.state;
+    let {selectedGroup, text,
+        scheduleOption, scheduleDate} = this.state;
 
     // Alert user to select group first before sending a message
     if(selectedGroup === null) {
@@ -204,6 +212,24 @@ export default class Compose extends React.Component {
         showMessageAlert: true,
         messageAlert: false,
         messageError: 1
+      })
+      return;
+    }
+
+    // Alert user to at least write something in message body
+    if(text === '') {
+      this.setState({
+        showMessageAlert: true,
+        messageAlert: false,
+        messageError: 1
+      })
+      return;
+    }
+
+    // Focus user to insert scheduled date if selection is not none
+    if(scheduleOption !== 'none' && scheduleDate === null) {
+      this.setState({
+        showScheduledAlert: true
       })
       return;
     }
@@ -242,7 +268,20 @@ export default class Compose extends React.Component {
 
   handleInputCalendar(datetime) {
     this.setState({
-      scheduleDate: moment(datetime).format('YYYY-MM-DD HH:mm')
+      scheduleDate: moment(datetime).format('YYYY-MM-DD HH:mm'),
+      showScheduledAlert: false
+    })
+  }
+
+  handleFocusInputCalendar() {
+    this.setState({
+      scheduleDate: null
+    })
+  }
+
+  handleAlertScheduledDismiss() {
+    this.setState({
+      showScheduledAlert: false
     })
   }
 
@@ -250,7 +289,8 @@ export default class Compose extends React.Component {
     let {group, selectedGroup, showGroupSelectAlert,
          showMessageAlert, messageAlert, responseMessage,
          messageError, template, showDialogueBox,
-         showSendSpinner, schedulePanel, scheduleOption} = this.state;
+         showSendSpinner, schedulePanel, scheduleOption,
+         scheduleDate, showScheduledAlert} = this.state;
 
     let alertGroupSelect = (showGroupSelectAlert) ?
     (<Alert bsStyle="danger" onDismiss={::this.handleAlertGroupSelectDismiss}>
@@ -275,12 +315,19 @@ export default class Compose extends React.Component {
         <span>{message}</span>
     </Alert>) : "";
 
+    let alertScheduledInput = (showScheduledAlert) ?
+    (<Alert bsStyle="danger" onDismiss={::this.handleAlertScheduledDismiss}>
+        <span>Anda memilih untuk menjadwalkan pesan, silahkan masukan tanggal.</span>
+    </Alert>) : ""
+
     let progressBar = (showMessageAlert && alertStyle === "success") ?
     (<Progress active bsStyle="success" value={this.state.progressTime} />) : "";
 
     const inputCalendar = (scheduleOption === 'monthly') ? 'pilih bulan' : 'pilih hari';
     const renderCalendar = (scheduleOption === 'monthly' || scheduleOption === 'daily') ?
-                            (<Datetime inputProps={{placeholder: inputCalendar}}
+                            (<Datetime value={scheduleDate}
+                                       inputProps={{placeholder: inputCalendar}}
+                                       onFocus={::this.handleFocusInputCalendar}
                                        onChange={::this.handleInputCalendar}
                                        locale="id"
                                        viewMode={(scheduleOption === 'monthly') ? 'months' : 'days'}
@@ -288,28 +335,34 @@ export default class Compose extends React.Component {
 
     const renderSchedulePanel = (schedulePanel) ?
             (<FormGroup>
-              <Col sm={2}>
+              <Col componentClass={ControlLabel} sm={2}>
               </Col>
-              <Col sm={2}>
+              <Col sm={3}>
                 {renderCalendar}
-                <label>
-                  <input type="radio" value="none" style={{'marginRight': '10px'}}
+                <p>
+                  <input id="none" type="radio" value="none" style={{'marginRight': '10px'}}
                                 checked={this.state.scheduleOption === 'none'}
                                 onChange={::this.handleOptionChange} />
-                  Kirim sekali saja
-                </label>
-                <label>
-                  <input type="radio" value="daily" style={{'marginRight': '10px'}}
+                  <label htmlFor='none'>
+                    Kirim sekali saja
+                  </label>
+                </p>
+                <p>
+                  <input id="daily" type="radio" value="daily" style={{'marginRight': '10px'}}
                                 checked={this.state.scheduleOption === 'daily'}
                                 onChange={::this.handleOptionChange} />
-                  Setiap hari
-                </label>
-                <label>
-                  <input type="radio" value="monthly" style={{'marginRight': '10px'}}
+                  <label htmlFor='daily'>
+                    Setiap hari
+                  </label>
+                </p>
+                <p>
+                  <input id="monthly" type="radio" value="monthly" style={{'marginRight': '10px'}}
                                 checked={this.state.scheduleOption === 'monthly'}
                                 onChange={::this.handleOptionChange} />
-                  Setiap bulan
-                </label>
+                  <label htmlFor='monthly'>
+                    Setiap bulan
+                  </label>
+                </p>
               </Col>
             </FormGroup>) : '';
 
@@ -325,6 +378,7 @@ export default class Compose extends React.Component {
                   <Col sm={9}>
                     {alertGroupSelect}
                     {alertMessage}
+                    {alertScheduledInput}
                     {progressBar}
                   </Col>
                 </FormGroup>

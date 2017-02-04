@@ -84,18 +84,18 @@ describe('Message Schedule API Test', () => {
             diseaseGroupID: currDiseaseGroupID,
             diseaseGroupName: 'kulit',
             patientID: null,
-            title: 'Some title',
-            content: 'Some content',
-            frequency: 'daily',
+            title: 'Another title',
+            content: 'Another content',
+            frequency: 'monthly',
           },
           {
             clinicID: currClinicID,
             diseaseGroupID: currDiseaseGroupID,
             diseaseGroupName: 'kulit',
             patientID: null,
-            title: 'Another title',
-            content: 'Another content',
-            frequency: 'monthly',
+            title: 'Some title',
+            content: 'Some content',
+            frequency: 'daily',
           },
         ];
 
@@ -105,7 +105,8 @@ describe('Message Schedule API Test', () => {
 
         r.data.forEach((data, i) => {
           expect(data['clinic_id']).to.equal(validScheduledMsgs[i].clinicID);
-          expect(data['disease_group_id']).to.equal(validScheduledMsgs[i].diseaseGroupID);
+          expect(data['disease_group']['id']).to.equal(validScheduledMsgs[i].diseaseGroupID);
+          expect(data['disease_group']['name']).to.equal(validScheduledMsgs[i].diseaseGroupName);
           expect(data['patient_id']).to.equal(null);
           expect(data['title']).to.equal(validScheduledMsgs[i].title);
           expect(data['content']).to.equal(validScheduledMsgs[i].content);
@@ -128,18 +129,20 @@ describe('Message Schedule API Test', () => {
           {
             clinicID: currClinicID,
             diseaseGroupID: currDiseaseGroupID,
-            patientID: null,
-            title: 'Some title',
-            content: 'Some content',
-            frequency: 'daily',
-          },
-          {
-            clinicID: currClinicID,
-            diseaseGroupID: currDiseaseGroupID,
+            diseaseGroupName: 'kulit',
             patientID: null,
             title: 'Another title',
             content: 'Another content',
             frequency: 'monthly',
+          },
+          {
+            clinicID: currClinicID,
+            diseaseGroupID: currDiseaseGroupID,
+            diseaseGroupName: 'kulit',
+            patientID: null,
+            title: 'Some title',
+            content: 'Some content',
+            frequency: 'daily',
           },
         ];
 
@@ -149,7 +152,8 @@ describe('Message Schedule API Test', () => {
 
         r.data.forEach((data, i) => {
           expect(data['clinic_id']).to.equal(validScheduledMsgs[i].clinicID);
-          expect(data['disease_group_id']).to.equal(validScheduledMsgs[i].diseaseGroupID);
+          expect(data['disease_group']['id']).to.equal(validScheduledMsgs[i].diseaseGroupID);
+          expect(data['disease_group']['name']).to.equal(validScheduledMsgs[i].diseaseGroupName);
           expect(data['patient_id']).to.equal(null);
           expect(data['title']).to.equal(validScheduledMsgs[i].title);
           expect(data['content']).to.equal(validScheduledMsgs[i].content);
@@ -191,7 +195,8 @@ describe('Message Schedule API Test', () => {
 
         const data = r.data;
         expect(data['clinic_id']).to.equal(currClinicID);
-        expect(data['disease_group_id']).to.equal(currDiseaseGroupID);
+        expect(data['disease_group']['id']).to.equal(currDiseaseGroupID);
+        expect(data['disease_group']['name']).to.equal('kulit');
         expect(data['patient_id']).to.equal(null);
         expect(data['title']).to.equal('Some title');
         expect(data['content']).to.equal('Some content');

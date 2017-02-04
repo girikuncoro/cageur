@@ -40,7 +40,13 @@ const ctl = {
   },
 
   getAllScheduledMessages(req, res, next) {
-    db.any('SELECT * FROM scheduled_message')
+    db.any(`
+      SELECT sm.*, row_to_json(dg.*) AS disease_group
+      FROM scheduled_message AS sm
+      JOIN disease_group AS dg
+      ON sm.disease_group_id = dg.id
+      ORDER BY sm.updated_at DESC
+    `)
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No scheduled message data yet', 'Empty scheduled_message table');
@@ -57,7 +63,14 @@ const ctl = {
 
   getScheduledMessagesByClinicID(req, res, next) {
     const clinicID = req.params.id;
-    db.any(`SELECT * FROM scheduled_message WHERE clinic_id=${clinicID}`)
+    db.any(`
+      SELECT sm.*, row_to_json(dg.*) AS disease_group
+      FROM scheduled_message AS sm
+      JOIN disease_group AS dg
+      ON sm.disease_group_id = dg.id
+      WHERE sm.clinic_id = ${clinicID}
+      ORDER BY sm.updated_at DESC
+    `)
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No scheduled message found', `Empty scheduled_message table for clinic ${clinicID}`);
@@ -76,9 +89,11 @@ const ctl = {
     const messageID = req.params.id;
 
     db.any(`
-      SELECT *
-      FROM scheduled_message
-      WHERE id = ${messageID}
+      SELECT sm.*, row_to_json(dg.*) AS disease_group
+      FROM scheduled_message AS sm
+      JOIN disease_group AS dg
+      ON sm.disease_group_id = dg.id
+      WHERE sm.id = ${messageID}
     `)
     .then((data) => {
       if (data.length === 0) {

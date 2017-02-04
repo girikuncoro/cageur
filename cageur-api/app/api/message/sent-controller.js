@@ -8,7 +8,8 @@ const ctl = {
       FROM sent_message AS sm
       JOIN disease_group AS dg
       ON sm.disease_group_id = dg.id
-      ORDER BY sm.updated_at DESC`)
+      ORDER BY sm.updated_at DESC
+    `)
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No sent message found', 'Empty sent_message table');
@@ -31,7 +32,8 @@ const ctl = {
       JOIN disease_group AS dg
       ON sm.disease_group_id = dg.id
       WHERE sm.clinic_id = ${clinicID}
-      ORDER BY sm.updated_at DESC`)
+      ORDER BY sm.updated_at DESC
+    `)
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No sent message found', 'Empty sent_message table');
@@ -53,7 +55,8 @@ const ctl = {
       FROM sent_message AS sm
       JOIN disease_group AS dg
       ON sm.disease_group_id = dg.id
-      WHERE sm.id = ${sentID}`)
+      WHERE sm.id = ${sentID}
+    `)
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No sent message found', `${sentID} not found`);

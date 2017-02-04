@@ -33,6 +33,7 @@ app.use('/api/v1/patient_disease_group', require('./app/api/patient-disease-grou
 app.use('/api/v1/template', require('./app/api/template'));
 app.use('/api/v1/message/send', require('./app/api/message/send'));
 app.use('/api/v1/message/sent', require('./app/api/message/sent'));
+app.use('/api/v1/message/schedule', require('./app/api/message/schedule'));
 app.use('/api/v1/message/incoming', require('./app/api/message/incoming'));
 app.use('/api/v1/analytics/message', require('./app/api/analytics/message'));
 

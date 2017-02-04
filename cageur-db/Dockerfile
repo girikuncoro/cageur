@@ -6,7 +6,7 @@ ENV POSTGRES_PASSWORD 123456
 ENV POSTGRES_DB cageur_db
 
 # Load schema
-ADD ./cageur_schema_v0.3.sql /docker-entrypoint-initdb.d
+ADD ./cageur_schema_v0.4.sql /docker-entrypoint-initdb.d
 
 # Postgres binds to port 5432
 EXPOSE 5432

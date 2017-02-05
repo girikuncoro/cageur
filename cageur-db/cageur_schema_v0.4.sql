@@ -100,6 +100,7 @@ CREATE TABLE scheduled_message (
   content TEXT NOT NULL,
   scheduled_at TIMESTAMP NOT NULL,
   frequency scheduled_frequency DEFAULT 'none',
+  is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id),

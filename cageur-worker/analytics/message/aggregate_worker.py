@@ -35,7 +35,7 @@ class AggregateWorker(object):
     # Get list of clinic_ids
     def get_clinic_ids(self):
         sql_get_clinics = '''
-        SELECT id FROM clinic
+            SELECT id FROM clinic
         '''
         try:
             self.cursor.execute(sql_get_clinics)
@@ -50,7 +50,7 @@ class AggregateWorker(object):
     # Get list of disease group_ids
     def get_disease_group_ids(self):
         sql_get_disease_groups = '''
-        SELECT id FROM disease_group
+            SELECT id FROM disease_group
         '''
         try:
             self.cursor.execute(sql_get_disease_groups)

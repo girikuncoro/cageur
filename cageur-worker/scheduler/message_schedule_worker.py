@@ -7,8 +7,9 @@ import psycopg2 as psql
 import os
 import json
 import sys
-from datetime import datetime, time, timedelta
-from collections import Counter
+import requests
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 CAGEUR_DB_HOST = os.getenv('CAGEUR_DB_HOST', '127.0.0.1')
 CAGEUR_DB_PORT = os.getenv('CAGEUR_DB_PORT', 5432)
@@ -32,19 +33,77 @@ class MessageScheduleWorker(object):
         self.now = datetime.utcnow()
 
         # Check interval in seconds
-        self.period = 10 * 60
+        self.period = 60 * 60 * 24 * 17
+        self.next = self.now + timedelta(seconds=self.period)
 
     def get_scheduled_message(self):
-        pass
+        scheduled_messages = []
+        sql_get_scheduled_message = '''
+            SELECT id, clinic_id, disease_group_id, content, scheduled_at, frequency
+            FROM scheduled_message
+            WHERE is_active = TRUE and scheduled_at >= '{}' AND scheduled_at < '{}'
+        '''
+        try:
+            self.cursor.execute(sql_get_scheduled_message.format(self.now, self.next))
+            results = self.cursor.fetchall()
+            for row in results:
+                scheduled_messages.append(row)
+        except psql.Error as err:
+            print 'Unable to fetch scheduled message data', err
+            sys.exit()
 
-    def update_scheduled_message(self):
-        pass
+        return scheduled_messages
 
-    def send_message(self):
-        pass
+    def send_message(self, clinic_id, **kwargs):
+        # return requests.post(CAGEUR_API_URL, data=kwargs)
+        print 'Clinic: {}, Send: {}'.format(clinic_id, kwargs)
+
+    def update_scheduled_message(self, msg_id, **kwargs):
+        frequency = kwargs['frequency']
+        prev_at = scheduled_at = kwargs['scheduled_at']
+
+        if frequency == 'none':
+            sql_update_scheduled_message = '''
+                UPDATE scheduled_message
+                SET is_active = {}
+                WHERE id = {}
+            '''.format(False, msg_id)
+
+        elif frequency == 'daily':
+            scheduled_at += timedelta(days=1)
+            sql_update_scheduled_message = '''
+                UPDATE scheduled_message
+                SET scheduled_at = '{}'
+                WHERE id = {}
+            '''.format(scheduled_at, msg_id)
+
+        elif frequency == 'monthly':
+            scheduled_at += relativedelta(months=1)
+            sql_update_scheduled_message = '''
+                UPDATE scheduled_message
+                SET scheduled_at = '{}'
+                WHERE id = {}
+            '''.format(scheduled_at, msg_id)
+
+        try:
+            print 'Update: {} to {}'.format(prev_at, scheduled_at)
+            self.cursor.execute(sql_update_scheduled_message)
+            self.db.commit()
+        except psql.Error as err:
+            print 'Unable to update scheduled message data', err
+            sys.exit()
 
     def run(self):
-        pass
+        scheduled_messages = self.get_scheduled_message()
+        for msg in scheduled_messages:
+            id, clinic_id, disease_group_id, content, scheduled_at, frequency = msg
+            self.send_message(clinic_id, diseaseGroup=disease_group_id,
+                body=content)
+            self.update_scheduled_message(id, frequency=frequency,
+                scheduled_at=scheduled_at)
+
+        print '{} scheduled messages have been sent'.format(len(scheduled_messages))
+
 
 if __name__ == '__main__':
     worker = MessageScheduleWorker()

@@ -33,7 +33,7 @@ class MessageScheduleWorker(object):
         self.now = datetime.utcnow()
 
         # Check interval in seconds
-        self.period = 60 * 60 * 24 * 1
+        self.period = 15 * 60  # 15 mins
         self.next = self.now + timedelta(seconds=self.period)
 
     def get_scheduled_message(self):

@@ -33,7 +33,7 @@ class MessageScheduleWorker(object):
         self.now = datetime.utcnow()
 
         # Check interval in seconds
-        self.period = 60 * 60 * 24 * 17
+        self.period = 60 * 60 * 24 * 1
         self.next = self.now + timedelta(seconds=self.period)
 
     def get_scheduled_message(self):
@@ -55,8 +55,10 @@ class MessageScheduleWorker(object):
         return scheduled_messages
 
     def send_message(self, clinic_id, **kwargs):
-        # return requests.post(CAGEUR_API_URL, data=kwargs)
         print 'Clinic: {}, Send: {}'.format(clinic_id, kwargs)
+
+        cageur_api = '{}/clinic/{}'.format(CAGEUR_SEND_API, clinic_id)
+        return requests.post(cageur_api, data=kwargs)
 
     def update_scheduled_message(self, msg_id, **kwargs):
         frequency = kwargs['frequency']

@@ -93,7 +93,7 @@ export default class Scheduled extends React.Component {
         responseData.data.map(function(d,i) {
           sentMessages.push(
             {
-              group_name: d["disease_group_id"],
+              group_name: d["disease_group"]["name"],
               title: d["title"],
               status: d["frequency"],
               content: d["content"],

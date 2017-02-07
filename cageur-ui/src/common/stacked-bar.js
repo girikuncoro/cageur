@@ -1,12 +1,8 @@
 import React, {Component} from 'react';
-import {
-  Row, Col, Panel, PanelBody,
-  PanelContainer, Button, ButtonGroup
-} from '@sketchpixy/rubix';
 import _ from 'underscore';
 import moment from 'moment';
 
-export default class Analytics extends Component {
+export default class StackedBar extends Component {
 
   componentDidMount() {
     let data;
@@ -39,11 +35,9 @@ export default class Analytics extends Component {
             deliveredVal = 0;
 
         d.message.map(function(item,index) {
-          d.message.map(function(item) {
             failedVal = failedVal + item.failed;
             pendingVal = pendingVal + item.pending;
             deliveredVal = deliveredVal + item.delivered;
-          })
         })
 
         failed.push(failedVal);
@@ -115,10 +109,16 @@ export default class Analytics extends Component {
           pending,
           delivered
         ],
+        colors: {
+            gagal: '#EA7882',
+            terkirim: '#55C9A6',
+            tunda: '#FADD7F'
+        },
         type: 'bar',
         groups: [
-          ['gagal', 'tunda','terkirim']
-        ]
+          ['terkirim', 'tunda','gagal']
+        ],
+        order: false
       },
       axis: {
           x: {
@@ -138,19 +138,7 @@ export default class Analytics extends Component {
 
   render() {
     return (
-      <div>
-        <Row>
-          <Col sm={12}>
-          <PanelContainer controls={false}>
-            <Panel>
-              <PanelBody style={{padding: 25}}>
-                <div id={this.props.id}></div>
-              </PanelBody>
-            </Panel>
-          </PanelContainer>
-          </Col>
-        </Row>
-      </div>
+        <div id={this.props.id}></div>
     );
   }
 }

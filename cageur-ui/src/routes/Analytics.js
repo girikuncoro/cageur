@@ -1,10 +1,32 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
 import StackedBar from '../common/stacked-bar';
-import {Row, Col} from '@sketchpixy/rubix';
+import PieChart from '../common/pie-chart';
+import {
+  Row, Col, Panel, PanelBody,
+  PanelContainer
+} from '@sketchpixy/rubix';
+import Spinner from 'react-spinner';
 import {API_URL, API_HEADERS} from '../common/constant';
 import _ from 'underscore';
 import 'whatwg-fetch';
+
+const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+class ChartContainer extends React.Component {
+  render() {
+    return (
+      <PanelContainer controls={false}>
+        <Panel>
+          <PanelBody style={{padding: 25}}>
+            {this.props.children}
+          </PanelBody>
+        </Panel>
+      </PanelContainer>
+    );
+  }
+}
 
 export default class Analytics extends Component {
   constructor(props) {
@@ -16,11 +38,14 @@ export default class Analytics extends Component {
       years: [],
       year: null,
       months: [],
-      month: null
+      month: null,
+      showSpinner: false,
     };
   }
 
   componentDidMount() {
+    // Showing spinner while waiting response from DB
+    this.setState({showSpinner: true});
 
     // Fetching analytics data
     fetch(API_URL+'/analytics/message/clinic/1', {
@@ -28,34 +53,40 @@ export default class Analytics extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      let data = responseData.data,
+        let data = responseData.data,
           years = [],
           months = [];
 
-      let groupedByYear = _.groupBy(data, function(item) {
-        return item.time.substring(0,4);
-      });
+        // Group by year response data
+        let groupedByYear = _.groupBy(data, function(item) {
+            return item.time.substring(0,4);
+        });
 
-      Object.keys(groupedByYear).forEach(function(d,i) {
-        years.push({id: i, value: d, label: d});
-      })
+        Object.keys(groupedByYear).forEach(function(d,i) {
+            years.push({id: i, value: d, label: d});
+        })
 
-      let monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agus', 'Sep',
-                    'Okt', 'Nov', 'Des'];
+        // Group by month of the latest yearly data
+        let groupedByMonth = _.groupBy(groupedByYear[years[years.length-1].value], function(item) {
+            return item.time.substring(5,7);
+        });
 
-      monthName.map(function(d,i) {
-        let value = (i<8) ? `0${i+1}` : `${i+1}`;
-        months.push({id: i, value: value, label: d});
-      })
+        // Push list of month to select for current year
+        Object.keys(groupedByMonth).forEach(function(d,i) {
+            let value = (i<9) ? `0${i+1}` : `${i+1}`;
+            months.push({id: i, value: value, label: monthName[i]});
+        })
 
-      this.setState({
-        data: responseData,
-        groupedByYear: groupedByYear,
-        years: years,
-        year: years[0].value,
-        months: months,
-        month: months[0].value,
-      })
+        // Set state with the latest year and month
+        this.setState({
+            data: responseData,
+            groupedByYear: groupedByYear,
+            years: years.reverse(),
+            year: years[0].value,
+            months: months,
+            month: months[months.length-1].value,
+            showSpinner: false,
+        })
 
     })
     .catch((error) => {
@@ -72,11 +103,8 @@ export default class Analytics extends Component {
       return item.time.substring(5,7);
     });
 
-    let monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agus', 'Sep',
-                  'Okt', 'Nov', 'Des'];
-
     Object.keys(groupedByMonth).forEach(function(d,i) {
-      let value = (i<8) ? `0${i+1}` : `${i+1}`;
+      let value = (i<9) ? `0${i+1}` : `${i+1}`;
       months.push({id: i, value: value, label: monthName[i]});
     })
 
@@ -99,26 +127,40 @@ export default class Analytics extends Component {
   }
 
   render() {
-    let {groupedByYear, year, month, months} = this.state;
+    let {groupedByYear, year, month, months, showSpinner} = this.state;
 
-    let renderDaily = (groupedByYear != 0) ?
+    let renderBarDaily = (groupedByYear != 0) ?
                       <StackedBar data={groupedByYear}
-                                 id='Harian'
+                                 id='bar-month'
                                  year={year}
                                  month={month}
                        /> : "";
 
-    let renderMonthly = (groupedByYear != 0) ?
+    let renderBarMonthly = (groupedByYear != 0) ?
                          <StackedBar data={groupedByYear}
-                                    id='Bulanan'
+                                    id='bar-year'
                                     year={year}
                                     months={months}
                           /> : "";
 
+    let renderPieMonth = (groupedByYear != 0) ?
+                    <PieChart data={groupedByYear}
+                               id='pie-month'
+                               year={year}
+                               month={month}
+                     /> : "";
+
+    let renderPieYear = (groupedByYear != 0) ?
+                    <PieChart data={groupedByYear}
+                              id='pie-year'
+                              year={year}
+                              months={months}
+                    /> : "";
+
     return (
       <div>
         <Row>
-          <Col sm={2}>
+          <Col xs={2} sm={2}>
           <Select
               ref="month-selection"
               matchProp="label"
@@ -132,9 +174,23 @@ export default class Analytics extends Component {
           />
           </Col>
         </Row>
-        {renderDaily}
         <Row>
-          <Col sm={2}>
+            <Col sm={6} md={8}>
+                <ChartContainer>
+                  {(showSpinner) ? <Spinner/> : ""}
+                  {renderBarDaily}
+                </ChartContainer>
+            </Col>
+            <Col sm={6} md={4}>
+                <ChartContainer>
+                  {(showSpinner) ? <Spinner/> : ""}
+                  {renderPieMonth}
+                </ChartContainer>
+            </Col>
+        </Row>
+
+        <Row>
+          <Col xs={2} sm={2}>
           <Select
               ref="year-selection"
               matchProp="label"
@@ -148,7 +204,20 @@ export default class Analytics extends Component {
           />
           </Col>
         </Row>
-        {renderMonthly}
+        <Row>
+            <Col sm={6} md={8}>
+                <ChartContainer>
+                    {(showSpinner) ? <Spinner/> : ""}
+                    {renderBarMonthly}
+                </ChartContainer>
+            </Col>
+            <Col sm={6} md={4}>
+                <ChartContainer>
+                    {(showSpinner) ? <Spinner/> : ""}
+                    {renderPieYear}
+                </ChartContainer>
+            </Col>
+        </Row>
       </div>
     );
   }

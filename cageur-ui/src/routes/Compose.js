@@ -7,9 +7,12 @@ import {
   PanelContainer, Panel, PanelBody, Progress
 } from '@sketchpixy/rubix';
 import Spinner from 'react-spinner';
+import Datetime from 'react-datetime';
+import moment from 'moment';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
 import {API_URL, API_HEADERS} from '../common/constant';
+require('moment/locale/id');
 
 export default class Compose extends React.Component {
   constructor(props) {
@@ -30,7 +33,11 @@ export default class Compose extends React.Component {
       progressTime: 0,
       showDialogueBox: false,
       showSpinner: false,
-      showSendSpinner: false
+      showSendSpinner: false,
+      schedulePanel: false,
+      scheduleOption: 'none',
+      scheduleDate: null,
+      showScheduledAlert: false
     };
   }
 
@@ -117,18 +124,35 @@ export default class Compose extends React.Component {
   }
 
   sendMessage() {
-    let {selectedGroup, text} = this.state;
-
-    let message = {
-      diseaseGroup: selectedGroup.id,
-      body: text
-    };
+    let {selectedGroup, text, scheduleOption, scheduleDate} = this.state;
 
     // Showing spinner while waiting response from DB
     this.setState({showSendSpinner: true});
 
     // Fetching ...
-    fetch(API_URL+'/message/send/clinic/1', {
+    const endpoint = (scheduleOption == 'none') ?
+                      '/message/send/clinic/1' :
+                      '/message/schedule/clinic/1';
+
+    const message = (scheduleOption == 'none') ?
+                {
+                  diseaseGroup: selectedGroup.id,
+                  body: text
+                } :
+                {
+                  clinic_id: 1,
+                  disease_group: selectedGroup.id,
+                  body: text,
+                  frequency: (scheduleOption === 'once') ? 'none' : scheduleOption,
+                  scheduled_at: moment.utc(scheduleDate).format('YYYY-MM-DD HH:mm')
+                };
+
+    const responseMessage = (scheduleOption == 'none') ?
+                            'kotak keluar' :
+                            'daftar pesan terjadwal';
+
+
+    fetch(`${API_URL}${endpoint}`, {
       method: 'post',
       headers: API_HEADERS,
       body: JSON.stringify(message)
@@ -136,7 +160,7 @@ export default class Compose extends React.Component {
     .then((response) => response.json())
     .then((responseData) => {
       this.setState({
-        responseMessage: `Pesan telah berhasil terkirim ke grup penyakit ${toTitleCase(selectedGroup.value)}. Mengarahkan ke kotak keluar ...`,
+        responseMessage: `Pesan dikirimkan ke grup penyakit ${toTitleCase(selectedGroup.value)}. Mengarahkan ke ${responseMessage} ...`,
         messageAlert: true,
         showMessageAlert: true,
         messageError: 3,
@@ -149,7 +173,10 @@ export default class Compose extends React.Component {
 
       let redirect = function () {
         clearInterval(showProgressBar);
-        return self.props.router.push("/mailbox/outbox");
+        const route = (scheduleOption === 'none') ?
+                      self.props.router.push("/mailbox/outbox/sent") :
+                      self.props.router.push("/mailbox/outbox/scheduled");
+        return route
       }
 
       setTimeout(redirect, 1000);
@@ -167,7 +194,8 @@ export default class Compose extends React.Component {
   }
 
   handleSendMessage() {
-    let {selectedGroup, text} = this.state;
+    let {selectedGroup, text,
+        scheduleOption, scheduleDate} = this.state;
 
     // Alert user to select group first before sending a message
     if(selectedGroup === null) {
@@ -183,6 +211,24 @@ export default class Compose extends React.Component {
         showMessageAlert: true,
         messageAlert: false,
         messageError: 1
+      })
+      return;
+    }
+
+    // Alert user to at least write something in message body
+    if(text === '') {
+      this.setState({
+        showMessageAlert: true,
+        messageAlert: false,
+        messageError: 1
+      })
+      return;
+    }
+
+    // Focus user to insert scheduled date if selection is not none
+    if(scheduleOption !== 'none' && scheduleDate === null) {
+      this.setState({
+        showScheduledAlert: true
       })
       return;
     }
@@ -207,10 +253,45 @@ export default class Compose extends React.Component {
     })
   }
 
+  toggleSchedulePanel() {
+    const scheduleOption = (this.state.schedulePanel) ? 'none' : 'once';
+    this.setState({
+      schedulePanel: !this.state.schedulePanel,
+      scheduleOption: scheduleOption
+    })
+  }
+
+  handleOptionChange(e) {
+    this.setState({
+      scheduleOption: e.target.value
+    })
+  }
+
+  handleInputCalendar(datetime) {
+    this.setState({
+      scheduleDate: datetime,
+      showScheduledAlert: false
+    })
+  }
+
+  handleFocusInputCalendar() {
+    this.setState({
+      scheduleDate: null
+    })
+  }
+
+  handleAlertScheduledDismiss() {
+    this.setState({
+      showScheduledAlert: false
+    })
+  }
+
   render() {
-    let {group, selectedGroup, showGroupSelectAlert, showMessageAlert,
-         messageAlert, responseMessage, messageError,
-         template, showDialogueBox, showSendSpinner} = this.state;
+    let {group, selectedGroup, showGroupSelectAlert,
+         showMessageAlert, messageAlert, responseMessage,
+         messageError, template, showDialogueBox,
+         showSendSpinner, schedulePanel, scheduleOption,
+         scheduleDate, showScheduledAlert} = this.state;
 
     let alertGroupSelect = (showGroupSelectAlert) ?
     (<Alert bsStyle="danger" onDismiss={::this.handleAlertGroupSelectDismiss}>
@@ -235,8 +316,51 @@ export default class Compose extends React.Component {
         <span>{message}</span>
     </Alert>) : "";
 
+    let alertScheduledInput = (showScheduledAlert) ?
+    (<Alert bsStyle="danger" onDismiss={::this.handleAlertScheduledDismiss}>
+        <span>Anda memilih untuk menjadwalkan pesan, silahkan masukan tanggal.</span>
+    </Alert>) : ""
+
     let progressBar = (showMessageAlert && alertStyle === "success") ?
     (<Progress active bsStyle="success" value={this.state.progressTime} />) : "";
+
+    const renderSchedulePanel = (schedulePanel) ?
+            (<FormGroup>
+              <Col componentClass={ControlLabel} sm={2}>
+              </Col>
+              <Col sm={3}>
+                <Datetime value={scheduleDate}
+                           inputProps={{placeholder: 'Pilih tanggal dan jam'}}
+                           onFocus={::this.handleFocusInputCalendar}
+                           onChange={::this.handleInputCalendar}
+                           locale="id"
+                />
+                <p>
+                  <input id="once" type="radio" value="once" style={{'marginRight': '10px'}}
+                                checked={this.state.scheduleOption === 'once'}
+                                onChange={::this.handleOptionChange} />
+                  <label htmlFor='once'>
+                    Kirim sekali saja
+                  </label>
+                </p>
+                <p>
+                  <input id="daily" type="radio" value="daily" style={{'marginRight': '10px'}}
+                                checked={this.state.scheduleOption === 'daily'}
+                                onChange={::this.handleOptionChange} />
+                  <label htmlFor='daily'>
+                    Setiap hari
+                  </label>
+                </p>
+                <p>
+                  <input id="monthly" type="radio" value="monthly" style={{'marginRight': '10px'}}
+                                checked={this.state.scheduleOption === 'monthly'}
+                                onChange={::this.handleOptionChange} />
+                  <label htmlFor='monthly'>
+                    Setiap bulan
+                  </label>
+                </p>
+              </Col>
+            </FormGroup>) : '';
 
     return (
       <div>
@@ -250,6 +374,7 @@ export default class Compose extends React.Component {
                   <Col sm={9}>
                     {alertGroupSelect}
                     {alertMessage}
+                    {alertScheduledInput}
                     {progressBar}
                   </Col>
                 </FormGroup>
@@ -285,21 +410,41 @@ export default class Compose extends React.Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <Col sm={7}>
+                  <Col sm={2}>
                   </Col>
-                  <Col sm={4}>
-                    <Button style={{margin: '10px'}}>
+                  <Col sm={3}>
+                    <Button bsStyle="primary" outlined
+                            active={schedulePanel}
+                            onClick={::this.toggleSchedulePanel}
+                            style={{margin: '10px'}}>
                       BERKALA
                     </Button>
-                    <Button bsStyle="primary" onClick={::this.open} style={{margin: '10px'}}>
+                    <Button bsStyle="primary" outlined
+                            onClick={::this.open} style={{margin: '10px'}}>
                       TEMPLATE
                     </Button>
-                    <Button bsStyle="success" onClick={::this.handleSendMessage} style={{margin: '10px'}}>
-                      KIRIM PESAN
+                  </Col>
+                  <Col sm={4}>
+                  </Col>
+                  <Col sm={2}>
+                    <Button bsStyle="success" outlined
+                            onClick={::this.handleSendMessage} style={{margin: '10px'}}>
+                      {(schedulePanel) ? `SIMPAN PESAN` : `KIRIM PESAN`}
                     </Button>
                   </Col>
                 </FormGroup>
 
+                {/* Shedule Panel */}
+                {renderSchedulePanel}
+
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
               </Form>
             </PanelBody>
           </Panel>

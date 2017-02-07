@@ -21,18 +21,18 @@ import {
 
 @withRouter
 export default class Mail extends React.Component {
-  handleClick(e) {
-    this.props.router.push('/mailbox/outbox');
-  }
-
   handleBackClick(e) {
-    this.props.router.push('/mailbox/inbox');
+      if (this.props.params.origin === 'scheduled') {
+        this.props.router.push('/mailbox/outbox/scheduled');
+      } else {
+        this.props.router.push('/mailbox/outbox/sent');
+      }
   }
 
   handleTextareaClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    this.handleClick();
+    this.handleBackClick();
   }
 
   print() {
@@ -44,19 +44,32 @@ export default class Mail extends React.Component {
   render() {
     let {group_name, status, content, date} = this.props.params;
     let labelValue, labelColor;
-    switch(status) {
-      case "delivered":
-        labelValue = "terkirim";
-        labelColor = "green";
-        break;
-      case "pending":
-        labelValue = "tertunda";
-        labelColor = "yellow";
-        break;
-      case "failed":
-        labelValue = "gagal";
-        labelColor = "red";
-        break;
+    if (this.props.params.origin === 'scheduled') {
+        switch(status) {
+            case "daily":
+              labelValue = "harian";
+              labelColor = "green";
+              break;
+            case "monthly":
+              labelValue = "bulanan";
+              labelColor = "yellow";
+              break;
+        }
+    } else {
+        switch(status) {
+            case "delivered":
+              labelValue = "terkirim";
+              labelColor = "green";
+              break;
+            case "pending":
+              labelValue = "tertunda";
+              labelColor = "yellow";
+              break;
+            case "failed":
+              labelValue = "gagal";
+              labelColor = "red";
+              break;
+        }
     }
 
     return (
@@ -68,7 +81,7 @@ export default class Mail extends React.Component {
                 <Col xs={8} style={{paddingTop: 12.5}}>
                   <ButtonToolbar className='inbox-toolbar'>
                     <ButtonGroup>
-                      <Button bsStyle='blue' onClick={::this.handleClick}>
+                      <Button bsStyle='blue' onClick={::this.handleBackClick}>
                         <Icon glyph='icon-dripicons-arrow-thin-left'/>
                       </Button>
                     </ButtonGroup>

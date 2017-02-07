@@ -144,7 +144,7 @@ export default class Compose extends React.Component {
                   disease_group: selectedGroup.id,
                   body: text,
                   frequency: (scheduleOption === 'once') ? 'none' : scheduleOption,
-                  scheduled_at: moment(scheduleDate).format('YYYY-MM-DD HH:mm')
+                  scheduled_at: moment.utc(scheduleDate).format('YYYY-MM-DD HH:mm')
                 };
 
     const responseMessage = (scheduleOption == 'none') ?

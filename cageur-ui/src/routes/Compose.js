@@ -145,7 +145,7 @@ export default class Compose extends React.Component {
                   disease_group: selectedGroup.id,
                   body: text,
                   frequency: scheduleOption,
-                  scheduled_at: scheduleDate
+                  scheduled_at: moment(scheduleDate).format('YYYY-MM-DD HH:mm')
                 };
 
     const responseMessage = (scheduleOption == 'none') ?
@@ -268,7 +268,7 @@ export default class Compose extends React.Component {
 
   handleInputCalendar(datetime) {
     this.setState({
-      scheduleDate: moment(datetime).format('YYYY-MM-DD HH:mm'),
+      scheduleDate: datetime,
       showScheduledAlert: false
     })
   }
@@ -323,14 +323,12 @@ export default class Compose extends React.Component {
     let progressBar = (showMessageAlert && alertStyle === "success") ?
     (<Progress active bsStyle="success" value={this.state.progressTime} />) : "";
 
-    const inputCalendar = (scheduleOption === 'monthly') ? 'pilih bulan' : 'pilih hari';
     const renderCalendar = (scheduleOption === 'monthly' || scheduleOption === 'daily') ?
                             (<Datetime value={scheduleDate}
                                        inputProps={{placeholder: inputCalendar}}
                                        onFocus={::this.handleFocusInputCalendar}
                                        onChange={::this.handleInputCalendar}
                                        locale="id"
-                                       viewMode={(scheduleOption === 'monthly') ? 'months' : 'days'}
                               />) : '';
 
     const renderSchedulePanel = (schedulePanel) ?

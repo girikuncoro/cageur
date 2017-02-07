@@ -23,9 +23,9 @@ import {
 export default class Mail extends React.Component {
   handleBackClick(e) {
       if (this.props.params.origin === 'scheduled') {
-        this.props.router.push('/mailbox/scheduled');
+        this.props.router.push('/mailbox/outbox/scheduled');
       } else {
-        this.props.router.push('/mailbox/outbox');
+        this.props.router.push('/mailbox/outbox/sent');
       }
   }
 

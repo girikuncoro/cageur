@@ -175,8 +175,8 @@ export default class Compose extends React.Component {
       let redirect = function () {
         clearInterval(showProgressBar);
         const route = (scheduleOption == 'none') ?
-                      self.props.router.push("/mailbox/outbox") :
-                      self.props.router.push("/mailbox/scheduled");
+                      self.props.router.push("/mailbox/outbox/sent") :
+                      self.props.router.push("/mailbox/outbox/scheduled");
         return route
       }
 

@@ -175,7 +175,7 @@ describe('Message Sent API Test', () => {
       const invalidClinicID = currClinicID + 999;
 
       chai.request(app)
-      .get(`/api/v1/message/sent/${invalidClinicID}`)
+      .get(`/api/v1/message/sent/clinic/${invalidClinicID}`)
       .then((_) => {}, (err) => {
         const data = err.response.body;
 

@@ -60,6 +60,10 @@
     top: 0;
     float: none;
   }
+
+  &.active {
+      color: white;
+  }
 }
 
 .inbox-nav hr {

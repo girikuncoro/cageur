@@ -330,7 +330,7 @@ export default class Compose extends React.Component {
               </Col>
               <Col sm={3}>
                 <Datetime value={scheduleDate}
-                           inputProps={{placeholder: 'Pilih tanggal'}}
+                           inputProps={{placeholder: 'Pilih tanggal dan jam'}}
                            onFocus={::this.handleFocusInputCalendar}
                            onChange={::this.handleInputCalendar}
                            locale="id"
@@ -409,25 +409,42 @@ export default class Compose extends React.Component {
                   </Col>
                 </FormGroup>
 
-                {/* Shedule Panel */}
-                {renderSchedulePanel}
-
                 <FormGroup>
-                  <Col sm={7}>
+                  <Col sm={2}>
                   </Col>
-                  <Col sm={4}>
-                    <Button onClick={::this.toggleSchedulePanel} style={{margin: '10px'}}>
+                  <Col sm={3}>
+                    <Button bsStyle="primary" outlined
+                            active={schedulePanel}
+                            onClick={::this.toggleSchedulePanel}
+                            style={{margin: '10px'}}>
                       BERKALA
                     </Button>
-                    <Button bsStyle="primary" onClick={::this.open} style={{margin: '10px'}}>
+                    <Button bsStyle="primary" outlined
+                            onClick={::this.open} style={{margin: '10px'}}>
                       TEMPLATE
                     </Button>
-                    <Button bsStyle="success" onClick={::this.handleSendMessage} style={{margin: '10px'}}>
+                  </Col>
+                  <Col sm={4}>
+                  </Col>
+                  <Col sm={2}>
+                    <Button bsStyle="success" outlined
+                            onClick={::this.handleSendMessage} style={{margin: '10px'}}>
                       {(schedulePanel) ? `SIMPAN PESAN` : `KIRIM PESAN`}
                     </Button>
                   </Col>
                 </FormGroup>
 
+                {/* Shedule Panel */}
+                {renderSchedulePanel}
+
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
               </Form>
             </PanelBody>
           </Panel>

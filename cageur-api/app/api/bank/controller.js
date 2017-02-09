@@ -5,12 +5,12 @@ const ctl = {
   createBank(req, res, next) {
     const bank = {
       name: req.body.name,
-      account_holder: req.body.account_holder,
-      account_number: req.body.account_number,
+      accountHolder: req.body['account_holder'],
+      accountNumber: req.body['account_number'],
     };
 
-    if (!bank.name) {
-      throw abort(400, 'Missing required parameters "name"');
+    if (!bank.name || !bank.accountHolder || !bank.accountNumber) {
+      throw abort(400, 'Missing required parameters "name" or "account_holder" or "account_number"');
     }
 
     db.any(`
@@ -69,12 +69,12 @@ const ctl = {
     const bank = {
       id: req.params.id,
       name: req.body.name,
-      account_holder: req.body.account_holder,
-      account_number: req.body.account_number,
+      accountHolder: req.body['account_holder'],
+      accountNumber: req.body['account_number'],
     };
 
-    if (!bank.name) {
-      throw abort(400, 'Missing required parameters "name"');
+    if (!bank.name || !bank.accountHolder || !bank.accountNumber) {
+      throw abort(400, 'Missing required parameters "name" or "account_holder" or "account_number"');
     }
 
     db.one(`

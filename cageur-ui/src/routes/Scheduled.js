@@ -74,7 +74,7 @@ export default class Scheduled extends Component {
               title: d["title"],
               status: d["frequency"],
               content: d["content"],
-              date: moment(d["schedule_at"]).locale("id").format("Do MMMM YY, HH:mm"),
+              date: moment(d["scheduled_at"]).locale("id").format("Do MMMM YY, HH:mm"),
               message_id: d["id"]
             }
           );

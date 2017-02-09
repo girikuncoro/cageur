@@ -409,6 +409,9 @@ export default class Compose extends React.Component {
                   </Col>
                 </FormGroup>
 
+                {/* Shedule Panel */}
+                {renderSchedulePanel}
+
                 <FormGroup>
                   <Col sm={2}>
                   </Col>

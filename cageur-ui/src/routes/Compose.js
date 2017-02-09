@@ -124,8 +124,7 @@ export default class Compose extends React.Component {
   }
 
   sendMessage() {
-    let {selectedGroup, text,
-    scheduleOption, scheduleDate} = this.state;
+    let {selectedGroup, text, scheduleOption, scheduleDate} = this.state;
 
     // Showing spinner while waiting response from DB
     this.setState({showSendSpinner: true});
@@ -144,8 +143,8 @@ export default class Compose extends React.Component {
                   clinic_id: 1,
                   disease_group: selectedGroup.id,
                   body: text,
-                  frequency: scheduleOption,
-                  scheduled_at: scheduleDate
+                  frequency: (scheduleOption === 'once') ? 'none' : scheduleOption,
+                  scheduled_at: moment.utc(scheduleDate).format('YYYY-MM-DD HH:mm')
                 };
 
     const responseMessage = (scheduleOption == 'none') ?
@@ -174,7 +173,7 @@ export default class Compose extends React.Component {
 
       let redirect = function () {
         clearInterval(showProgressBar);
-        const route = (scheduleOption == 'none') ?
+        const route = (scheduleOption === 'none') ?
                       self.props.router.push("/mailbox/outbox/sent") :
                       self.props.router.push("/mailbox/outbox/scheduled");
         return route
@@ -254,9 +253,11 @@ export default class Compose extends React.Component {
     })
   }
 
-  openSchedulePanel() {
+  toggleSchedulePanel() {
+    const scheduleOption = (this.state.schedulePanel) ? 'none' : 'once';
     this.setState({
-      schedulePanel: !this.state.schedulePanel
+      schedulePanel: !this.state.schedulePanel,
+      scheduleOption: scheduleOption
     })
   }
 
@@ -268,7 +269,7 @@ export default class Compose extends React.Component {
 
   handleInputCalendar(datetime) {
     this.setState({
-      scheduleDate: moment(datetime).format('YYYY-MM-DD HH:mm'),
+      scheduleDate: datetime,
       showScheduledAlert: false
     })
   }
@@ -323,27 +324,22 @@ export default class Compose extends React.Component {
     let progressBar = (showMessageAlert && alertStyle === "success") ?
     (<Progress active bsStyle="success" value={this.state.progressTime} />) : "";
 
-    const inputCalendar = (scheduleOption === 'monthly') ? 'pilih bulan' : 'pilih hari';
-    const renderCalendar = (scheduleOption === 'monthly' || scheduleOption === 'daily') ?
-                            (<Datetime value={scheduleDate}
-                                       inputProps={{placeholder: inputCalendar}}
-                                       onFocus={::this.handleFocusInputCalendar}
-                                       onChange={::this.handleInputCalendar}
-                                       locale="id"
-                                       viewMode={(scheduleOption === 'monthly') ? 'months' : 'days'}
-                              />) : '';
-
     const renderSchedulePanel = (schedulePanel) ?
             (<FormGroup>
               <Col componentClass={ControlLabel} sm={2}>
               </Col>
               <Col sm={3}>
-                {renderCalendar}
+                <Datetime value={scheduleDate}
+                           inputProps={{placeholder: 'Pilih tanggal dan jam'}}
+                           onFocus={::this.handleFocusInputCalendar}
+                           onChange={::this.handleInputCalendar}
+                           locale="id"
+                />
                 <p>
-                  <input id="none" type="radio" value="none" style={{'marginRight': '10px'}}
-                                checked={this.state.scheduleOption === 'none'}
+                  <input id="once" type="radio" value="once" style={{'marginRight': '10px'}}
+                                checked={this.state.scheduleOption === 'once'}
                                 onChange={::this.handleOptionChange} />
-                  <label htmlFor='none'>
+                  <label htmlFor='once'>
                     Kirim sekali saja
                   </label>
                 </p>
@@ -417,21 +413,41 @@ export default class Compose extends React.Component {
                 {renderSchedulePanel}
 
                 <FormGroup>
-                  <Col sm={7}>
+                  <Col sm={2}>
                   </Col>
-                  <Col sm={4}>
-                    <Button onClick={::this.openSchedulePanel} style={{margin: '10px'}}>
+                  <Col sm={3}>
+                    <Button bsStyle="primary" outlined
+                            active={schedulePanel}
+                            onClick={::this.toggleSchedulePanel}
+                            style={{margin: '10px'}}>
                       BERKALA
                     </Button>
-                    <Button bsStyle="primary" onClick={::this.open} style={{margin: '10px'}}>
+                    <Button bsStyle="primary" outlined
+                            onClick={::this.open} style={{margin: '10px'}}>
                       TEMPLATE
                     </Button>
-                    <Button bsStyle="success" onClick={::this.handleSendMessage} style={{margin: '10px'}}>
+                  </Col>
+                  <Col sm={4}>
+                  </Col>
+                  <Col sm={2}>
+                    <Button bsStyle="success" outlined
+                            onClick={::this.handleSendMessage} style={{margin: '10px'}}>
                       {(schedulePanel) ? `SIMPAN PESAN` : `KIRIM PESAN`}
                     </Button>
                   </Col>
                 </FormGroup>
 
+                {/* Shedule Panel */}
+                {renderSchedulePanel}
+
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
+                <FormGroup></FormGroup>
               </Form>
             </PanelBody>
           </Panel>

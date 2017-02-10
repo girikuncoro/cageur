@@ -4,34 +4,36 @@ const abort = require('../../util/abort');
 const ctl = {
   createSubscription(req, res, next) {
     const subscription = {
-      clinic_id: req.body.clinic_id,
-      bank_id: req.body.bank_id,
-      payment_date: req.body.payment_date,
-      amount: req.body.amount,
-      container: req.body.container,
-      transfer_from: req.body.transfer_from,
-      transfer_from_account_holder: req.body.transfer_from_account_holder,
-      transfer_from_bank_account: req.body.transfer_from_bank_account,
-      subscription_start: req.body.subscription_start,
-      subscription_end: req.body.subscription_end,
+      clinicID: req.body['clinic_id'],
+      bankID: req.body['bank_id'],
+      paymentDate: req.body['payment_date'],
+      amount: req.body['amount'],
+      container: req.body['container'],
+      transferFrom: req.body['transfer_from'],
+      transferFromAccountHolder: req.body['transfer_from_account_holder'],
+      transferFromBankAccount: req.body['transfer_from_bank_account'],
+      subscriptionStart: req.body['subscription_start'],
+      subscriptionEnd: req.body['subscription_end'],
     };
 
-    console.log(req.body.bank_id)
-    console.log('test')
-
-    if (!subscription.clinic_id) {
+    if (!subscription.clinicID) {
       throw abort(400, 'Missing required parameters "clinic_id"');
     }
-
-    if (!subscription.bank_id) {
+    if (!subscription.bankID) {
       throw abort(400, 'Missing required parameters "bank_id"');
+    }
+    if (!subscription.paymentDate) {
+      throw abort(400, 'Missing required parameters "payment_date"');
+    }
+    if (!subscription.amount) {
+      throw abort(400, 'Missing required parameters "amount"');
     }
 
     db.any(`
       INSERT INTO subscription(clinic_id, bank_id, payment_date, amount, container, transfer_from, transfer_from_account_holder, transfer_from_bank_account, subscription_start, subscription_end)
-      VALUES($(clinic_id), $(bank_id), $(payment_date), $(amount), $(container), $(transfer_from), $(transfer_from_account_holder), $(transfer_from_bank_account), $(subscription_start), $(subscription_end))
+      VALUES($(clinicID), $(bankID), $(paymentDate), $(amount), $(container), $(transferFrom), $(transferFromAccountHolder), $(transferFromBankAccount), $(subscriptionStart), $(subscriptionEnd))
       RETURNING id, clinic_id, bank_id, payment_date, amount, container,
-      transfer_from, transfer_from_account_holder, transfer_from_bank_account, 
+      transfer_from, transfer_from_account_holder, transfer_from_bank_account,
       subscription_start, subscription_end,
       created_at, updated_at`, subscription
     )
@@ -85,33 +87,39 @@ const ctl = {
   updateSubscription(req, res, next) {
     const subscription = {
       id: req.params.id,
-      clinic_id: req.body.clinic_id,
-      bank_id: req.body.bank_id,
-      payment_date: req.body.payment_date,
+      clinicID: req.body['clinic_id'],
+      bankID: req.body['bank_id'],
+      paymentDate: req.body['payment_date'],
       amount: req.body.amount,
       container: req.body.container,
-      transfer_from: req.body.transfer_from,
-      transfer_from_account_holder: req.body.transfer_from_account_holder,
-      transfer_from_bank_account: req.body.transfer_from_bank_account,
-      subscription_start: req.body.subscription_start,
-      subscription_end: req.body.subscription_end,
+      transferFrom: req.body['transfer_from'],
+      transferFromAccountHolder: req.body['transfer_from_account_holder'],
+      transferFromBankAccount: req.body['transfer_from_bank_account'],
+      subscriptionStart: req.body['subscription_start'],
+      subscriptionEnd: req.body['subscription_end'],
     };
 
-    if (!subscription.clinic_id) {
+    if (!subscription.clinicID) {
       throw abort(400, 'Missing required parameters "clinic_id"');
     }
-
-    if (!subscription.bank_id) {
+    if (!subscription.bankID) {
       throw abort(400, 'Missing required parameters "bank_id"');
     }
+    if (!subscription.paymentDate) {
+      throw abort(400, 'Missing required parameters "payment_date"');
+    }
+    if (!subscription.amount) {
+      throw abort(400, 'Missing required parameters "amount"');
+    }
+
     db.one(`
       UPDATE subscription
-      SET clinic_id=$(clinic_id), bank_id=$(bank_id), payment_date=$(payment_date),
-      amount=$(amount), container=$(container), transfer_from=$(transfer_from),
-      transfer_from_account_holder=$(transfer_from_account_holder), transfer_from_bank_account=$(transfer_from_bank_account),
-      subscription_start=$(subscription_start), subscription_end=$(subscription_end)
+      SET clinic_id=$(clinicID), bank_id=$(bankID), payment_date=$(paymentDate),
+      amount=$(amount), container=$(container), transfer_from=$(transferFrom),
+      transfer_from_account_holder=$(transferFromAccountHolder), transfer_from_bank_account=$(transferFromBankAccount),
+      subscription_start=$(subscriptionStart), subscription_end=$(subscriptionEnd)
       WHERE id = $(id)
-      RETURNING id, clinic_id, bank_id, payment_date, amount, 
+      RETURNING id, clinic_id, bank_id, payment_date, amount,
       container, transfer_from, transfer_from_account_holder, transfer_from_bank_account,
       subscription_start, subscription_end,
       created_at, updated_at`,

@@ -22,6 +22,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors()); // TODO: whitelist the origin for production
 
+/**
+* API routes
+*/
 app.use('/', require('./app/api'));
 app.use('/api/v1/clinic', require('./app/api/clinic'));
 app.use('/api/v1/disease_group', require('./app/api/disease-group'));

@@ -30,6 +30,9 @@ app.use('/api/v1/clinic', require('./app/api/clinic'));
 app.use('/api/v1/disease_group', require('./app/api/disease-group'));
 app.use('/api/v1/patient', require('./app/api/patient'));
 app.use('/api/v1/patient_disease_group', require('./app/api/patient-disease-group'));
+app.use('/api/v1/bank', require('./app/api/bank'));
+app.use('/api/v1/subscription', require('./app/api/subscription'));
+
 app.use('/api/v1/template', require('./app/api/template'));
 app.use('/api/v1/message/send', require('./app/api/message/send'));
 app.use('/api/v1/message/sent', require('./app/api/message/sent'));

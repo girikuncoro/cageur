@@ -69,7 +69,7 @@ CREATE TABLE subscription (
   bank_id INT NOT NULL,
   payment_date TIMESTAMP DEFAULT (now() at time zone 'utc'),
   amount INT NOT NULL,
-  type subscription_type DEFAULT 'new',
+  type subscription_type NOT NULL,
   transfer_from VARCHAR(255) NOT NULL,
   transfer_from_account_holder VARCHAR(255) NOT NULL,
   transfer_from_account_number INT NOT NULL,

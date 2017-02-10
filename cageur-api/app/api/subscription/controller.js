@@ -28,6 +28,9 @@ const ctl = {
     if (!subscription.amount) {
       throw abort(400, 'Missing required parameters "amount"');
     }
+    if (!subscription.type) {
+      throw abort(400, 'Missing required parameters "type"');
+    }
     if (!subscription.transferFrom) {
       throw abort(400, 'Missing required parameters "transfer_from"');
     }
@@ -45,7 +48,7 @@ const ctl = {
     }
 
     db.any(`
-      INSERT INTO subscription(clinic_id, bank_id, payment_date, amount, container, transfer_from, transfer_from_account_holder, transfer_from_bank_account, subscription_start, subscription_end)
+      INSERT INTO subscription(clinic_id, bank_id, payment_date, amount, type, transfer_from, transfer_from_account_holder, transfer_from_account_number, subscription_start, subscription_end)
       VALUES($(clinicID), $(bankID), $(paymentDate), $(amount), $(type), $(transferFrom), $(transferFromAccountHolder), $(transferFromAccountNumber), $(subscriptionStart), $(subscriptionEnd))
       RETURNING id, clinic_id, bank_id, payment_date, amount, type,
       transfer_from, transfer_from_account_holder, transfer_from_account_number,
@@ -125,6 +128,9 @@ const ctl = {
     }
     if (!subscription.amount) {
       throw abort(400, 'Missing required parameters "amount"');
+    }
+    if (!subscription.type) {
+      throw abort(400, 'Missing required parameters "type"');
     }
     if (!subscription.transferFrom) {
       throw abort(400, 'Missing required parameters "transfer_from"');

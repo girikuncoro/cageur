@@ -91,7 +91,7 @@ const ctl = {
     `)
     .then((data) => {
       if (data.length === 0) {
-        throw abort(404, 'No bank data found', `subscription ${subscriptionID} not found`);
+        throw abort(404, 'No subscription data found', `subscription ${subscriptionID} not found`);
       }
       return res.status(200).json({
         status: 'success',

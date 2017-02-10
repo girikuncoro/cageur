@@ -149,7 +149,7 @@ describe('Bank API Test', () => {
 
           expect(err.status).to.equal(400);
           expect(data.status).to.equal('error');
-          expect(data.message.slice(0,27)).to.equal('Missing required parameters');
+          expect(data.message.slice(0, 27)).to.equal('Missing required parameters');
 
           if (i === invalidRequests.length - 1) done();
         });

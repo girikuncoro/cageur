@@ -8,10 +8,10 @@ const ctl = {
       bankID: req.body['bank_id'],
       paymentDate: req.body['payment_date'],
       amount: req.body['amount'],
-      container: req.body['container'],
+      type: req.body['type'],
       transferFrom: req.body['transfer_from'],
       transferFromAccountHolder: req.body['transfer_from_account_holder'],
-      transferFromBankAccount: req.body['transfer_from_bank_account'],
+      transferFromAccountNumber: req.body['transfer_from_account_number'],
       subscriptionStart: req.body['subscription_start'],
       subscriptionEnd: req.body['subscription_end'],
     };
@@ -28,12 +28,27 @@ const ctl = {
     if (!subscription.amount) {
       throw abort(400, 'Missing required parameters "amount"');
     }
+    if (!subscription.transferFrom) {
+      throw abort(400, 'Missing required parameters "transfer_from"');
+    }
+    if (!subscription.transferFromAccountHolder) {
+      throw abort(400, 'Missing required parameters "transfer_from_account_holder"');
+    }
+    if (!subscription.transferFromAccountNumber) {
+      throw abort(400, 'Missing required parameters "transfer_from_account_number"');
+    }
+    if (!subscription.subscriptionStart) {
+      throw abort(400, 'Missing required parameters "subscription_start"');
+    }
+    if (!subscription.subscriptionEnd) {
+      throw abort(400, 'Missing required parameters "subscription_end"');
+    }
 
     db.any(`
       INSERT INTO subscription(clinic_id, bank_id, payment_date, amount, container, transfer_from, transfer_from_account_holder, transfer_from_bank_account, subscription_start, subscription_end)
-      VALUES($(clinicID), $(bankID), $(paymentDate), $(amount), $(container), $(transferFrom), $(transferFromAccountHolder), $(transferFromBankAccount), $(subscriptionStart), $(subscriptionEnd))
-      RETURNING id, clinic_id, bank_id, payment_date, amount, container,
-      transfer_from, transfer_from_account_holder, transfer_from_bank_account,
+      VALUES($(clinicID), $(bankID), $(paymentDate), $(amount), $(type), $(transferFrom), $(transferFromAccountHolder), $(transferFromAccountNumber), $(subscriptionStart), $(subscriptionEnd))
+      RETURNING id, clinic_id, bank_id, payment_date, amount, type,
+      transfer_from, transfer_from_account_holder, transfer_from_account_number,
       subscription_start, subscription_end,
       created_at, updated_at`, subscription
     )
@@ -90,11 +105,11 @@ const ctl = {
       clinicID: req.body['clinic_id'],
       bankID: req.body['bank_id'],
       paymentDate: req.body['payment_date'],
-      amount: req.body.amount,
-      container: req.body.container,
+      amount: req.body['amount'],
+      type: req.body['type'],
       transferFrom: req.body['transfer_from'],
       transferFromAccountHolder: req.body['transfer_from_account_holder'],
-      transferFromBankAccount: req.body['transfer_from_bank_account'],
+      transferFromAccountNumber: req.body['transfer_from_account_number'],
       subscriptionStart: req.body['subscription_start'],
       subscriptionEnd: req.body['subscription_end'],
     };
@@ -111,16 +126,31 @@ const ctl = {
     if (!subscription.amount) {
       throw abort(400, 'Missing required parameters "amount"');
     }
+    if (!subscription.transferFrom) {
+      throw abort(400, 'Missing required parameters "transfer_from"');
+    }
+    if (!subscription.transferFromAccountHolder) {
+      throw abort(400, 'Missing required parameters "transfer_from_account_holder"');
+    }
+    if (!subscription.transferFromAccountNumber) {
+      throw abort(400, 'Missing required parameters "transfer_from_account_number"');
+    }
+    if (!subscription.subscriptionStart) {
+      throw abort(400, 'Missing required parameters "subscription_start"');
+    }
+    if (!subscription.subscriptionEnd) {
+      throw abort(400, 'Missing required parameters "subscription_end"');
+    }
 
     db.one(`
       UPDATE subscription
       SET clinic_id=$(clinicID), bank_id=$(bankID), payment_date=$(paymentDate),
       amount=$(amount), container=$(container), transfer_from=$(transferFrom),
-      transfer_from_account_holder=$(transferFromAccountHolder), transfer_from_bank_account=$(transferFromBankAccount),
+      transfer_from_account_holder=$(transferFromAccountHolder), transfer_from_bank_account=$(transferFromAccountNumber),
       subscription_start=$(subscriptionStart), subscription_end=$(subscriptionEnd)
       WHERE id = $(id)
       RETURNING id, clinic_id, bank_id, payment_date, amount,
-      container, transfer_from, transfer_from_account_holder, transfer_from_bank_account,
+      container, transfer_from, transfer_from_account_holder, transfer_from_account_number,
       subscription_start, subscription_end,
       created_at, updated_at`,
       subscription

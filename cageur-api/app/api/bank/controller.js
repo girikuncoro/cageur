@@ -15,7 +15,7 @@ const ctl = {
 
     db.any(`
       INSERT INTO bank(name, account_holder, account_number)
-      VALUES($(name), $(account_holder), $(account_number))
+      VALUES($(name), $(accountHolder), $(accountNumber))
       RETURNING id, name, account_holder, account_number, created_at, updated_at`, bank
     )
     .then((data) => {
@@ -79,7 +79,7 @@ const ctl = {
 
     db.one(`
       UPDATE bank
-      SET name=$(name), account_holder=$(account_holder), account_number=$(account_number)
+      SET name=$(name), account_holder=$(accountHolder), account_number=$(accountNumber)
       WHERE id = $(id)
       RETURNING id, name, account_holder, account_number, created_at, updated_at`,
       bank

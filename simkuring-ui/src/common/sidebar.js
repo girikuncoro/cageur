@@ -24,7 +24,7 @@ class ApplicationSidebar extends React.Component {
             <Col xs={12}>
               <div className='sidebar-nav-container'>
                 <SidebarNav style={{marginBottom: 0}} ref={(c) => this._nav = c}>
-                  <SidebarNavItem glyph='icon-fontello-gauge' name='Home' href='/' />
+                  <SidebarNavItem glyph='icon-simple-line-icons-users' name='Informasi Pasien' href='/patient-information' />
                 </SidebarNav>
               </div>
             </Col>

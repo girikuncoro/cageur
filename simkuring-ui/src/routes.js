@@ -1,14 +1,15 @@
 import React from 'react';
 import classNames from 'classnames';
 import { IndexRoute, Route } from 'react-router';
-
 import { Grid, Row, Col, MainContainer } from '@sketchpixy/rubix';
 
+/* Common Components */
 import Footer from './common/footer';
 import Header from './common/header';
 import Sidebar from './common/sidebar';
 
-import Home from './routes/home';
+// Patient Information
+import PatientInfo from './routes/patient-info';
 
 class App extends React.Component {
   render() {
@@ -33,6 +34,6 @@ class App extends React.Component {
 
 export default (
   <Route path='/' component={App}>
-    <IndexRoute component={Home} />
+    <Route path="patient-information" component={PatientInfo} />
   </Route>
 );

@@ -35,7 +35,7 @@ const ctl = {
         message: 'user data succesfully added to db',
       });
     })
-    .catch(err => next(err));
+    .catch(err => next('Email address exist'));
   },
 
   getAllUser(req, res, next) {

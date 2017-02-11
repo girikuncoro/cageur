@@ -18,6 +18,7 @@ $ git clone https://github.com/girikuncoro/cageur.git
 ```
 $ cd simkuring-ui
 $ npm install
+$ bower install
 ```
 
 ## Common Development Task

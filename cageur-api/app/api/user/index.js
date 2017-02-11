@@ -1,34 +1,34 @@
 const router = require('express').Router();
-const ctl = require('../users/controller');
+const ctl = require('../user/controller');
 
 /**
-* Insert Users data
-* POST /api/v1/users
+* Insert User data
+* POST /api/v1/user
 */
 router.post('/', ctl.createUser);
 
 /**
-* Retrieve all Users data
-* GET /api/v1/users
+* Retrieve all User data
+* GET /api/v1/user
 */
 router.get('/', ctl.getAllUser);
 
 /**
-* Retrieve single Users data
-* GET /api/v1/users/:id
+* Retrieve single User data
+* GET /api/v1/user/:id
 */
 router.get('/:id', ctl.getSingleUser);
 
 /**
-* Update Users data
-* PUT /api/v1/users/:id
+* Update User data
+* PUT /api/v1/user/:id
 */
 router.put('/:id', ctl.updateUser);
 
 
 /**
 * Remove Users
-* DELETE /api/v1/users/:id
+* DELETE /api/v1/user/:id
 */
 router.delete('/:id', ctl.removeUser);
 

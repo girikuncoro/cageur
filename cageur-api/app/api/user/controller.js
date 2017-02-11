@@ -3,34 +3,30 @@ const abort = require('../../util/abort');
 
 const ctl = {
   createUser(req, res, next) {
-    const users = {
-      role: req.body.role,
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
+    const user = {
+      name: req.body.name,
       email: req.body.email,
       password: req.body.password,
+      role: req.body.role,
     };
 
-    if (!users.role) {
+    if (!user.name) {
+      throw abort(400, 'Missing required parameters "name"');
+    }
+    if (!user.email) {
+      throw abort(400, 'Missing required parameters "email"');
+    }
+    if (!user.password) {
+      throw abort(400, 'Missing required parameters "password"');
+    }
+    if (!user.role) {
       throw abort(400, 'Missing required parameters "role"');
     }
 
-    if (users.role == 1) {
-      throw abort(400, 'you cant use that role');
-    }
-
-    if (!users.email) {
-      throw abort(400, 'Missing required parameters "email"');
-    }
-    
-    if (!users.password) {
-      throw abort(400, 'Missing required parameters "password"');
-    }
-
     db.any(`
-      INSERT INTO users(role, first_name, last_name, email, password)
-      VALUES($(role), $(first_name), $(last_name), $(email), $(password))
-      RETURNING id, role, first_name, last_name, email, created_at, updated_at`, users
+      INSERT INTO users(role, name, email, password)
+      VALUES($(role), $(name), $(email), $(password))
+      RETURNING id, role, name, email, created_at, updated_at`, user
     )
     .then((data) => {
       res.status(200).json({
@@ -43,7 +39,7 @@ const ctl = {
   },
 
   getAllUser(req, res, next) {
-    db.any('SELECT * FROM users')
+    db.any('SELECT * FROM user')
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No user data yet', 'Empty user table');
@@ -52,7 +48,7 @@ const ctl = {
       return res.status(200).json({
         status: 'success',
         data,
-        message: 'Retrieved all users data',
+        message: 'Retrieved all user data',
       });
     })
     .catch(err => next(err));
@@ -63,7 +59,7 @@ const ctl = {
 
     db.any(`
       SELECT *
-      FROM users
+      FROM user
       WHERE id = ${userID}
     `)
     .then((data) => {
@@ -80,31 +76,35 @@ const ctl = {
   },
 
   updateUser(req, res, next) {
-    const users = {
+    const user = {
       id: req.params.id,
-      role: req.body.role,
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
+      name: req.body.name,
       email: req.body.email,
+      password: req.body.password,
+      role: req.body.role,
     };
 
-    if (!users.id) {
+    if (!user.id) {
       throw abort(400, 'Missing required parameters "id"');
     }
-
-    if (!users.role) {
-      throw abort(400, 'Missing required parameters "role"');
+    if (!user.name) {
+      throw abort(400, 'Missing required parameters "name"');
     }
-
-    if (!users.email) {
+    if (!user.email) {
       throw abort(400, 'Missing required parameters "email"');
+    }
+    if (!user.password) {
+      throw abort(400, 'Missing required parameters "password"');
+    }
+    if (!user.role) {
+      throw abort(400, 'Missing required parameters "role"');
     }
 
     db.one(`
       UPDATE users
-      SET role=$(role), first_name=$(first_name), last_name=$(last_name), email=$(email)
+      SET name=$(name), email=$(email), password=$(password), role=$(role)
       WHERE id = $(id)
-      RETURNING id, role, first_name, last_name, email, created_at, updated_at`,
+      RETURNING id, name, email, role, created_at, updated_at`,
       users
     )
     .then((data) => {
@@ -120,7 +120,7 @@ const ctl = {
   removeUser(req, res, next) {
     const userID = req.params.id;
 
-    db.result(`DELETE FROM users WHERE id = ${userID}`)
+    db.result(`DELETE FROM user WHERE id = ${userID}`)
     .then((result) => {
       if (result.rowCount === 0) {
         throw abort(404, 'user not exist or already removed', `${userID} not found`);

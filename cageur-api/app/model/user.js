@@ -3,13 +3,13 @@ const bcrypt = require('bcrypt');
 const ROLES = ['superadmin', 'clinic'];
 
 class User {
-  constructor(db, args) {
-    this.db = db || {};
-
+  constructor(args) {
     this.email = args.email || '';
     this.name = args.name || '';
     this.password = args.password || '';
-    this.role = args.password || '';
+    this.role = args.role || '';
+
+    this.valid = args.email && args.password && args.role;
   }
 
   isValidEmail() {

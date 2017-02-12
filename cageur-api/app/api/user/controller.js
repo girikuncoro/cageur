@@ -1,33 +1,38 @@
 const db = require('../../config/db');
 const abort = require('../../util/abort');
 
+const User = require('../../model/user');
+
 const ctl = {
   createUser(req, res, next) {
-    const user = {
+    const user = new User({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       role: req.body.role,
-    };
+    });
 
-    if (!user.name) {
-      throw abort(400, 'Missing required parameters "name"');
+    if (!user.valid) {
+      throw abort(400, 'Missing required parameters "name" or "email" or "password" or "role"');
     }
-    if (!user.email) {
-      throw abort(400, 'Missing required parameters "email"');
+    if (!user.isValidEmail()) {
+      throw abort(400, 'Invalid email format')
     }
-    if (!user.password) {
-      throw abort(400, 'Missing required parameters "password"');
+    if (!user.isValidRole()) {
+      throw abort(400, 'Invalid role');
     }
-    if (!user.role) {
-      throw abort(400, 'Missing required parameters "role"');
+    if (!user.isValidPassword()) {
+      throw abort(400, 'Invalid password requirement, must contain at least 1 special character, uppercase, alphabet, number and minimum 8 characters')
     }
 
-    db.any(`
-      INSERT INTO user(role, name, email, password)
-      VALUES($(role), $(name), $(email), $(password))
-      RETURNING id, role, name, email, created_at, updated_at`, user
-    )
+    user.encryptPassword()
+    .then(_ => {
+      return db.any(`
+        INSERT INTO user(role, name, email, password)
+        VALUES($(role), $(name), $(email), $(password))
+        RETURNING id, role, name, email, created_at, updated_at`, user
+      );
+    })
     .then((data) => {
       res.status(200).json({
         status: 'success',
@@ -39,7 +44,7 @@ const ctl = {
   },
 
   getAllUser(req, res, next) {
-    db.any('SELECT * FROM user')
+    db.any('SELECT name, email, role FROM user')
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No user data yet', 'Empty user table');
@@ -58,7 +63,7 @@ const ctl = {
     const userID = req.params.id;
 
     db.any(`
-      SELECT *
+      SELECT name, email, role
       FROM user
       WHERE id = ${userID}
     `)
@@ -76,37 +81,40 @@ const ctl = {
   },
 
   updateUser(req, res, next) {
-    const user = {
-      id: req.params.id,
+    const userID = req.params.id;
+    const user = new User({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       role: req.body.role,
-    };
+    });
 
     if (!user.id) {
       throw abort(400, 'Missing required parameters "id"');
     }
-    if (!user.name) {
-      throw abort(400, 'Missing required parameters "name"');
+    if (!user.valid) {
+      throw abort(400, 'Missing required parameters "name" or "email" or "password" or "role"');
     }
-    if (!user.email) {
-      throw abort(400, 'Missing required parameters "email"');
+    if (!user.isValidEmail()) {
+      throw abort(400, 'Invalid email format')
     }
-    if (!user.password) {
-      throw abort(400, 'Missing required parameters "password"');
+    if (!user.isValidRole()) {
+      throw abort(400, 'Invalid role');
     }
-    if (!user.role) {
-      throw abort(400, 'Missing required parameters "role"');
+    if (!user.isValidPassword()) {
+      throw abort(400, 'Invalid password requirement, must contain at least 1 special character, uppercase, alphabet, number and minimum 8 characters')
     }
 
-    db.one(`
-      UPDATE users
-      SET name=$(name), email=$(email), password=$(password), role=$(role)
-      WHERE id = $(id)
-      RETURNING id, name, email, role, created_at, updated_at`,
-      users
-    )
+    user.encryptPassword()
+    .then(_ => {
+      return db.one(`
+        UPDATE users
+        SET name=$(name), email=$(email), password=$(password), role=$(role)
+        WHERE id = $(id)
+        RETURNING id, name, email, role, created_at, updated_at`,
+        user
+      );
+    })
     .then((data) => {
       res.status(200).json({
         status: 'success',

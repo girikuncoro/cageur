@@ -28,7 +28,7 @@ const ctl = {
     user.encryptPassword()
     .then(_ => {
       return db.any(`
-        INSERT INTO user(role, name, email, password)
+        INSERT INTO cageur_user(role, name, email, password)
         VALUES($(role), $(name), $(email), $(password))
         RETURNING id, role, name, email, created_at, updated_at`, user
       );
@@ -40,11 +40,11 @@ const ctl = {
         message: 'user data succesfully added to db',
       });
     })
-    .catch(err => next('Email address exist'));
+    .catch(err => next(abort(400, 'Email address exist')));
   },
 
   getAllUser(req, res, next) {
-    db.any('SELECT name, email, role FROM user')
+    db.any('SELECT id, name, email, role FROM cageur_user')
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No user data yet', 'Empty user table');
@@ -63,8 +63,8 @@ const ctl = {
     const userID = req.params.id;
 
     db.any(`
-      SELECT name, email, role
-      FROM user
+      SELECT id, name, email, role
+      FROM cageur_user
       WHERE id = ${userID}
     `)
     .then((data) => {
@@ -89,9 +89,6 @@ const ctl = {
       role: req.body.role,
     });
 
-    if (!user.id) {
-      throw abort(400, 'Missing required parameters "id"');
-    }
     if (!user.valid) {
       throw abort(400, 'Missing required parameters "name" or "email" or "password" or "role"');
     }
@@ -108,9 +105,9 @@ const ctl = {
     user.encryptPassword()
     .then(_ => {
       return db.one(`
-        UPDATE users
+        UPDATE cageur_user
         SET name=$(name), email=$(email), password=$(password), role=$(role)
-        WHERE id = $(id)
+        WHERE id = ${userID}
         RETURNING id, name, email, role, created_at, updated_at`,
         user
       );
@@ -128,7 +125,7 @@ const ctl = {
   removeUser(req, res, next) {
     const userID = req.params.id;
 
-    db.result(`DELETE FROM user WHERE id = ${userID}`)
+    db.result(`DELETE FROM cageur_user WHERE id = ${userID}`)
     .then((result) => {
       if (result.rowCount === 0) {
         throw abort(404, 'user not exist or already removed', `${userID} not found`);

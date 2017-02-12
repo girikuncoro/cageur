@@ -174,6 +174,8 @@ CREATE TABLE cageur_user (
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id)
 );
+DROP INDEX IF EXISTS distinct_email;
+CREATE UNIQUE INDEX distinct_email ON cageur_user (email);
 
 -- In Postgres, updated timestamp
 -- must be performed manually through trigger

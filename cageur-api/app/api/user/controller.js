@@ -24,7 +24,7 @@ const ctl = {
     }
 
     db.any(`
-      INSERT INTO users(role, name, email, password)
+      INSERT INTO user(role, name, email, password)
       VALUES($(role), $(name), $(email), $(password))
       RETURNING id, role, name, email, created_at, updated_at`, user
     )

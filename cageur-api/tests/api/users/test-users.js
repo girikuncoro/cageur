@@ -199,7 +199,7 @@ describe('Bank API Test', () => {
 
   describe('PUT /api/v1/bank/:id', () => {
     it('should update bank data', (done) => {
-      const updateClinic = {
+      const updateBank = {
         name: 'Bank Test Update',
         account_holder: 'account holder Update',
         account_number: '321',

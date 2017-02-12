@@ -1,4 +1,5 @@
 const db = require('../../config/db');
+
 const abort = require('../../util/abort');
 
 const ctl = {
@@ -10,7 +11,7 @@ const ctl = {
     };
 
     if (!clinic.name) {
-      throw abort(400, 'Missing required parameters "name"');
+      throw abort(400, 'Missing required parameters "name" ');
     }
 
     db.any(`

@@ -1,11 +1,10 @@
 const db = require('../../config/db');
+
 const abort = require('../../util/abort');
 
 const ctl = {
   createDiseaseGroup(req, res, next) {
-    const diseaseGroup = {
-      name: req.body.name,
-    };
+    const diseaseGroup = { name: req.body.name };
 
     if (!diseaseGroup.name) {
       throw abort(400, 'Missing required parameters "name"');

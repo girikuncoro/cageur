@@ -1,54 +1,30 @@
-// auth.js
-var passport = require("passport");  
-var passportJWT = require("passport-jwt");  
-// var users = require("./users.js");  
+const passport = require('passport');  
 
+const passportJWT = require('passport-jwt');  
 
-const login = require('./app/api/users/login.js');
+const login = require('./app/api/users/login');
+
 const users = login.getAllUser()
 
+const cfg = require('./config');  
 
-var cfg = require("./config.js");  
-var ExtractJwt = passportJWT.ExtractJwt;  
-var Strategy = passportJWT.Strategy;  
-var params = {  
-    secretOrKey: cfg.jwtSecret,
-    jwtFromRequest: ExtractJwt.fromAuthHeader()
-};
+const ExtractJwt = passportJWT.ExtractJwt;  
+const Strategy = passportJWT.Strategy;  
+
+const params = { secretOrKey: cfg.jwtSecret, jwtFromRequest: ExtractJwt.fromAuthHeader() };
 
 module.exports = function() {  
-    var strategy = new Strategy(params, function(payload, done) {
-        // var user = users[payload.id] || null;
-        // if (user) {
-        //     return done(null, {
-        //         id: user.id
-        //     });
-        // } else {
-        //     return done(new Error("User not found"), null);
-        // }
-        // users.getAllUser().then(data => {
-            
+    const strategy = new Strategy(params, function(payload, done) {
         users.then(data => {
-            let found = data.find(user => user.id == payload.id);
-
-            if (!found) {
-                return done(new Error("User not found"), null);
-            }
-
-            return done(null, {
-                id: found.id
-            });
+            const found = data.find(user => user.id === payload.id);
+            if (!found) { return done(new Error('User not found'), null); }
+            return done('null', { id: found.id });
         })
     });
     passport.use(strategy);
     return {
-        initialize: function() {
-            return passport.initialize();
-        },
-        authenticate: function() {
-            console.log(passport.authenticate("jwt", cfg.jwtSession))
-            // return passport.authenticate("jwt", cfg.jwtSession);
-            return passport.authenticate("jwt", { session : false } );
-        }
+        initialize: function() { return passport.initialize(); },
+        authenticate: function() { return passport.authenticate('jwt', {session: false} ); }
     };
 };
+

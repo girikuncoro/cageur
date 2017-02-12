@@ -16,9 +16,6 @@ const ctl = {
       subscription_end: req.body.subscription_end,
     };
 
-    console.log(req.body.bank_id)
-    console.log('test')
-
     if (!subscription.clinic_id) {
       throw abort(400, 'Missing required parameters "clinic_id"');
     }

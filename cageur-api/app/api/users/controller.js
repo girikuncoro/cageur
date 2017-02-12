@@ -14,8 +14,8 @@ const ctl = {
     if (!users.role) {
       throw abort(400, 'Missing required parameters "role"');
     }
-
-    if (users.role == 1) {
+    
+    if (users.role === 1) {
       throw abort(400, 'you cant use that role');
     }
 

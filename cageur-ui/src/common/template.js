@@ -1,6 +1,6 @@
 import React from 'react';
 import {Modal, Button, Accordion, BPanel} from '@sketchpixy/rubix';
-
+import Spinner from 'react-spinner';
 import {toTitleCase} from '../utilities/util';
 
 export default class Template extends React.Component {
@@ -13,7 +13,7 @@ export default class Template extends React.Component {
   }
 
   render() {
-    let {showModal, handleHide, template, group, handleUse} = this.props;
+    let {showModal, handleHide, template, group, handleUse, showSpinner} = this.props;
     let self = this;
 
     return (
@@ -23,6 +23,7 @@ export default class Template extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <Accordion defaultActiveKey='1'>
+          {(showSpinner) ? <Spinner style={{marginBottom: "50px"}}/> : ""}
           {template.map(function (d,i) {
             let title = (d.title.length > 50) ?
                         `${d.title.substr(0,50)} ...` :

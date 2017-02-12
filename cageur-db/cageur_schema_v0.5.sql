@@ -161,6 +161,22 @@ CREATE TABLE message_analytics (
 DROP INDEX IF EXISTS distinct_time;
 CREATE UNIQUE INDEX distinct_time ON message_analytics (clinic_id, disease_group_id, time);
 
+DROP TYPE IF EXISTS user_role;
+CREATE TYPE user_role AS ENUM ('superadmin', 'clinic');
+DROP TABLE IF EXISTS cageur_user;
+CREATE TABLE cageur_user (
+  id SERIAL NOT NULL,
+  name VARCHAR(255),
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role user_role DEFAULT 'clinic',
+  created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  PRIMARY KEY (id)
+);
+DROP INDEX IF EXISTS distinct_email;
+CREATE UNIQUE INDEX distinct_email ON cageur_user (email);
+
 -- In Postgres, updated timestamp
 -- must be performed manually through trigger
 CREATE OR REPLACE FUNCTION update_column_updated_at()
@@ -219,4 +235,9 @@ CREATE TRIGGER update_updated_at BEFORE UPDATE
 DROP TRIGGER IF EXISTS update_updated_at ON message_analytics;
 CREATE TRIGGER update_updated_at BEFORE UPDATE
   ON message_analytics FOR EACH ROW EXECUTE PROCEDURE
+  update_column_updated_at();
+
+DROP TRIGGER IF EXISTS update_updated_at ON cageur_user;
+CREATE TRIGGER update_updated_at BEFORE UPDATE
+  ON cageur_user FOR EACH ROW EXECUTE PROCEDURE
   update_column_updated_at();

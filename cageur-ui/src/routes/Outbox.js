@@ -1,125 +1,46 @@
-import React from 'react';
-import classNames from 'classnames';
+import React, {Component} from 'react';
 import { withRouter } from 'react-router';
 import {
-  Row,Col,Icon,Grid,Label,Badge,Panel,
-  Button,PanelLeft,PanelBody,ListGroup,
-  LoremIpsum,ButtonGroup,ButtonToolbar,
-  ListGroupItem,PanelContainer,
+  Row, Col, Icon, Grid, Panel, Label,
+  Button, PanelLeft, PanelBody, ListGroup,
+  ButtonToolbar, ListGroupItem, PanelContainer,
 } from '@sketchpixy/rubix';
 import {API_URL, API_HEADERS} from '../common/constant';
 import {toTitleCase} from '../utilities/util';
 import moment from 'moment';
+import update from 'immutability-helper';
+import _ from 'underscore';
 
-class InboxNavItem extends React.Component {
-  render() {
-    return (
-      <Grid>
-        <Row>
-          <Col xs={8} collapseLeft collapseRight>
-            <Icon glyph={this.props.glyph} className='inbox-item-icon'/>
-            <span>{this.props.title}</span>
-          </Col>
-          <Col xs={4} className='text-right' collapseLeft collapseRight>
-            <div style={{marginTop: 5}}><Label className={this.props.labelClass}>{this.props.labelValue}</Label></div>
-          </Col>
-        </Row>
-      </Grid>
-    );
-  }
-}
-
-class OutboxNavTag extends React.Component {
-  render() {
-    return (
-      <Grid>
-        <Row>
-          <Col xs={12} collapseLeft collapseRight>
-            <Badge className={this.props.badgeClass}>{' '}</Badge>
-            <span>{this.props.title}</span>
-          </Col>
-        </Row>
-      </Grid>
-    );
-  }
-}
-
-@withRouter
-class OutboxItem extends React.Component {
-  handleClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    let {name,status,content,date} = this.props;
-    let group_name = name;
-    this.props.router.push(`/mailbox/mail/${group_name}/${status}/${content}/${date}`);
-  }
-  render() {
-    var classes = classNames({
-      'inbox-item': true,
-      'unread': this.props.unread
-    });
-
-    var linkProps = {
-      href: '/mailbox/mail',
-      onClick: ::this.handleClick,
-      className: classes,
-    };
-
-    return (
-      <a {...linkProps}>
-        <div className='inbox-avatar'>
-          <div className='inbox-avatar-name'>
-            <div className='fg-darkgrayishblue75'>{this.props.name}</div>
-            <div><small><Badge className={this.props.labelClass} style={{marginRight: 5, display: this.props.labelValue ? 'inline':'none'}}>{this.props.labelValue}</Badge><span>{this.props.description}</span></small></div>
-          </div>
-          <div className='inbox-date hidden-sm hidden-xs fg-darkgray40 text-right'>
-            <div style={{position: 'relative', top: 5}}>{this.props.date}</div>
-            <div style={{position: 'relative', top: -5}}><small>#{this.props.itemId}</small></div>
-          </div>
-        </div>
-      </a>
-    );
-  }
-}
-
-@withRouter
-export default class Outbox extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      sent_messages: []
-    };
-  }
-
-  componentDidMount() {
-
-    // Fetching Sent Messages Information
-    fetch(`${API_URL}/message/sent/clinic/1`, {
-      headers: API_HEADERS
-    })
-    .then((response) => response.json())
-    .then((responseData) => {
-      let sent_messages = [];
-      responseData.data.map(function(d,i) {
-        sent_messages.push(
-          {
-            group_name: toTitleCase(d["disease_group"]["name"]),
-            title: d["title"],
-            status: d["processed"],
-            content: d["content"],
-            date: moment(d["updated_at"]).locale("id").format("Do MMMM YY")
-          }
+class OutboxNavItem extends Component {
+    render() {
+        return (
+            <Grid>
+                <Row>
+                    <Col xs={8} collapseLeft collapseRight>
+                        <Icon glyph={this.props.glyph} className='inbox-item-icon'/>
+                        <span>{this.props.title}</span>
+                    </Col>
+                    <Col xs={4} className='text-right' collapseLeft collapseRight>
+                        <div style={{marginTop: 5}}><Label className={this.props.labelClass}>{this.props.labelValue}</Label></div>
+                    </Col>
+                </Row>
+            </Grid>
         );
-      })
-      this.setState({sent_messages: sent_messages});
-    })
-    .catch((error) => {
-      console.log('Error fetching and parsing data', error);
-    })
-  }
+    }
+}
+
+@withRouter
+export default class Outbox extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            sentMessages: undefined,
+            selectedMessage: null,
+            checkedAll: false
+        };
+    }
 
   handleClick(e) {
     e.preventDefault();
@@ -128,8 +49,112 @@ export default class Outbox extends React.Component {
     this.props.router.push('/mailbox/compose');
   }
 
+  handleClickNav(route) {
+    this.props.router.push(`/mailbox/outbox${route}`);
+  }
+
+  setSelectedMessage(selectedMessage) {
+    this.setState({
+        selectedMessage: selectedMessage
+    })
+  }
+
+  handleSelectItem(itemId) {
+      let {selectedMessage} = this.state;
+      this.setState({
+        selectedMessage: update(selectedMessage, {[itemId]: {$set: !selectedMessage[itemId]}})
+      })
+  }
+
+  handleSelectAll() {
+    const {checkedAll, selectedMessage} = this.state;
+    const newSelectedMessage = selectedMessage;
+    Object.keys(selectedMessage).forEach(function(key) {
+      newSelectedMessage[key] = !checkedAll;
+    })
+
+    this.setState({
+      selectedMessage: newSelectedMessage,
+      checkedAll: !checkedAll
+    })
+  }
+
+  handleDelete() {
+      const {selectedMessage} = this.state;
+      const self = this;
+      const endpoint = `${'/message/schedule/'}`;
+
+      Object.keys(selectedMessage).forEach(function(d,i) {
+          if(selectedMessage[d]) {
+            fetch(`${API_URL}${endpoint}${d}`, {
+              method: 'delete',
+              headers: API_HEADERS
+            })
+            .then((response) => response.json())
+            .then((responseData) => {
+                self.handleFetching();
+            })
+            .catch((error) => {
+              console.log('Error fetching and parsing data', error);
+            });
+          }
+      })
+  }
+
+  handleFetching() {
+    // Fetching Sent Messages Information
+    fetch(`${API_URL}/message/schedule/clinic/1`, {
+      headers: API_HEADERS
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      let sentMessages = [], selectedMessage = {};
+      if (responseData.data !== undefined) {
+        responseData.data.map(function(d,i) {
+          sentMessages.push(
+            {
+              group_name: toTitleCase(d["disease_group"]["name"]),
+              title: d["title"],
+              status: d["frequency"],
+              content: d["content"],
+              date: moment(d["schedule_at"]).locale("id").format("Do MMMM YY, HH:mm"),
+              message_id: d["id"]
+            }
+          );
+
+          selectedMessage[d["id"]] = false;
+        })
+
+        this.setState({
+            sentMessages: sentMessages,
+            selectedMessage: selectedMessage
+        });
+
+      } else {
+        this.setState({
+            sentMessages: sentMessages,
+            selectedMessage: selectedMessage
+        });
+      }
+
+    })
+    .catch((error) => {
+      console.log('Error fetching and parsing data', error);
+    })
+  }
+
+
   render() {
-    let {sent_messages} = this.state;
+    const {selectedMessage, checkedAll, sentMessages} = this.state;
+    const self = this;
+
+    const renderDeleteButton = (_.findKey(selectedMessage, function(d) {return d === true}))
+                              ?
+                              (<Button bsStyle='danger' onClick={::this.handleDelete}>
+                                  <Icon glyph='icon-fontello-trash-1'/>
+                              </Button>) :
+                              '';
+
     return (
       <div>
         <PanelContainer className='inbox' collapseBottom controls={false}>
@@ -139,11 +164,10 @@ export default class Outbox extends React.Component {
                 <Row>
                   <Col xs={8} style={{paddingTop: 12.5}}>
                     <ButtonToolbar className='inbox-toolbar'>
-                      <ButtonGroup>
                         <Button bsStyle='blue' onClick={::this.handleClick}>
                           <Icon glyph='icon-fontello-edit-1'/>
                         </Button>
-                      </ButtonGroup>
+                        {renderDeleteButton}
                     </ButtonToolbar>
                   </Col>
                   <Col xs={4} className='text-right'>
@@ -165,9 +189,17 @@ export default class Outbox extends React.Component {
                       <Col xs={12}>
                         <h6><small className='fg-darkgray'>KOTAK PESAN</small></h6>
                         <ListGroup className='list-bg-blue'>
-                          <ListGroupItem active>
-                            <InboxNavItem glyph='icon-dripicons-return' title='Pesan Keluar' />
-                          </ListGroupItem>
+                            <div onClick={this.handleClickNav.bind(this,'/sent')} style={{cursor: 'pointer'}}>
+                                <ListGroupItem active={(this.props.location.pathname === '/mailbox/outbox/sent')}>
+                                  <OutboxNavItem glyph='icon-dripicons-return' title='Keluar' />
+                                </ListGroupItem>
+                            </div>
+
+                            <div onClick={this.handleClickNav.bind(this,'/scheduled')} style={{cursor: 'pointer'}}>
+                                <ListGroupItem active={(this.props.location.pathname === '/mailbox/outbox/scheduled')}>
+                                  <OutboxNavItem glyph='icon-dripicons-calendar' title='Terjadwal' />
+                                </ListGroupItem>
+                            </div>
                         </ListGroup>
                         <hr/>
                         <h6><small className='fg-darkgray'>LAINNYA</small></h6>
@@ -181,34 +213,18 @@ export default class Outbox extends React.Component {
                   <Grid>
                     <Row>
                       <Col xs={12}>
-                        {sent_messages.map(function(d,i) {
-                          let labelValue, labelColor;
-                          switch(d.status) {
-                            case "delivered":
-                              labelValue = "terkirim";
-                              labelColor = "green";
-                              break;
-                            case "pending":
-                              labelValue = "tertunda";
-                              labelColor = "yellow";
-                              break;
-                            case "failed":
-                              labelValue = "gagal";
-                              labelColor = "red";
-                              break;
-                          }
-                          return (
-                            <OutboxItem key={i}
-                                        itemId={i}
-                                        name={d.group_name}
-                                        labelValue={labelValue}
-                                        labelClass={`bg-${labelColor} fg-white`}
-                                        description={<strong>{`${d.title} ...`}</strong>}
-                                        status={d.status}
-                                        content={d.content}
-                                        date={d.date} />
-                          )
-                        })}
+                        {React.Children.map(
+                               this.props.children,
+                               child => React.cloneElement(child,
+                                           {
+                                              handleSelectItem: self.handleSelectItem.bind(self),
+                                              handleSelectAll: self.handleSelectAll.bind(self),
+                                              setSelectedMessage: self.setSelectedMessage.bind(self),
+                                              selectedMessage: selectedMessage,
+                                              checkedAll: checkedAll,
+                                              sentMessages: sentMessages
+                                           })
+                        )}
                       </Col>
                     </Row>
                   </Grid>

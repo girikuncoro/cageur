@@ -80,18 +80,18 @@ describe('Message Sent API Test', () => {
             diseaseGroupID: currDiseaseGroupID,
             diseaseGroupName: 'hipertensi',
             patientID: null,
-            title: 'Some title',
-            content: 'Some content',
-            processed: 'delivered',
+            title: 'Another title',
+            content: 'Another content',
+            processed: 'pending',
           },
           {
             clinicID: currClinicID,
             diseaseGroupID: currDiseaseGroupID,
             diseaseGroupName: 'hipertensi',
             patientID: null,
-            title: 'Another title',
-            content: 'Another content',
-            processed: 'pending',
+            title: 'Some title',
+            content: 'Some content',
+            processed: 'delivered',
           },
         ];
 
@@ -102,15 +102,16 @@ describe('Message Sent API Test', () => {
         r.data.forEach((data, i) => {
           expect(data['clinic_id']).to.equal(validSentMsg[i].clinicID);
           expect(data['disease_group_id']).to.equal(validSentMsg[i].diseaseGroupID);
+          expect(data['disease_group']['name']).to.equal(validSentMsg[i].diseaseGroupName);
           expect(data['patient_id']).to.equal(null);
           expect(data['title']).to.equal(validSentMsg[i].title);
           expect(data['content']).to.equal(validSentMsg[i].content);
           expect(data['processed']).to.equal(validSentMsg[i].processed);
 
           if (i === 0) {
-            expect(data['processed_at']).to.not.equal(null);
-          } else {
             expect(data['processed_at']).to.equal(null);
+          } else {
+            expect(data['processed_at']).to.not.equal(null);
           }
 
           if (i === r.data.length - 1) done();
@@ -131,18 +132,18 @@ describe('Message Sent API Test', () => {
             diseaseGroupID: currDiseaseGroupID,
             diseaseGroupName: 'hipertensi',
             patientID: null,
-            title: 'Some title',
-            content: 'Some content',
-            processed: 'delivered',
+            title: 'Another title',
+            content: 'Another content',
+            processed: 'pending',
           },
           {
             clinicID: currClinicID,
             diseaseGroupID: currDiseaseGroupID,
             diseaseGroupName: 'hipertensi',
             patientID: null,
-            title: 'Another title',
-            content: 'Another content',
-            processed: 'pending',
+            title: 'Some title',
+            content: 'Some content',
+            processed: 'delivered',
           },
         ];
 
@@ -153,15 +154,16 @@ describe('Message Sent API Test', () => {
         r.data.forEach((data, i) => {
           expect(data['clinic_id']).to.equal(validSentMsg[i].clinicID);
           expect(data['disease_group_id']).to.equal(validSentMsg[i].diseaseGroupID);
+          expect(data['disease_group']['name']).to.equal(validSentMsg[i].diseaseGroupName);
           expect(data['patient_id']).to.equal(null);
           expect(data['title']).to.equal(validSentMsg[i].title);
           expect(data['content']).to.equal(validSentMsg[i].content);
           expect(data['processed']).to.equal(validSentMsg[i].processed);
 
           if (i === 0) {
-            expect(data['processed_at']).to.not.equal(null);
-          } else {
             expect(data['processed_at']).to.equal(null);
+          } else {
+            expect(data['processed_at']).to.not.equal(null);
           }
 
           if (i === r.data.length - 1) done();
@@ -173,7 +175,7 @@ describe('Message Sent API Test', () => {
       const invalidClinicID = currClinicID + 999;
 
       chai.request(app)
-      .get(`/api/v1/message/sent/${invalidClinicID}`)
+      .get(`/api/v1/message/sent/clinic/${invalidClinicID}`)
       .then((_) => {}, (err) => {
         const data = err.response.body;
 

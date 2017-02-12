@@ -22,6 +22,8 @@
   ],
   "dependencies": {
     "PACE": "pace#~1.0.2",
-    "datatables": "^1.10.12"
+    "datatables": "^1.10.12",
+    "d3": "3.5.17",
+    "c3": "^0.4.11"
   }
 }

@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 // test restricted page
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
   res.status(200).json({
     status: 'success',
     data: {

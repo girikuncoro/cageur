@@ -13,7 +13,7 @@ module.exports = {
   // auth
   jwtSecret: process.env.JWT_SECRET || 'c49eu12',
   jwtSession: {
-      session: true
+    session: true,
   },
   jwtExpiresIn: 10080, // in seconds
 

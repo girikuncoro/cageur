@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style, max-len, no-useless-escape */
 const bcrypt = require('bcrypt');
 
 const ROLES = ['superadmin', 'clinic'];
@@ -29,13 +30,13 @@ class User {
 
   encryptPassword() {
     return new Promise((resolve, reject) => {
-      bcrypt.genSalt(10, (err, salt) => {
+      return bcrypt.genSalt(10, (err, salt) => {
         if (err) {
           return reject('Salt error: ', err);
         }
-        bcrypt.hash(this.password, salt, (err, hash) => {
-          if (err) {
-            return reject('Hash error: ', err);
+        return bcrypt.hash(this.password, salt, (hashErr, hash) => {
+          if (hashErr) {
+            return reject('Hash error: ', hashErr);
           }
           this.password = hash;
           return resolve(true);

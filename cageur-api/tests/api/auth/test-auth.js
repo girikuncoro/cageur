@@ -50,7 +50,7 @@ describe('Auth API Test', () => {
         expect(r.token.split(' ')[0]).to.equal('JWT');
 
         done();
-      })
+      });
     });
 
     it('should return 400 for missing parameters', (done) => {
@@ -93,7 +93,7 @@ describe('Auth API Test', () => {
         expect(data.message).to.equal('Authentication failed. Email and password not matched.');
 
         done();
-      })
+      });
     });
 
     it('should return 401 unauthorized for invalid email', (done) => {
@@ -113,7 +113,7 @@ describe('Auth API Test', () => {
         expect(data.message).to.equal('Authentication failed. User not found.');
 
         done();
-      })
+      });
     });
   });
 });

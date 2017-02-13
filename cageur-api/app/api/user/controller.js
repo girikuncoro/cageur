@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 const db = require('../../config/db');
 const abort = require('../../util/abort');
 
@@ -16,17 +17,17 @@ const ctl = {
       throw abort(400, 'Missing required parameters "name" or "email" or "password" or "role"');
     }
     if (!user.isValidEmail()) {
-      throw abort(400, 'Invalid email format')
+      throw abort(400, 'Invalid email format');
     }
     if (!user.isValidRole()) {
       throw abort(400, 'Invalid role');
     }
     if (!user.isValidPassword()) {
-      throw abort(400, 'Invalid password requirement, must contain at least 1 special character, uppercase, alphabet, number and minimum 8 characters')
+      throw abort(400, 'Invalid password requirement, must contain at least 1 special character, uppercase, alphabet, number and minimum 8 characters');
     }
 
     user.encryptPassword()
-    .then(_ => {
+    .then((_) => {
       return db.any(`
         INSERT INTO cageur_user(role, name, email, password)
         VALUES($(role), $(name), $(email), $(password))
@@ -40,7 +41,7 @@ const ctl = {
         message: 'user data succesfully added to db',
       });
     })
-    .catch(err => next(abort(400, 'Email address exist')));
+    .catch(err => next(abort(400, 'Email address exist', err)));
   },
 
   getAllUser(req, res, next) {
@@ -93,17 +94,17 @@ const ctl = {
       throw abort(400, 'Missing required parameters "name" or "email" or "password" or "role"');
     }
     if (!user.isValidEmail()) {
-      throw abort(400, 'Invalid email format')
+      throw abort(400, 'Invalid email format');
     }
     if (!user.isValidRole()) {
       throw abort(400, 'Invalid role');
     }
     if (!user.isValidPassword()) {
-      throw abort(400, 'Invalid password requirement, must contain at least 1 special character, uppercase, alphabet, number and minimum 8 characters')
+      throw abort(400, 'Invalid password requirement, must contain at least 1 special character, uppercase, alphabet, number and minimum 8 characters');
     }
 
     user.encryptPassword()
-    .then(_ => {
+    .then((_) => {
       return db.one(`
         UPDATE cageur_user
         SET name=$(name), email=$(email), password=$(password), role=$(role)

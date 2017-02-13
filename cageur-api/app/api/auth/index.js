@@ -8,8 +8,8 @@
 *
 * in headers, you need to pass this
 * Authorization : JWT <token>
-* Example :
-* Authorization : JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MX0.N0D7YmoU7HJQ9MSQ15QmSLhbPhCplNfaI8haFBfmu2s
+* Example:
+* Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MX0
 *
 */
 const jwt = require('jsonwebtoken');
@@ -37,7 +37,7 @@ router.post('/', (req, res, next) => {
       userFound = user;
       return User.comparePassword(password, user.password);
     },
-    (_) => { throw abort(401, 'Authentication failed. User not found.', `${email} not found`) }
+    (_) => { throw abort(401, 'Authentication failed. User not found.', `${email} not found`); }
   )
   .then((isMatch) => {
     if (!isMatch) {

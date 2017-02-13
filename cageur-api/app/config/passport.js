@@ -13,8 +13,8 @@ module.exports = (passport) => {
   passport.use(new JwtStrategy(params, (payload, done) => {
     User.findOneByID(db, payload.id)
     .then(
-      (user) => done(null, user),
-      (err) => done(err, false)
-    )
+      user => done(null, user),
+      err => done(err, false)
+    );
   }));
 };

@@ -13,15 +13,18 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
 class PatientInfoTable extends Component {
   render() {
-    let {patients} = this.props;
+    let {patients, showSpinner} = this.props;
 
     const cellEdit = {
       mode: 'click',
       blurToSave: true
     };
 
+    const noDataText = (showSpinner && patients.length === 0) ?
+                        <Spinner style={{marginTop: '40px'}}/> :
+                        'Data tidak ditemukan';
     const options = {
-      noDataText: <Spinner style={{marginTop: '40px'}}/>
+      noDataText: noDataText
     }
 
     return (
@@ -100,6 +103,7 @@ export default class PatientInfo extends Component {
 
     this.state = {
       patients: [],
+      showSpinner: false,
       clinic: [],
       selectedClinic: null,
     };
@@ -135,6 +139,7 @@ export default class PatientInfo extends Component {
 
     // Showing spinner while waiting response from DB
     this.setState({
+      showSpinner: true,
       patients: []
     });
 
@@ -179,6 +184,7 @@ export default class PatientInfo extends Component {
 
       })
       this.setState({
+        showSpinner: true,
         patients: patients
       });
     })
@@ -188,11 +194,12 @@ export default class PatientInfo extends Component {
   }
 
   render() {
-    const {patients, selectedClinic} = this.state;
+    const {patients, selectedClinic, showSpinner} = this.state;
     const clinicId = (selectedClinic) ? selectedClinic['id'] : 'undefined';
 
     const renderPatiens = (patients) ?
-                          (<PatientInfoTable patients={patients}/>) : '';
+                          (<PatientInfoTable  patients={patients}
+                                              showSpinner={showSpinner}/>) : '';
 
     return (
       <div>

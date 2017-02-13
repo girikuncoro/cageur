@@ -15,6 +15,7 @@ module.exports = {
   jwtSession: {
       session: true
   },
+  jwtExpiresIn: 10080, // in seconds
 
   // line api
   lineChannelID: process.env.LINE_CHANNEL_ID,

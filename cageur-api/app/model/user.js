@@ -53,9 +53,25 @@ class User {
   }
 
   // find user with given id
-  static findOne(db, userID) {
+  static findOneByID(db, userID) {
     return new Promise((resolve, reject) => {
       db.any(`SELECT * FROM cageur_user WHERE id = ${userID}`)
+      .then(
+        (user) => {
+          if (user.length === 0) {
+            reject('User not exist');
+          }
+          resolve(user);
+        },
+        err => reject(err)
+      );
+    });
+  }
+
+  // find user with given email
+  static findOneByEmail(db, email) {
+    return new Promise((resolve, reject) => {
+      db.any(`SELECT * FROM cageur_user WHERE email = ${email}`)
       .then(
         (user) => {
           if (user.length === 0) {

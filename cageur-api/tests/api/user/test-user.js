@@ -8,8 +8,6 @@ chai.use(require('chai-http'));
 const db = require('../../../app/config/db');
 
 describe('User API Test', () => {
-  let currUserID;
-
   const sqlInsertUser = (data) => {
     return `
       INSERT INTO cageur_user(name, email, password, role)
@@ -24,8 +22,7 @@ describe('User API Test', () => {
       password: 'Cageur@123!',
       role: 'clinic',
     }))
-    .then((data) => {
-      currUserID = data.id;
+    .then((_) => {
       return db.any(sqlInsertUser({
         name: 'Baba',
         email: 'baba@foo.com',

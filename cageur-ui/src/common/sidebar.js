@@ -23,13 +23,19 @@ class ApplicationSidebar extends React.Component {
             <Col xs={12}>
               <div className='sidebar-nav-container'>
                 <SidebarNav style={{marginBottom: 0}} ref={(c) => this._nav = c}>
-                <SidebarNavItem glyph='icon-feather-mail' name={<span>Kotak Pesan <Label className='bg-darkgreen45 fg-white'></Label></span>}>
-                  <SidebarNav>
-                    <SidebarNavItem glyph='icon-dripicons-message' name='Tulis Pesan' href={::this.getPath('mailbox/compose')} />
-                    <SidebarNavItem glyph='icon-dripicons-return' name='Pesan Keluar' href={::this.getPath('mailbox/outbox')} />
-                  </SidebarNav>
-                </SidebarNavItem>
+                  {/* Mailbox */}
+                  <SidebarNavItem glyph='icon-feather-mail' name={<span>Kotak Pesan <Label className='bg-darkgreen45 fg-white'></Label></span>}>
+                    <SidebarNav>
+                      <SidebarNavItem glyph='icon-dripicons-message' name='Tulis Pesan' href={::this.getPath('mailbox/compose')} />
+                      <SidebarNavItem glyph='icon-dripicons-return' name='Pesan Keluar' href={::this.getPath('mailbox/outbox')} />
+                    </SidebarNav>
+                  </SidebarNavItem>
+
+                  {/* Patient Information */}
                   <SidebarNavItem glyph='icon-simple-line-icons-users' name='Informasi Pasien' href='/patient-information' />
+
+                  {/* Analytics */}
+                  <SidebarNavItem glyph='icon-ikons-bar-chart-2 float-right-rtl' name='Analytics' href={::this.getPath('analytics')}/>
                 </SidebarNav>
               </div>
             </Col>

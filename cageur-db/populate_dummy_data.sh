@@ -15,3 +15,9 @@ python tools/insert_template_data.py
 
 # Generate random sent message
 python tools/insert_sent_message_data.py
+
+# Generate random scheduled message
+python tools/insert_scheduled_message_data.py
+
+# Generate random message analytics
+python tools/insert_message_analytics_data.py

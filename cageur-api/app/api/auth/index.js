@@ -40,6 +40,9 @@ router.post('/', (req, res, next) => {
     (_) => { throw abort(401, 'Authentication failed. User not found.', `${email} not found`) }
   )
   .then((isMatch) => {
+    if (!isMatch) {
+      throw abort(401, 'Authentication failed. Email and password not matched.', `${email} wrong password`);
+    }
     // generate token if password matched
     const token = jwt.sign(userFound, jwtSecret, {
       expiresIn: jwtExpiresIn,

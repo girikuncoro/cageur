@@ -61,7 +61,7 @@ class User {
           if (user.length === 0) {
             reject('User not exist');
           }
-          resolve(user);
+          resolve(user[0]);
         },
         err => reject(err)
       );
@@ -71,13 +71,13 @@ class User {
   // find user with given email
   static findOneByEmail(db, email) {
     return new Promise((resolve, reject) => {
-      db.any(`SELECT * FROM cageur_user WHERE email = ${email}`)
+      db.any(`SELECT * FROM cageur_user WHERE email = '${email}'`)
       .then(
         (user) => {
           if (user.length === 0) {
             reject('User not exist');
           }
-          resolve(user);
+          resolve(user[0]);
         },
         err => reject(err)
       );

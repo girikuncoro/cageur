@@ -170,9 +170,11 @@ CREATE TABLE cageur_user (
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   role user_role DEFAULT 'clinic',
+  clinic_id INT,
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (clinic_id) REFERENCES clinic(id) ON DELETE CASCADE
 );
 DROP INDEX IF EXISTS distinct_email;
 CREATE UNIQUE INDEX distinct_email ON cageur_user (email);

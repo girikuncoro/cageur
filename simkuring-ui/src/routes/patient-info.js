@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Row, Col, Grid, Panel, Table, PanelBody,
+  Row, Col, Grid, Panel, PanelBody,
   PanelHeader, FormControl, PanelContainer
 } from '@sketchpixy/rubix';
 import Spinner from 'react-spinner';
@@ -9,65 +9,87 @@ import Select from 'react-select';
 import {API_URL, API_HEADERS} from '../common/constant';
 import moment from 'moment';
 import {compare, toTitleCase} from '../utilities/util';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
 class PatientInfoTable extends Component {
-  componentDidMount() {
-    $(ReactDOM.findDOMNode(this.table))
-      .addClass('nowrap')
-      .dataTable({
-        responsive: true
-    });
-  }
-
   render() {
-    let {patients, showSpinner} = this.props;
+    let {patients} = this.props;
+
+    const cellEdit = {
+      mode: 'click',
+      blurToSave: true
+    };
+
+    const options = {
+      noDataText: <Spinner style={{marginTop: '40px'}}/>
+    }
+
     return (
-      <Table ref={(c) => this.table = c} className='display' cellSpacing='0' width='100%'>
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Nama Pasien</th>
-            <th>Penyakit</th>
-            <th>Penyakit Muncul</th>
-            <th>Pasien Terdaftar</th>
-            <th>No. Telp</th>
-            <th>LineID</th>
-          </tr>
-          {(showSpinner) ? <tr><Spinner style={{left: "700%", marginTop: "50px"}}/> </tr> : ""}
-        </thead>
-        <tfoot>
-          <tr>
-            <th>No.</th>
-            <th>Nama Pasien</th>
-            <th>Penyakit</th>
-            <th>Penyakit Muncul</th>
-            <th>Pasien Terdaftar</th>
-            <th>No. Telp</th>
-            <th>LineID</th>
-          </tr>
-        </tfoot>
-        <tbody>
-          {patients.map((d,i) => (
-            <tr key={i}>
-              <td>{i+1}</td>
-              <td>{d.name}</td>
-              <td>
-                {d.group.map((d,i) =>
-                  (<p key={i}>{d}</p>)
-                )}
-              </td>
-              <td>
-                {d.disease_created.map((d,i) =>
-                  (<p key={i}>{d}</p>)
-                )}
-              </td>
-              <td>{d.patient_created}</td>
-              <td>{d.phone_number}</td>
-              <td>{d.line_id}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <BootstrapTable data={patients}
+                      options={options}
+                      striped
+                      hover
+                      pagination
+                      cellEdit={ cellEdit }>
+          <TableHeaderColumn  dataSort
+                              width="70"
+                              editable={ false }
+                              dataAlign='center'
+                              dataField='num'>
+                                No.
+          </TableHeaderColumn>
+          <TableHeaderColumn  dataSort
+                              dataField='name'
+                              filter={
+                                  { type: 'TextFilter',
+                                    placeholder: 'cari nama'
+                                  }
+                              }>
+                                Nama Pasien
+          </TableHeaderColumn>
+          <TableHeaderColumn  dataField='group' dataSort
+                              filter={
+                                  { type: 'TextFilter',
+                                    placeholder: 'cari penyakit'
+                                  }
+                              }>
+                              Penyakit
+          </TableHeaderColumn>
+          <TableHeaderColumn  dataField='disease_created' dataSort
+                              filter={
+                                  { type: 'TextFilter',
+                                    placeholder: 'cari tanggal'
+                                  }
+                              }>
+                              Penyakit Muncul
+          </TableHeaderColumn>
+          <TableHeaderColumn  dataField='patient_created'
+                              dataSort
+                              editable={ false }
+                              filter={
+                                  { type: 'TextFilter',
+                                    placeholder: 'cari tanggal'
+                                  }
+                              }>
+                                Pasien Terdaftar
+          </TableHeaderColumn>
+          <TableHeaderColumn dataField='phone_number' dataSort
+                              filter={
+                                  { type: 'TextFilter',
+                                    placeholder: 'cari nomor'
+                                  }
+                              }>
+                                No. Telp
+          </TableHeaderColumn>
+          <TableHeaderColumn isKey dataField='line_id' dataSort
+                              filter={
+                                  { type: 'TextFilter',
+                                    placeholder: 'cari ID'
+                                  }
+                              }>
+                                LineID
+          </TableHeaderColumn>
+      </BootstrapTable>
     );
   }
 }
@@ -78,7 +100,6 @@ export default class PatientInfo extends Component {
 
     this.state = {
       patients: [],
-      showSpinner: false,
       clinic: [],
       selectedClinic: null,
     };
@@ -98,6 +119,7 @@ export default class PatientInfo extends Component {
       })
       clinic.sort(compare);
       this.setState({clinic: clinic});
+      this.selectClinic(clinic[0]);
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
@@ -112,7 +134,9 @@ export default class PatientInfo extends Component {
   renderTable(clinicId) {
 
     // Showing spinner while waiting response from DB
-    this.setState({showSpinner: true});
+    this.setState({
+      patients: []
+    });
 
     // Fetching Patient Information
     fetch(`${API_URL}/patient_disease_group/clinic/${clinicId}`, {
@@ -143,6 +167,7 @@ export default class PatientInfo extends Component {
 
         patients.push(
           {
+            num: i+1,
             name: `${patient["first_name"]} ${last_name}`,
             group: group,
             patient_created: patient_created,
@@ -154,8 +179,7 @@ export default class PatientInfo extends Component {
 
       })
       this.setState({
-        patients: patients,
-        showSpinner: false
+        patients: patients
       });
     })
     .catch((error) => {
@@ -167,12 +191,8 @@ export default class PatientInfo extends Component {
     const {patients, selectedClinic} = this.state;
     const clinicId = (selectedClinic) ? selectedClinic['id'] : 'undefined';
 
-    console.log(selectedClinic);
-    console.log(patients);
-
     const renderPatiens = (patients) ?
-                          (<PatientInfoTable patients={patients}
-                                             showSpinner={this.state.showSpinner}/>) : '';
+                          (<PatientInfoTable patients={patients}/>) : '';
 
     return (
       <div>
@@ -197,10 +217,9 @@ export default class PatientInfo extends Component {
               <Panel>
                 <PanelBody>
                   <Grid>
-                    <Row>
+                    <Row style={{'paddingBottom': '150px'}}>
                       <Col xs={12}>
                         {renderPatiens}
-                        <br/>
                       </Col>
                     </Row>
                   </Grid>

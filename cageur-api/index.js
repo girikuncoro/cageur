@@ -4,23 +4,14 @@
 const express = require('express');
 
 const app = express();
-
 const bodyParser = require('body-parser');
-
 const cors = require('cors');
-
 const debug = require('debug')('cageur');
-
 const morgan = require('morgan');
-
-const jwt = require("jwt-simple");
-
-const auth = require("./auth")();
-
-const cfg = require("./config");  
-
-const users = require("./app/api/users/login");  
-
+const jwt = require('jwt-simple');
+const auth = require('./auth')();
+const cfg = require('./config');
+const users = require('./app/api/users/login');
 const { port } = require('./app/config');
 
 /**
@@ -31,7 +22,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors()); // TODO: whitelist the origin for production
+app.use(cors());// TODO: whitelist the origin for production
 app.use(auth.initialize());
 
 app.use('/', require('./app/api'));
@@ -59,7 +50,7 @@ app.use('/api/v1/message/sent', require('./app/api/message/sent'));
 app.use('/api/v1/message/incoming', require('./app/api/message/incoming'));
 
 
-app.post("/api/v1/token", function(req, res) {  
+app.post('/api/v1/token', function(req, res) {
     if (req.body.email && req.body.password) {
         const email = req.body.email;
         const password = req.body.password;

@@ -1,19 +1,19 @@
-const passport = require('passport');  
+const passport = require('passport');
 
-const passportJWT = require('passport-jwt');  
+const passportJWT = require('passport-jwt');
 
 const login = require('./app/api/users/login');
 
-const users = login.getAllUser()
+const users = login.getAllUser();
 
-const cfg = require('./config');  
+const cfg = require('./config'); 
 
-const ExtractJwt = passportJWT.ExtractJwt;  
-const Strategy = passportJWT.Strategy;  
+const ExtractJwt = passportJWT.ExtractJwt;
+const Strategy = passportJWT.Strategy;
 
 const params = { secretOrKey: cfg.jwtSecret, jwtFromRequest: ExtractJwt.fromAuthHeader() };
 
-module.exports = function() {  
+module.exports = function() {
     const strategy = new Strategy(params, function(payload, done) {
         users.then(data => {
             const found = data.find(user => user.id === payload.id);

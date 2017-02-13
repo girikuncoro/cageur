@@ -1,4 +1,5 @@
 const db = require('../../config/db');
+
 const abort = require('../../util/abort');
 
 const ctl = {
@@ -119,7 +120,6 @@ const ctl = {
 
   removeUser(req, res, next) {
     const userID = req.params.id;
-
     db.result(`DELETE FROM users WHERE id = ${userID}`)
     .then((result) => {
       if (result.rowCount === 0) {

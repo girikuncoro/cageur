@@ -11,7 +11,7 @@ const users = {
       return resolve(data);
     })
     .catch(err => reject(err));
-   })
+   });
   },
 };
 

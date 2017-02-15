@@ -22,6 +22,22 @@ export default class Table extends Component {
     let newCell = (typeof cell  === 'string') ? cell.split(',') : cell;
     return <CustomCell cell={newCell}/>
   }
+
+  onRowSelect(row, isSelected, e) {
+    let id = row['id'],
+        selectedRows = this.props.selectedRows;
+    if (isSelected) {
+      selectedRows.push(id);
+      this.props.handleRowSelection(selectedRows)
+    } else {
+      let index = selectedRows.indexOf(id);
+      if (index > -1) {
+        selectedRows.splice(index, 1);
+        this.props.handleRowSelection(selectedRows);
+      }
+    }
+  }
+
   render() {
     let {patients, showSpinner} = this.props;
 
@@ -37,13 +53,21 @@ export default class Table extends Component {
       noDataText: noDataText
     }
 
+    const selectRowProp = {
+      mode: 'checkbox',
+      clickToSelect: true,
+      bgColor: 'pink',
+      onSelect: this.onRowSelect.bind(this)
+    };
+
     return (
       <BootstrapTable data={patients}
                       options={options}
                       striped
                       hover
                       pagination
-                      cellEdit={ cellEdit }>
+                      cellEdit={cellEdit}
+                      selectRow={selectRowProp}>
           <TableHeaderColumn  dataSort
                               width="70px"
                               editable={ false }
@@ -96,13 +120,16 @@ export default class Table extends Component {
                               }>
                                 No. Telp
           </TableHeaderColumn>
-          <TableHeaderColumn isKey dataField='line_id' dataSort
+          <TableHeaderColumn  dataField='line_id' dataSort
                               filter={
                                   { type: 'TextFilter',
-                                    placeholder: 'cari ID'
+                                    placeholder: 'cari LineID'
                                   }
                               }>
                                 LineID
+          </TableHeaderColumn>
+          <TableHeaderColumn isKey dataField='id'>
+                                Pasien ID
           </TableHeaderColumn>
       </BootstrapTable>
     );

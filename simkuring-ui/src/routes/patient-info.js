@@ -18,7 +18,14 @@ export default class PatientInfo extends Component {
       showSpinner: false,
       clinic: [],
       selectedClinic: null,
+      selectedRows: []
     };
+  }
+
+  handleRowSelection(selectedRows) {
+    this.setState({
+      selectedRows: selectedRows
+    })
   }
 
   componentDidMount() {
@@ -83,6 +90,7 @@ export default class PatientInfo extends Component {
         patients.push(
           {
             num: i+1,
+            id: patient["id"],
             name: `${patient["first_name"]} ${last_name}`,
             group: group,
             patient_created: patient_created,
@@ -104,12 +112,16 @@ export default class PatientInfo extends Component {
   }
 
   render() {
-    const {patients, selectedClinic, showSpinner} = this.state;
+    const {patients, selectedClinic,
+           showSpinner, selectedRows} = this.state;
     const clinicId = (selectedClinic) ? selectedClinic['id'] : 'undefined';
 
     const renderPatiens = (patients) ?
-                          (<Table  patients={patients}
-                                              showSpinner={showSpinner}/>) : '';
+                          (<Table patients={patients}
+                                  selectedRows={selectedRows}
+                                  showSpinner={showSpinner}
+                                  handleRowSelection={::this.handleRowSelection}/>) 
+                          : '';
 
     return (
       <div>

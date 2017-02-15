@@ -128,6 +128,9 @@ export default class PatientInfo extends Component {
       .then((response) => response.json())
       .then((responseData) => {
           self.renderTable(selectedClinic['id']);
+          self.setState({
+            selectedRows: []
+          })
       })
       .catch((error) => {
         console.log('Error fetching and parsing data', error);

@@ -11,7 +11,26 @@ import moment from 'moment';
 import {compare, toTitleCase} from '../utilities/util';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
+class CustomRow extends Component {
+
+  render() {
+    let renderCustomRow = this.props.cell.map(function(d,i) {
+      return (<tr key={i}><td>{d}</td></tr>)
+    })
+
+    return (
+      <div>
+        {renderCustomRow}
+      </div>
+    )
+  }
+}
+
 class PatientInfoTable extends Component {
+  diseaseFormatter(cell, row) {
+    let newCell = (typeof cell  === 'string') ? cell.split(',') : cell;
+    return <CustomRow cell={newCell}/>
+  }
   render() {
     let {patients, showSpinner} = this.props;
 
@@ -55,7 +74,8 @@ class PatientInfoTable extends Component {
                                   { type: 'TextFilter',
                                     placeholder: 'cari penyakit'
                                   }
-                              }>
+                              }
+                              dataFormat = {this.diseaseFormatter}>
                               Penyakit
           </TableHeaderColumn>
           <TableHeaderColumn  dataField='disease_created' dataSort
@@ -63,7 +83,8 @@ class PatientInfoTable extends Component {
                                   { type: 'TextFilter',
                                     placeholder: 'cari tanggal'
                                   }
-                              }>
+                              }
+                              dataFormat = {this.diseaseFormatter}>
                               Penyakit Muncul
           </TableHeaderColumn>
           <TableHeaderColumn  dataField='patient_created'
@@ -121,7 +142,6 @@ export default class PatientInfo extends Component {
       responseData.data.map(function(d,i) {
         clinic.push({id: d.id, value: d.name, label: toTitleCase(d.name)});
       })
-      clinic.sort(compare);
       this.setState({clinic: clinic});
       this.selectClinic(clinic[0]);
     })
@@ -143,7 +163,7 @@ export default class PatientInfo extends Component {
       patients: []
     });
 
-    // Fetching Patient Information
+    // Fetching Patient Information based on selected clinic
     fetch(`${API_URL}/patient_disease_group/clinic/${clinicId}`, {
       headers: API_HEADERS
     })

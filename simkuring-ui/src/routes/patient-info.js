@@ -1,122 +1,13 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import {
   Row, Col, Grid, Panel, PanelBody,
   PanelHeader, FormControl, PanelContainer
 } from '@sketchpixy/rubix';
-import Spinner from 'react-spinner';
 import Select from 'react-select';
 import {API_URL, API_HEADERS} from '../common/constant';
 import moment from 'moment';
-import {compare, toTitleCase} from '../utilities/util';
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-
-class CustomRow extends Component {
-
-  render() {
-    let renderCustomRow = this.props.cell.map(function(d,i) {
-      return (<tr key={i}><td>{d}</td></tr>)
-    })
-
-    return (
-      <div>
-        {renderCustomRow}
-      </div>
-    )
-  }
-}
-
-class PatientInfoTable extends Component {
-  diseaseFormatter(cell, row) {
-    let newCell = (typeof cell  === 'string') ? cell.split(',') : cell;
-    return <CustomRow cell={newCell}/>
-  }
-  render() {
-    let {patients, showSpinner} = this.props;
-
-    const cellEdit = {
-      mode: 'click',
-      blurToSave: true
-    };
-
-    const noDataText = (showSpinner && patients.length === 0) ?
-                        <Spinner style={{marginTop: '40px'}}/> :
-                        'Data tidak ditemukan';
-    const options = {
-      noDataText: noDataText
-    }
-
-    return (
-      <BootstrapTable data={patients}
-                      options={options}
-                      striped
-                      hover
-                      pagination
-                      cellEdit={ cellEdit }>
-          <TableHeaderColumn  dataSort
-                              width="70"
-                              editable={ false }
-                              dataAlign='center'
-                              dataField='num'>
-                                No.
-          </TableHeaderColumn>
-          <TableHeaderColumn  dataSort
-                              dataField='name'
-                              filter={
-                                  { type: 'TextFilter',
-                                    placeholder: 'cari nama'
-                                  }
-                              }>
-                                Nama Pasien
-          </TableHeaderColumn>
-          <TableHeaderColumn  dataField='group' dataSort
-                              filter={
-                                  { type: 'TextFilter',
-                                    placeholder: 'cari penyakit'
-                                  }
-                              }
-                              dataFormat = {this.diseaseFormatter}>
-                              Penyakit
-          </TableHeaderColumn>
-          <TableHeaderColumn  dataField='disease_created' dataSort
-                              filter={
-                                  { type: 'TextFilter',
-                                    placeholder: 'cari tanggal'
-                                  }
-                              }
-                              dataFormat = {this.diseaseFormatter}>
-                              Penyakit Muncul
-          </TableHeaderColumn>
-          <TableHeaderColumn  dataField='patient_created'
-                              dataSort
-                              editable={ false }
-                              filter={
-                                  { type: 'TextFilter',
-                                    placeholder: 'cari tanggal'
-                                  }
-                              }>
-                                Pasien Terdaftar
-          </TableHeaderColumn>
-          <TableHeaderColumn dataField='phone_number' dataSort
-                              filter={
-                                  { type: 'TextFilter',
-                                    placeholder: 'cari nomor'
-                                  }
-                              }>
-                                No. Telp
-          </TableHeaderColumn>
-          <TableHeaderColumn isKey dataField='line_id' dataSort
-                              filter={
-                                  { type: 'TextFilter',
-                                    placeholder: 'cari ID'
-                                  }
-                              }>
-                                LineID
-          </TableHeaderColumn>
-      </BootstrapTable>
-    );
-  }
-}
+import {toTitleCase} from '../utilities/util';
+import Table from '../common/table';
 
 export default class PatientInfo extends Component {
   constructor(props) {
@@ -137,7 +28,6 @@ export default class PatientInfo extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      console.log(responseData);
       let clinic = [];
       responseData.data.map(function(d,i) {
         clinic.push({id: d.id, value: d.name, label: toTitleCase(d.name)});
@@ -218,7 +108,7 @@ export default class PatientInfo extends Component {
     const clinicId = (selectedClinic) ? selectedClinic['id'] : 'undefined';
 
     const renderPatiens = (patients) ?
-                          (<PatientInfoTable  patients={patients}
+                          (<Table  patients={patients}
                                               showSpinner={showSpinner}/>) : '';
 
     return (

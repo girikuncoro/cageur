@@ -25,3 +25,15 @@
 @import "react-spinner";
 @import "react-select";
 @import "react-bootstrap-table-all.min";
+
+/* custom style */
+tbody {
+  tr {
+    td {
+      ul {
+        list-style: 'none';
+        padding-left: 0;
+      }
+    }
+  }
+}

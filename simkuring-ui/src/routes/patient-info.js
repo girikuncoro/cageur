@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {
   Row, Col, Grid, Panel, PanelBody,
-  PanelHeader, FormControl, PanelContainer
+  PanelHeader, FormControl, PanelContainer,
+  Button, Icon
 } from '@sketchpixy/rubix';
 import Select from 'react-select';
 import {API_URL, API_HEADERS} from '../common/constant';
@@ -18,14 +19,8 @@ export default class PatientInfo extends Component {
       showSpinner: false,
       clinic: [],
       selectedClinic: null,
-      selectedRows: []
+      selectedRows: [],
     };
-  }
-
-  handleRowSelection(selectedRows) {
-    this.setState({
-      selectedRows: selectedRows
-    })
   }
 
   componentDidMount() {
@@ -48,7 +43,10 @@ export default class PatientInfo extends Component {
   }
 
   selectClinic(newValue) {
-    this.setState({selectedClinic: newValue});
+    this.setState({
+        selectedClinic: newValue,
+        selectedRows: []
+      });
     this.renderTable(newValue['id']);
   }
 
@@ -111,16 +109,49 @@ export default class PatientInfo extends Component {
     })
   }
 
+  handleRowSelection(selectedRows) {
+    this.setState({
+      selectedRows: selectedRows
+    })
+  }
+
+  handleDelete() {
+    const {selectedClinic,selectedRows} = this.state;
+    const self = this;
+    const endpoint = `${'/patient/'}`;
+
+    selectedRows.map(function(d,i) {
+      fetch(`${API_URL}${endpoint}${d}`, {
+        method: 'delete',
+        headers: API_HEADERS
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+          self.renderTable(selectedClinic['id']);
+      })
+      .catch((error) => {
+        console.log('Error fetching and parsing data', error);
+      });
+    })
+  }
+
   render() {
     const {patients, selectedClinic,
            showSpinner, selectedRows} = this.state;
     const clinicId = (selectedClinic) ? selectedClinic['id'] : 'undefined';
 
+    const renderDeleteButton = (selectedRows.length !== 0)
+                              ?
+                              (<Button bsStyle='danger' onClick={::this.handleDelete}>
+                                  <Icon glyph='icon-fontello-trash-1'/>
+                              </Button>) :
+                              '';
+
     const renderPatiens = (patients) ?
                           (<Table patients={patients}
                                   selectedRows={selectedRows}
                                   showSpinner={showSpinner}
-                                  handleRowSelection={::this.handleRowSelection}/>) 
+                                  handleRowSelection={::this.handleRowSelection}/>)
                           : '';
 
     return (
@@ -146,6 +177,11 @@ export default class PatientInfo extends Component {
               <Panel>
                 <PanelBody>
                   <Grid>
+                    <Row>
+                      <Col xs={2}>
+                        {renderDeleteButton}
+                      </Col>
+                    </Row>
                     <Row style={{'paddingBottom': '150px'}}>
                       <Col xs={12}>
                         {renderPatiens}

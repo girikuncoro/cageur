@@ -38,6 +38,18 @@ export default class Table extends Component {
     }
   }
 
+  onSelectAll(isSelected, rows) {
+    let selectedRows = this.props.selectedRows;
+    if (isSelected) {
+      rows.map(function(d) {
+        selectedRows.push(d['id']);
+      })
+      this.props.handleRowSelection(selectedRows);
+    } else {
+      this.props.handleRowSelection([]);
+    }
+  }
+
   render() {
     let {patients, showSpinner} = this.props;
 
@@ -57,7 +69,8 @@ export default class Table extends Component {
       mode: 'checkbox',
       clickToSelect: true,
       bgColor: 'pink',
-      onSelect: this.onRowSelect.bind(this)
+      onSelect: this.onRowSelect.bind(this),
+      onSelectAll: this.onSelectAll.bind(this)
     };
 
     return (

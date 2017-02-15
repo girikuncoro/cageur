@@ -7,6 +7,7 @@ module.exports = {
 
   isAuthorized: {
     clinic(req, res, next) {
+      console.log('auth clinic: ', JSON.stringify(req.user));
       if (req.user.role === 'clinic') {
         return next();
       }

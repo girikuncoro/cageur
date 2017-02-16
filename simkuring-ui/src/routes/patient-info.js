@@ -64,6 +64,7 @@ export default class PatientInfo extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
+      // console.log(responseData);
       let patients = [];
       responseData.data.map(function(d,i) {
         let patient = d["patient_disease_group"]["patient"],
@@ -77,10 +78,15 @@ export default class PatientInfo extends Component {
             disease_created = [],
             group = [];
 
-        if(disease_group.length > 0) {
+        if(disease_group) {
           disease_group.map(function(d,i) {
-            disease_created.push(moment(d["disease_created_at"]).locale("id").format("Do MMMM YY"));
-            group.push(toTitleCase(d["name"]));
+            disease_created.push(moment(d.disease["disease_created_at"]).locale("id").format("Do MMMM YY"));
+            group.push(
+              {
+                name: toTitleCase(d.disease["name"]),
+                pdg_id: d.disease["pdg_id"]
+              }
+            );
           })
         }
 
@@ -138,6 +144,28 @@ export default class PatientInfo extends Component {
     })
   }
 
+  handlePatientUpdate(patientId) {
+    console.log('patient updated');
+    // const {selectedClinic} = this.state;
+    // const endpoint = `${'/patient/'}`;
+    //
+    // fetch(`${API_URL}${endpoint}${patientId}`, {
+    //   method: 'update',
+    //   headers: API_HEADERS
+    // })
+    // .then((response) => response.json())
+    // .then((responseData) => {
+    //     self.renderTable(selectedClinic['id']);
+    //     self.setState({
+    //       selectedRows: []
+    //     })
+    // })
+    // .catch((error) => {
+    //   console.log('Error fetching and parsing data', error);
+    // });
+
+  }
+
   render() {
     const {patients, selectedClinic,
            showSpinner, selectedRows} = this.state;
@@ -154,7 +182,8 @@ export default class PatientInfo extends Component {
                           (<Table patients={patients}
                                   selectedRows={selectedRows}
                                   showSpinner={showSpinner}
-                                  handleRowSelection={::this.handleRowSelection}/>)
+                                  handleRowSelection={::this.handleRowSelection}
+                                  handlePatientUpdate={::this.handlePatientUpdate}/>)
                           : '';
 
     return (

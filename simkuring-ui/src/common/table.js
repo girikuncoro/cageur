@@ -2,11 +2,60 @@ import React, {Component} from 'react';
 import Spinner from 'react-spinner';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
+class StringEditor extends Component {
+  constructor(props) {
+    super(props);
+    this.updateData = this.updateData.bind(this);
+    this.state = {
+      name: props.defaultValue,
+      open: true,
+      patient_id: props.row.id
+    };
+  }
+  focus() {
+    this.refs.inputRef.focus();
+  }
+  updateData() {
+    this.props.onUpdate(this.state.name);
+  }
+  close = () => {
+    this.setState({ open: false });
+    this.props.onUpdate(this.props.defaultValue);
+  }
+  render() {
+    console.log(this.props);
+
+    const fadeIn = this.state.open ? 'in' : '';
+    const display = this.state.open ? 'block' : 'none';
+    return (
+      <span>
+        <input
+          ref='inputRef'
+          className={ ( this.props.editorClass || '') + ' form-control editor edit-text' }
+          style={ { display: 'block', width: '100%' } }
+          type='text'
+          value={ this.state.name }
+          onKeyDown={ this.props.onKeyDown }
+          onChange={ e => { this.setState({ name: e.currentTarget.value }); } } />
+        <button
+          className='btn btn-info btn-xs textarea-save-btn'
+          onClick={ this.updateData }>
+          simpan
+        </button>
+      </span>
+    );
+  }
+}
+
 class CustomCell extends Component {
 
   render() {
     let renderCustomCell = this.props.cell.map(function(d,i) {
-      return (<li key={i}>{d}</li>)
+      if (typeof d === 'object') {
+        return (<li key={i}>{d.name}</li>)
+      } else {
+        return (<li key={i}>{d}</li>)
+      }
     })
 
     return (
@@ -73,6 +122,8 @@ export default class Table extends Component {
       onSelectAll: this.onSelectAll.bind(this)
     };
 
+    const createStringEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props}/>);
+
     return (
       <BootstrapTable data={patients}
                       options={options}
@@ -94,6 +145,12 @@ export default class Table extends Component {
                                   { type: 'TextFilter',
                                     placeholder: 'cari nama'
                                   }
+                              }
+                              customEditor={
+                                {
+                                  getElement: createStringEditor,
+                                  customEditorParameters: this.props.handlePatientUpdate
+                                }
                               }>
                                 Nama Pasien
           </TableHeaderColumn>

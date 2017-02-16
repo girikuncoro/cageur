@@ -65,7 +65,7 @@ const ctl = {
     const sqlGetAllDataWithClinicID = `
       SELECT json_build_object(
           'patient', row_to_json(p.*),
-          'disease_group', array_remove(array_agg(DISTINCT dg.*), NULL)) AS patient_disease_group
+          'disease_group', COALESCE(array_agg(json_build_object('pdg_id', pdg.id, 'disease', dg.*)) FILTER (WHERE pdg.id IS NOT NULL))) AS patient_disease_group
       FROM patient p
       LEFT OUTER JOIN patient_disease_group pdg
         ON pdg.patient_id = p.id

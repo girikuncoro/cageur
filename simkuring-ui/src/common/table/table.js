@@ -4,6 +4,11 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import StringEditor from './string-editor';
 import ObjectEditor from './object-editor';
 
+function filterLabel(cell, row) {
+  return cell.map((d) => d.label)
+}
+
+
 class CustomCell extends Component {
 
   render() {
@@ -125,18 +130,19 @@ export default class Table extends Component {
                               customEditor={{getElement: createNameEditor}}>
                                 Nama Pasien
           </TableHeaderColumn>
-          <TableHeaderColumn  dataField='group' dataSort
+          <TableHeaderColumn  dataField='group'
                               filter={
                                   { type: 'TextFilter',
                                     placeholder: 'cari penyakit',
                                     delay: 100
                                   }
                               }
+                              filterValue={ filterLabel }
                               dataFormat = {this.diseaseFormatter}
                               customEditor={{getElement: createDiseaseEditor}}>
                               Penyakit
           </TableHeaderColumn>
-          <TableHeaderColumn  dataField='disease_created' dataSort
+          <TableHeaderColumn  dataField='disease_created'
                               filter={
                                   { type: 'TextFilter',
                                     placeholder: 'cari tanggal',
@@ -158,7 +164,7 @@ export default class Table extends Component {
                               }>
                                 Pasien Terdaftar
           </TableHeaderColumn>
-          <TableHeaderColumn dataField='phone_number' dataSort
+          <TableHeaderColumn dataField='phone_number'
                               filter={
                                   { type: 'TextFilter',
                                     placeholder: 'cari nomor',
@@ -168,7 +174,7 @@ export default class Table extends Component {
                               customEditor={{getElement: createPhoneEditor}}>
                                 No. Telp
           </TableHeaderColumn>
-          <TableHeaderColumn  dataField='line_id' dataSort
+          <TableHeaderColumn  dataField='line_id'
                               filter={
                                   { type: 'TextFilter',
                                     placeholder: 'cari LineID',

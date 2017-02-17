@@ -20,27 +20,36 @@ module.exports = {
   },
 
   isAuthorized: {
-    clinic(req, res, next) {
+    // any clinic can access
+    clinicAny(req, res, next) {
       // superadmin permission can do anything
       if (req.user.role === 'superadmin') {
         return next();
       }
-      // for clinic permission, must check if requested its own clinic data
       if (req.user.role === 'clinic') {
-        const clinicID = extractClinicID(req);
-        if (clinicID && req.user['clinic_id'] !== clinicID) {
-          return next(abort(401, 'Must have clinic permission', JSON.stringify(req.user)));
-        }
         return next();
       }
-      return next(abort(401, 'Must have permission', JSON.stringify(req.user)));
+      return next(abort(401, 'Insufficient permission', JSON.stringify(req.user)));
+    },
+
+    // clinic can only access its own data
+    clinicSelf(req, res, next) {
+      // superadmin permission can do anything
+      if (req.user.role === 'superadmin') {
+        return next();
+      }
+      if (req.user.role === 'clinic') {
+        // TODO: check if its own clinic
+        return next();
+      }
+      return next(abort(401, 'Insufficient permission', JSON.stringify(req.user)));
     },
 
     superAdmin(req, res, next) {
       if (req.user.role === 'superadmin') {
         return next();
       }
-      return next(abort(401, 'Must have superadmin level permission', JSON.stringify(req.user)));
+      return next(abort(401, 'Insufficient permission', JSON.stringify(req.user)));
     },
   },
 };

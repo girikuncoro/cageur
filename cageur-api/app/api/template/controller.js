@@ -4,13 +4,13 @@ const abort = require('../../util/abort');
 const ctl = {
   createTemplate(req, res, next) {
     const template = {
-      diseaseGroup: req.body.diseaseGroup,
+      diseaseGroup: req.body['disease_group'],
       title: req.body.title,
       content: req.body.content,
     };
 
     if (!template.diseaseGroup || !template.title || !template.content) {
-      throw abort(400, 'Missing required parameters "diseaseGroup" or "title" or "content"');
+      throw abort(400, 'Missing required parameters "disease_group" or "title" or "content"');
     }
 
     // Check if valid diseaseGroup
@@ -192,7 +192,7 @@ const ctl = {
     .catch(err => next(err));
   },
 
-  deleteTemplate(req, res, next) {
+  removeTemplate(req, res, next) {
     const templateID = req.params.id;
 
     db.result('DELETE FROM template WHERE id=$1', templateID)
@@ -208,3 +208,5 @@ const ctl = {
     .catch(err => next(err));
   },
 };
+
+module.exports = ctl;

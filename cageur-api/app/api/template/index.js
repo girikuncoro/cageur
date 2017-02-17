@@ -1,73 +1,12 @@
 const router = require('express').Router();
-const db = require('../../config/db');
-const abort = require('../../util/abort');
+const ctl = require('../template/controller');
 
 /**
 * Insert template data
 * POST /api/v1/template
 */
 router.post('/', (req, res, next) => {
-  const template = {
-    diseaseGroup: req.body.diseaseGroup,
-    title: req.body.title,
-    content: req.body.content,
-  };
 
-  if (!template.diseaseGroup || !template.title || !template.content) {
-    throw abort(400, 'Missing required parameters "diseaseGroup" or "title" or "content"');
-  }
-
-  // Check if valid diseaseGroup
-  const validateDiseaseGroupID = (diseaseGroup) => {
-    if (diseaseGroup === 'all') {
-      return Promise.resolve(true);
-    }
-    return db.any(`
-      SELECT *
-      FROM template
-      WHERE disease_group_id = $1`, template.diseaseGroup
-    )
-    .then((data) => {
-      if (data.length === 0) {
-        return Promise.resolve(false);
-      }
-      return Promise.resolve(true);
-    })
-    .catch(err => next(err));
-  };
-
-  let sqlInsertTemplate;
-  if (template.diseaseGroup !== 'all') {
-    sqlInsertTemplate = `
-      INSERT INTO template(disease_group_id, title, content)
-      VALUES($1, $2, $3)
-      RETURNING id, disease_group_id AS disease_group, title, content, created_at, updated_at`;
-  } else {
-    sqlInsertTemplate = `
-      INSERT INTO template(disease_group_id, title, content)
-      VALUES($1, $2, $3)
-      RETURNING id, 'all' AS disease_group, title, content, created_at, updated_at`;
-  }
-
-  validateDiseaseGroupID(template.diseaseGroup)
-  .then((valid) => {
-    if (!valid) {
-      throw abort(400, 'Invalid disease group', `DiseaseGroup ${template.diseaseGroup}`);
-    }
-    const disease = template.diseaseGroup === 'all' ? null : template.diseaseGroup;
-    const title = template.title;
-    const content = template.content;
-
-    return db.any(sqlInsertTemplate, [disease, title, content]);
-  })
-  .then((data) => {
-    res.status(200).json({
-      status: 'success',
-      data: data[0],
-      message: 'Template data has been inserted',
-    });
-  })
-  .catch(err => next(err));
 });
 
 /**

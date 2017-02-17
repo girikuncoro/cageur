@@ -80,7 +80,7 @@ export default class PatientInfo extends Component {
 
         if(disease_group) {
           disease_group.map(function(d,i) {
-            disease_created.push(moment(d.disease["disease_created_at"]).locale("id").format("Do MMMM YY"));
+            disease_created.push(moment(d.disease["created_at"]).locale("id").format("Do MMMM YY"));
             group.push(
               {
                 name: toTitleCase(d.disease["name"]),
@@ -144,25 +144,39 @@ export default class PatientInfo extends Component {
     })
   }
 
-  handlePatientUpdate(patientId) {
-    console.log('patient updated');
-    // const {selectedClinic} = this.state;
-    // const endpoint = `${'/patient/'}`;
-    //
-    // fetch(`${API_URL}${endpoint}${patientId}`, {
-    //   method: 'update',
-    //   headers: API_HEADERS
-    // })
-    // .then((response) => response.json())
-    // .then((responseData) => {
-    //     self.renderTable(selectedClinic['id']);
-    //     self.setState({
-    //       selectedRows: []
-    //     })
-    // })
-    // .catch((error) => {
-    //   console.log('Error fetching and parsing data', error);
-    // });
+  handlePatientUpdate(row, dataField, value) {
+    const {selectedClinic} = this.state,
+          endpoint = `${'/patient/'}`;
+    let body = {};
+
+    switch(dataField) {
+      case "name":
+        const fullName = value.split(' ');
+        const firstName = fullName[0];
+        const lastName = (fullName.length > 1) ? fullName[1] : '';
+        body = {
+            id: row['id'],
+            clinic_id: selectedClinic['id'],
+            phone_number: row['phone_number'],
+            first_name: firstName,
+            last_name: lastName,
+            line_user_id: row['line_id']
+        }
+        break;
+    }
+
+    fetch(`${API_URL}${endpoint}${row['id']}`, {
+      method: 'PUT',
+      headers: API_HEADERS,
+       body: JSON.stringify(body)
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+        this.renderTable(selectedClinic['id']);
+    })
+    .catch((error) => {
+      console.log('Error fetching and parsing data', error);
+    });
 
   }
 

@@ -7,7 +7,7 @@ class StringEditor extends Component {
     super(props);
     this.updateData = this.updateData.bind(this);
     this.state = {
-      name: props.defaultValue,
+      value: props.defaultValue,
       open: true,
       patient_id: props.row.id
     };
@@ -16,14 +16,14 @@ class StringEditor extends Component {
     this.refs.inputRef.focus();
   }
   updateData() {
-    this.props.onUpdate(this.state.name);
+    this.props.onUpdate(this.state.value);
+    this.props.handlePatientUpdate(this.props.row,this.props.dataField,this.state.value);
   }
   close = () => {
     this.setState({ open: false });
     this.props.onUpdate(this.props.defaultValue);
   }
   render() {
-    console.log(this.props);
 
     const fadeIn = this.state.open ? 'in' : '';
     const display = this.state.open ? 'block' : 'none';
@@ -34,9 +34,9 @@ class StringEditor extends Component {
           className={ ( this.props.editorClass || '') + ' form-control editor edit-text' }
           style={ { display: 'block', width: '100%' } }
           type='text'
-          value={ this.state.name }
+          value={ this.state.value }
           onKeyDown={ this.props.onKeyDown }
-          onChange={ e => { this.setState({ name: e.currentTarget.value }); } } />
+          onChange={ e => { this.setState({ value: e.currentTarget.value }); } } />
         <button
           className='btn btn-info btn-xs textarea-save-btn'
           onClick={ this.updateData }>
@@ -100,7 +100,7 @@ export default class Table extends Component {
   }
 
   render() {
-    let {patients, showSpinner} = this.props;
+    let {patients, showSpinner, handlePatientUpdate} = this.props;
 
     const cellEdit = {
       mode: 'click',
@@ -122,7 +122,7 @@ export default class Table extends Component {
       onSelectAll: this.onSelectAll.bind(this)
     };
 
-    const createStringEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props}/>);
+    const createNameEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='name'/>);
 
     return (
       <BootstrapTable data={patients}
@@ -146,12 +146,7 @@ export default class Table extends Component {
                                     placeholder: 'cari nama'
                                   }
                               }
-                              customEditor={
-                                {
-                                  getElement: createStringEditor,
-                                  customEditorParameters: this.props.handlePatientUpdate
-                                }
-                              }>
+                              customEditor={{getElement: createNameEditor}}>
                                 Nama Pasien
           </TableHeaderColumn>
           <TableHeaderColumn  dataField='group' dataSort

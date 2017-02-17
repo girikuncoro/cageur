@@ -34,12 +34,16 @@ module.exports = {
 
     // clinic can only access its own data
     clinicSelf(req, res, next) {
+      const clinicID = parseInt(req.params.id, 10);
+
       // superadmin permission can do anything
       if (req.user.role === 'superadmin') {
         return next();
       }
       if (req.user.role === 'clinic') {
-        // TODO: check if its own clinic
+        if (req.user['clinic_id'] !== clinicID) {
+          return next(abort(401, 'Insufficient permission', JSON.stringify(req.user)));
+        }
         return next();
       }
       return next(abort(401, 'Insufficient permission', JSON.stringify(req.user)));

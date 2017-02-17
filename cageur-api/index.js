@@ -21,8 +21,12 @@ const { authenticate, isAuthorized } = require('./app/middleware');
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined'));
 }
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({
+  verify(req, res, buf) {
+    req.rawBody = buf;  // line signature validator need buffer
+  }
+}));
 app.use(cors()); // TODO: whitelist the origin for production
 
 // Init passport use

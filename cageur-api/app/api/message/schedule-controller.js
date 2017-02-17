@@ -4,7 +4,7 @@ const moment = require('moment');
 
 const ctl = {
   scheduleMessage(req, res, next) {
-    const clinicID = req.params.id;
+    const clinicID = req.params['clinic_id'];
     const message = {
       diseaseGroup: req.body['disease_group'],
       body: req.body['body'],
@@ -62,7 +62,7 @@ const ctl = {
   },
 
   getScheduledMessagesByClinicID(req, res, next) {
-    const clinicID = req.params.id;
+    const clinicID = req.params['clinic_id'];
     db.any(`
       SELECT sm.*, row_to_json(dg.*) AS disease_group
       FROM scheduled_message AS sm

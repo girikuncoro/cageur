@@ -12,7 +12,7 @@ router.post('/', isAuthorized.superAdmin, ctl.createDiseaseGroup);
 * Retrieve all disease group data
 * GET /api/v1/disease_group
 */
-router.get('/', isAuthorized.superAdmin, ctl.getAllDiseaseGroup);
+router.get('/', isAuthorized.clinicAny, ctl.getAllDiseaseGroup);
 
 /**
 * Retrieve single disease group data

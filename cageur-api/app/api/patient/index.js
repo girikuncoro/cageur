@@ -18,7 +18,7 @@ router.get('/', isAuthorized.superAdmin, ctl.getAllPatient);
 * Retrieve all patient data by clinicID
 * GET /api/v1/patient/clinic/:id
 */
-router.get('/clinic/:id', isAuthorized.clinicSelf, ctl.getAllPatientByClinicID);
+router.get('/clinic/:clinic_id', isAuthorized.clinicSelf, ctl.getAllPatientByClinicID);
 
 /**
 * Retrieve single patient data

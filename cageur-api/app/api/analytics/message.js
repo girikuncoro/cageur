@@ -12,6 +12,6 @@ router.get('/', isAuthorized.superAdmin, ctl.getAllMessage);
 * Retrieve all message analytics data from clinicID
 * GET /api/v1/analytics/message/clinic/:id
 */
-router.get('/clinic/:id', isAuthorized.clinicSelf, ctl.getAllMessageWithClinicID);
+router.get('/clinic/:clinic_id', isAuthorized.clinicSelf, ctl.getAllMessageWithClinicID);
 
 module.exports = router;

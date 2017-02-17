@@ -47,7 +47,7 @@ const ctl = {
   },
 
   getAllPatientByClinicID(req, res, next) {
-    const clinicID = req.params.id;
+    const clinicID = req.params['clinic_id'];
 
     db.any(`SELECT * FROM patient WHERE clinic_id = ${clinicID}`)
     .then((data) => {

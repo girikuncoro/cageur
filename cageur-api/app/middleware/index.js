@@ -34,7 +34,7 @@ module.exports = {
 
     // clinic can only access its own data
     clinicSelf(req, res, next) {
-      const clinicID = parseInt(req.params.id, 10);
+      const clinicID = parseInt(req.params['clinic_id'], 10);
 
       // superadmin permission can do anything
       if (req.user.role === 'superadmin') {

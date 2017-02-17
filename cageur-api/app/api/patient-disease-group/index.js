@@ -18,7 +18,7 @@ router.get('/', isAuthorized.superAdmin, ctl.getAllPatientDiseaseGroup);
 * Retrieve all patient disease group data with clinic id
 * GET /api/v1/patient_disease_group/clinic/:id
 */
-router.get('/clinic/:id', isAuthorized.clinicSelf, ctl.getAllPatientDiseaseGroupWithClinicID);
+router.get('/clinic/:clinic_id', isAuthorized.clinicSelf, ctl.getAllPatientDiseaseGroupWithClinicID);
 
 /**
 * Retrieve single patient disease group data

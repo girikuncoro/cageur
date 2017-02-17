@@ -30,12 +30,18 @@ router.get('/:id', isAuthorized.superAdmin, ctl.getSingleScheduledMessage);
 * Fetch one scheduled message with clinic ID
 * GET /api/v1/message/schedule/:id/clinic/:id
 */
-router.get('/:id/clinic/:clinic_id', isAuthorized.clinicSelf, ctl.getSingleScheduledMessage);
+router.get('/:id/clinic/:clinic_id', isAuthorized.clinicSelf, ctl.getSingleScheduledMessageWithClinicID);
 
 /**
 * Remove scheduled message
 * GET /api/v1/message/schedule/:id
 */
-router.delete('/:id', ctl.removeScheduledMessage);
+router.delete('/:id', isAuthorized.superAdmin, ctl.removeScheduledMessage);
+
+/**
+* Remove scheduled message with clinic ID
+* GET /api/v1/message/schedule/:id/clinic/:id
+*/
+router.delete('/:id/clinic/:clinic_id', isAuthorized.clinicSelf, ctl.removeScheduledMessageWithClinicID);
 
 module.exports = router;

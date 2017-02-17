@@ -108,10 +108,51 @@ const ctl = {
     .catch(err => next(err));
   },
 
+  getSingleScheduledMessageWithClinicID(req, res, next) {
+    const messageID = req.params.id;
+    const clinicID = req.params['clinic_id'];
+
+    db.any(`
+      SELECT sm.*, row_to_json(dg.*) AS disease_group
+      FROM scheduled_message AS sm
+      JOIN disease_group AS dg
+      ON sm.disease_group_id = dg.id
+      WHERE sm.id = ${messageID} AND sm.clinic_id = ${clinicID}
+    `)
+    .then((data) => {
+      if (data.length === 0) {
+        throw abort(404, 'No scheduled message found', `Scheduled message ${messageID} not found`);
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: data[0],
+        message: 'Retrieved one scheduled message',
+      });
+    })
+    .catch(err => next(err));
+  },
+
   removeScheduledMessage(req, res, next) {
     const messageID = req.params.id;
 
     db.result(`DELETE FROM scheduled_message WHERE id = ${messageID}`)
+    .then((result) => {
+      if (result.rowCount === 0) {
+        throw abort(404, 'Scheduled message not exist or already removed', `${messageID} not found`);
+      }
+      return res.status(200).json({
+        status: 'success',
+        message: 'Scheduled message has been removed',
+      });
+    })
+    .catch(err => next(err));
+  },
+
+  removeScheduledMessageWithClinicID(req, res, next) {
+    const messageID = req.params.id;
+    const clinicID = req.params['clinic_id'];
+
+    db.result(`DELETE FROM scheduled_message WHERE id = ${messageID} AND clinic_id = ${clinicID}`)
     .then((result) => {
       if (result.rowCount === 0) {
         throw abort(404, 'Scheduled message not exist or already removed', `${messageID} not found`);

@@ -1,19 +1,5 @@
 const abort = require('../util/abort');
 
-const extractClinicID = (req) => {
-  // example: /api/v1/message/schedule/clinic/1
-  const originalUrl = req.originalUrl;
-  // example: /api/v1/message/schedule
-  const baseUrl = req.baseUrl;
-  const params = originalUrl.split(baseUrl)[1];
-
-  if (params.indexOf('/clinic/') > -1) {
-    const clinicID = params.split('/clinic/')[1];
-    return parseInt(clinicID, 10);
-  }
-  return null;
-};
-
 module.exports = {
   authenticate(passport) {
     return passport.authenticate('jwt', { session: false });

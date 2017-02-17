@@ -36,11 +36,13 @@ export default class ObjectEditor extends Component {
   }
 
   focus() {
-    this.refs.inputRef.focus();
+    this.props.handleInitEdit(this.props.row);
+    this.refs.editableDiseaseGroup.focus();
   }
+
   updateData() {
-    this.props.onUpdate(this.state.value);
-    this.props.handlePatientUpdate(this.props.row,this.props.dataField,this.state.value);
+    this.props.onUpdate(this.state.selectedGroup);
+    this.props.handleDiseaseGroupUpdate(this.state.selectedGroup, this.props.row.id);
   }
   close = () => {
     this.setState({ open: false });
@@ -65,7 +67,7 @@ export default class ObjectEditor extends Component {
     	);
     }
     return (
-          <span style={selectContainer}>
+          <span style={selectContainer} ref="editableDiseaseGroup">
               <Select
                   arrowRenderer={arrowRenderer}
                   ref="groupDiseaseSelect"

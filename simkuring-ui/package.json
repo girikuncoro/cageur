@@ -89,6 +89,7 @@
     "compression": "1.6.2",
     "cookie-parser": "1.4.3",
     "express": "4.14.0",
+    "lodash": "4.17.4",
     "pug": "2.0.0-beta3",
     "react": "15.3.0",
     "react-bootstrap-table": "2.11.2",

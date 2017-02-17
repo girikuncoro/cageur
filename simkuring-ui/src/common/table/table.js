@@ -57,7 +57,9 @@ export default class Table extends Component {
   }
 
   render() {
-    let {patients, showSpinner, handlePatientUpdate} = this.props;
+    let {patients, showSpinner,
+        handlePatientUpdate, handleInitEdit,
+        handleDiseaseGroupUpdate} = this.props;
 
     const cellEdit = {
       mode: 'click',
@@ -79,10 +81,23 @@ export default class Table extends Component {
       onSelectAll: this.onSelectAll.bind(this)
     };
 
-    const createNameEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='name'/>);
-    const createPhoneEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='phone_number'/>);
-    const createLineIdEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='line_id'/>);
-    const createDiseaseEditor = (onUpdate, props) => (<ObjectEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='disease_group'/>);
+    const createNameEditor = (onUpdate, props) =>
+                              (<StringEditor onUpdate={ onUpdate } {...props}
+                                            handlePatientUpdate={handlePatientUpdate}
+                                            dataField='name'/>);
+    const createPhoneEditor = (onUpdate, props) =>
+                              (<StringEditor onUpdate={ onUpdate } {...props}
+                                            handlePatientUpdate={handlePatientUpdate}
+                                            dataField='phone_number'/>);
+    const createLineIdEditor = (onUpdate, props) =>
+                                (<StringEditor onUpdate={ onUpdate } {...props}
+                                              handlePatientUpdate={handlePatientUpdate}
+                                              dataField='line_id'/>);
+    const createDiseaseEditor = (onUpdate, props) =>
+                                (<ObjectEditor onUpdate={ onUpdate } {...props}
+                                              handleInitEdit={handleInitEdit}
+                                              handleDiseaseGroupUpdate={handleDiseaseGroupUpdate}
+                                              dataField='disease_group'/>);
 
     return (
       <BootstrapTable data={patients}
@@ -94,7 +109,7 @@ export default class Table extends Component {
                       selectRow={selectRowProp}>
           <TableHeaderColumn  dataSort
                               width="70px"
-                              editable={ false }
+                              editable={false}
                               dataAlign='center'
                               dataField='num'>
                                 No.
@@ -103,7 +118,8 @@ export default class Table extends Component {
                               dataField='name'
                               filter={
                                   { type: 'TextFilter',
-                                    placeholder: 'cari nama'
+                                    placeholder: 'cari nama',
+                                    delay: 100
                                   }
                               }
                               customEditor={{getElement: createNameEditor}}>
@@ -112,7 +128,8 @@ export default class Table extends Component {
           <TableHeaderColumn  dataField='group' dataSort
                               filter={
                                   { type: 'TextFilter',
-                                    placeholder: 'cari penyakit'
+                                    placeholder: 'cari penyakit',
+                                    delay: 100
                                   }
                               }
                               dataFormat = {this.diseaseFormatter}
@@ -122,18 +139,21 @@ export default class Table extends Component {
           <TableHeaderColumn  dataField='disease_created' dataSort
                               filter={
                                   { type: 'TextFilter',
-                                    placeholder: 'cari tanggal'
+                                    placeholder: 'cari tanggal',
+                                    delay: 100
                                   }
                               }
+                              editable={false}
                               dataFormat = {this.diseaseFormatter}>
                               Penyakit Muncul
           </TableHeaderColumn>
           <TableHeaderColumn  dataField='patient_created'
                               dataSort
-                              editable={ false }
+                              editable={false}
                               filter={
                                   { type: 'TextFilter',
-                                    placeholder: 'cari tanggal'
+                                    placeholder: 'cari tanggal',
+                                    delay: 100
                                   }
                               }>
                                 Pasien Terdaftar
@@ -141,7 +161,8 @@ export default class Table extends Component {
           <TableHeaderColumn dataField='phone_number' dataSort
                               filter={
                                   { type: 'TextFilter',
-                                    placeholder: 'cari nomor'
+                                    placeholder: 'cari nomor',
+                                    delay: 100
                                   }
                               }
                               customEditor={{getElement: createPhoneEditor}}>
@@ -150,13 +171,14 @@ export default class Table extends Component {
           <TableHeaderColumn  dataField='line_id' dataSort
                               filter={
                                   { type: 'TextFilter',
-                                    placeholder: 'cari LineID'
+                                    placeholder: 'cari LineID',
+                                    delay: 100
                                   }
                               }
                               customEditor={{getElement: createLineIdEditor}}>
                                 LineID
           </TableHeaderColumn>
-          <TableHeaderColumn isKey dataField='id'>
+          <TableHeaderColumn isKey dataField='id' width="70px" >
                                 Pasien ID
           </TableHeaderColumn>
       </BootstrapTable>

@@ -9,6 +9,7 @@ import {API_URL, API_HEADERS} from '../common/constant';
 import moment from 'moment';
 import {toTitleCase} from '../utilities/util';
 import Table from '../common/table/table';
+import _ from 'lodash';
 
 export default class PatientInfo extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ export default class PatientInfo extends Component {
       clinic: [],
       selectedClinic: null,
       selectedRows: [],
+      oldGroup: []
     };
   }
 
@@ -89,7 +91,6 @@ export default class PatientInfo extends Component {
             );
           })
         }
-
 
         patients.push(
           {
@@ -192,6 +193,61 @@ export default class PatientInfo extends Component {
 
   }
 
+  handleInitEdit(row) {
+    this.setState({
+      oldGroup : row.group
+    })
+  }
+
+  handleDiseaseGroupUpdate(selectedGroup, patientId) {
+    let {oldGroup, selectedClinic} = this.state,
+        newGroup = selectedGroup,
+        method = '',
+        endpoint = 'patient_disease_group';
+
+    var result = _.intersectionWith(oldGroup, newGroup, _.isEqual);
+    oldGroup = _.difference(oldGroup, result);
+    newGroup = _.difference(newGroup, result);
+
+    if (oldGroup.length > 0) {
+      oldGroup.map((d) => {
+        fetch(`${API_URL}/${endpoint}/${d.pdg_id}`, {
+          method: 'DELETE',
+          headers: API_HEADERS,
+        })
+        .then((response) => response.json())
+        .then((responseData) => {
+          this.renderTable(selectedClinic['id']);
+        })
+        .catch((error) => {
+          console.log('Error fetching and parsing data', error);
+        });
+      })
+    }
+
+    if (newGroup.length > 0) {
+      newGroup.map((d) => {
+        let body = {
+          patient_id: patientId,
+          disease_group_id: d.value
+        }
+        fetch(`${API_URL}/${endpoint}`, {
+          method: 'POST',
+          headers: API_HEADERS,
+           body: JSON.stringify(body)
+        })
+        .then((response) => response.json())
+        .then((responseData) => {
+          this.renderTable(selectedClinic['id']);
+        })
+        .catch((error) => {
+          console.log('Error fetching and parsing data', error);
+        });
+      })
+    }
+
+  }
+
   render() {
     const {patients, selectedClinic,
            showSpinner, selectedRows} = this.state;
@@ -209,7 +265,10 @@ export default class PatientInfo extends Component {
                                   selectedRows={selectedRows}
                                   showSpinner={showSpinner}
                                   handleRowSelection={::this.handleRowSelection}
-                                  handlePatientUpdate={::this.handlePatientUpdate}/>)
+                                  handlePatientUpdate={::this.handlePatientUpdate}
+                                  handleInitEdit={::this.handleInitEdit}
+                                  handleDiseaseGroupUpdate={::this.handleDiseaseGroupUpdate}
+                                  />)
                           : '';
 
     return (

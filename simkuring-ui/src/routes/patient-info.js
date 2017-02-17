@@ -147,21 +147,27 @@ export default class PatientInfo extends Component {
   handlePatientUpdate(row, dataField, value) {
     const {selectedClinic} = this.state,
           endpoint = `${'/patient/'}`;
-    let body = {};
+
+    let fullName = row['name'].split(' ');
+    let firstName = fullName[0];
+    let lastName = (fullName.length > 1) ? fullName[1] : '';
+    let body = {
+                id: row['id'],
+                clinic_id: selectedClinic['id'],
+                phone_number: row['phone_number'],
+                first_name: firstName,
+                last_name: lastName,
+                line_user_id: row['line_id']
+            };
 
     switch(dataField) {
       case "name":
-        const fullName = value.split(' ');
-        const firstName = fullName[0];
-        const lastName = (fullName.length > 1) ? fullName[1] : '';
-        body = {
-            id: row['id'],
-            clinic_id: selectedClinic['id'],
-            phone_number: row['phone_number'],
-            first_name: firstName,
-            last_name: lastName,
-            line_user_id: row['line_id']
-        }
+        fullName = value.split(' ');
+        firstName = fullName[0];
+        lastName = (fullName.length > 1) ? fullName[1] : '';
+
+        body.first_name = firstName;
+        body.last_name = lastName;
         break;
     }
 

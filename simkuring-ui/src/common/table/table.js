@@ -1,58 +1,15 @@
 import React, {Component} from 'react';
 import Spinner from 'react-spinner';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-
-class StringEditor extends Component {
-  constructor(props) {
-    super(props);
-    this.updateData = this.updateData.bind(this);
-    this.state = {
-      value: props.defaultValue,
-      open: true,
-      patient_id: props.row.id
-    };
-  }
-  focus() {
-    this.refs.inputRef.focus();
-  }
-  updateData() {
-    this.props.onUpdate(this.state.value);
-    this.props.handlePatientUpdate(this.props.row,this.props.dataField,this.state.value);
-  }
-  close = () => {
-    this.setState({ open: false });
-    this.props.onUpdate(this.props.defaultValue);
-  }
-  render() {
-
-    const fadeIn = this.state.open ? 'in' : '';
-    const display = this.state.open ? 'block' : 'none';
-    return (
-      <span>
-        <input
-          ref='inputRef'
-          className={ ( this.props.editorClass || '') + ' form-control editor edit-text' }
-          style={ { display: 'block', width: '100%' } }
-          type='text'
-          value={ this.state.value }
-          onKeyDown={ this.props.onKeyDown }
-          onChange={ e => { this.setState({ value: e.currentTarget.value }); } } />
-        <button
-          className='btn btn-info btn-xs textarea-save-btn'
-          onClick={ this.updateData }>
-          simpan
-        </button>
-      </span>
-    );
-  }
-}
+import StringEditor from './string-editor';
+import ObjectEditor from './object-editor';
 
 class CustomCell extends Component {
 
   render() {
     let renderCustomCell = this.props.cell.map(function(d,i) {
       if (typeof d === 'object') {
-        return (<li key={i}>{d.name}</li>)
+        return (<li key={i}>{d.label}</li>)
       } else {
         return (<li key={i}>{d}</li>)
       }
@@ -125,6 +82,7 @@ export default class Table extends Component {
     const createNameEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='name'/>);
     const createPhoneEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='phone_number'/>);
     const createLineIdEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='line_id'/>);
+    const createDiseaseEditor = (onUpdate, props) => (<ObjectEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='disease_group'/>);
 
     return (
       <BootstrapTable data={patients}
@@ -157,7 +115,8 @@ export default class Table extends Component {
                                     placeholder: 'cari penyakit'
                                   }
                               }
-                              dataFormat = {this.diseaseFormatter}>
+                              dataFormat = {this.diseaseFormatter}
+                              customEditor={{getElement: createDiseaseEditor}}>
                               Penyakit
           </TableHeaderColumn>
           <TableHeaderColumn  dataField='disease_created' dataSort

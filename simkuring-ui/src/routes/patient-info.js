@@ -8,7 +8,7 @@ import Select from 'react-select';
 import {API_URL, API_HEADERS} from '../common/constant';
 import moment from 'moment';
 import {toTitleCase} from '../utilities/util';
-import Table from '../common/table';
+import Table from '../common/table/table';
 
 export default class PatientInfo extends Component {
   constructor(props) {
@@ -64,7 +64,6 @@ export default class PatientInfo extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
-      // console.log(responseData);
       let patients = [];
       responseData.data.map(function(d,i) {
         let patient = d["patient_disease_group"]["patient"],
@@ -83,8 +82,9 @@ export default class PatientInfo extends Component {
             disease_created.push(moment(d.disease["created_at"]).locale("id").format("Do MMMM YY"));
             group.push(
               {
-                name: toTitleCase(d.disease["name"]),
-                pdg_id: d.disease["pdg_id"]
+                label: toTitleCase(d.disease["name"]),
+                pdg_id: d["pdg_id"],
+                value: d.disease['id']
               }
             );
           })

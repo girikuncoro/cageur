@@ -161,14 +161,20 @@ export default class PatientInfo extends Component {
             };
 
     switch(dataField) {
-      case "name":
-        fullName = value.split(' ');
-        firstName = fullName[0];
-        lastName = (fullName.length > 1) ? fullName[1] : '';
+        case "name":
+            fullName = value.split(' ');
+            firstName = fullName[0];
+            lastName = (fullName.length > 1) ? fullName[1] : '';
 
-        body.first_name = firstName;
-        body.last_name = lastName;
-        break;
+            body.first_name = firstName;
+            body.last_name = lastName;
+            break;
+        case "phone_number":
+            body.phone_number = value;
+            break;
+        case "line_id":
+            body.line_id = value;
+            break;
     }
 
     fetch(`${API_URL}${endpoint}${row['id']}`, {

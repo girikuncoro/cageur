@@ -123,6 +123,8 @@ export default class Table extends Component {
     };
 
     const createNameEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='name'/>);
+    const createPhoneEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='phone_number'/>);
+    const createLineIdEditor = (onUpdate, props) => (<StringEditor onUpdate={ onUpdate } {...props} handlePatientUpdate={handlePatientUpdate} dataField='line_id'/>);
 
     return (
       <BootstrapTable data={patients}
@@ -182,7 +184,8 @@ export default class Table extends Component {
                                   { type: 'TextFilter',
                                     placeholder: 'cari nomor'
                                   }
-                              }>
+                              }
+                              customEditor={{getElement: createPhoneEditor}}>
                                 No. Telp
           </TableHeaderColumn>
           <TableHeaderColumn  dataField='line_id' dataSort
@@ -190,7 +193,8 @@ export default class Table extends Component {
                                   { type: 'TextFilter',
                                     placeholder: 'cari LineID'
                                   }
-                              }>
+                              }
+                              customEditor={{getElement: createLineIdEditor}}>
                                 LineID
           </TableHeaderColumn>
           <TableHeaderColumn isKey dataField='id'>

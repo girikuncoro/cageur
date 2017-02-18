@@ -25,15 +25,3 @@
 @import "react-spinner";
 @import "react-bootstrap-table-all.css";
 @import "react-select";
-
-/* custom style */
-tbody {
-  tr {
-    td {
-      ul {
-        list-style: 'none';
-        padding-left: 0;
-      }
-    }
-  }
-}

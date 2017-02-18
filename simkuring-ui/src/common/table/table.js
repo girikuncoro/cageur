@@ -21,7 +21,10 @@ class CustomCell extends Component {
     })
 
     return (
-      <ul>
+      <ul style={{
+        'listStyleType': 'none',
+        'paddingLeft': 0
+      }}>
         {renderCustomCell}
       </ul>
     )
@@ -184,7 +187,9 @@ export default class Table extends Component {
                               customEditor={{getElement: createLineIdEditor}}>
                                 LineID
           </TableHeaderColumn>
-          <TableHeaderColumn isKey dataField='id' width="70px" >
+          <TableHeaderColumn isKey
+                             dataField='id'
+                             hidden>
                                 Pasien ID
           </TableHeaderColumn>
       </BootstrapTable>

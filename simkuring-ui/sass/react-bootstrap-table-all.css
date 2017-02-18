@@ -17,8 +17,7 @@
 
 .react-bs-table table td,
 .react-bs-table table th {
-  overflow-x: hidden;
-  overflow-y: visible;
+  /*overflow: hidden;*/
   white-space: nowrap;
   text-overflow: ellipsis;
 }

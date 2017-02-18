@@ -66,8 +66,14 @@ export default class ObjectEditor extends Component {
     		<span>+</span>
     	);
     }
+    
     return (
           <span style={selectContainer} ref="editableDiseaseGroup">
+              <button
+                className='btn btn-info btn-xs textarea-save-btn'
+                onClick={this.updateData}>
+                simpan
+              </button>
               <Select
                   arrowRenderer={arrowRenderer}
                   ref="groupDiseaseSelect"
@@ -79,20 +85,13 @@ export default class ObjectEditor extends Component {
                   onChange={::this.updateGroup}
                   autofocus={true}
                   clearable={false}/>
-              <button
-                className='btn btn-info btn-xs textarea-save-btn'
-                onClick={ this.updateData }>
-                simpan
-              </button>
           </span>
     );
   }
 }
 
 const selectContainer = {
+    'display': 'block',
     'position': 'relative',
     'width': '100%',
-    'height': '100%',
-    'zIndex': '100000',
-    'overflow': 'visible'
 }

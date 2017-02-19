@@ -11,6 +11,7 @@ const ctl = {
       email: req.body.email,
       password: req.body.password,
       role: req.body.role,
+      clinicID: req.body['clinic_id'],
     });
 
     if (!user.valid) {
@@ -29,9 +30,9 @@ const ctl = {
     user.encryptPassword()
     .then((_) => {
       return db.any(`
-        INSERT INTO cageur_user(role, name, email, password)
-        VALUES($(role), $(name), $(email), $(password))
-        RETURNING id, role, name, email, created_at, updated_at`, user
+        INSERT INTO cageur_user(role, name, email, password, clinic_id)
+        VALUES($(role), $(name), $(email), $(password), $(clinicID))
+        RETURNING id, role, name, email, clinic_id, created_at, updated_at`, user
       );
     })
     .then((data) => {
@@ -45,7 +46,7 @@ const ctl = {
   },
 
   getAllUser(req, res, next) {
-    db.any('SELECT id, name, email, role FROM cageur_user')
+    db.any('SELECT id, name, email, role, clinic_id FROM cageur_user')
     .then((data) => {
       if (data.length === 0) {
         throw abort(404, 'No user data yet', 'Empty user table');
@@ -64,7 +65,7 @@ const ctl = {
     const userID = req.params.id;
 
     db.any(`
-      SELECT id, name, email, role
+      SELECT id, name, email, role, clinic_id
       FROM cageur_user
       WHERE id = ${userID}
     `)
@@ -88,6 +89,7 @@ const ctl = {
       email: req.body.email,
       password: req.body.password,
       role: req.body.role,
+      clinicID: req.body['clinic_id'],
     });
 
     if (!user.valid) {
@@ -107,9 +109,9 @@ const ctl = {
     .then((_) => {
       return db.one(`
         UPDATE cageur_user
-        SET name=$(name), email=$(email), password=$(password), role=$(role)
+        SET name=$(name), email=$(email), password=$(password), role=$(role), clinic_id=$(clinicID)
         WHERE id = ${userID}
-        RETURNING id, name, email, role, created_at, updated_at`,
+        RETURNING id, name, email, role, clinic_id, created_at, updated_at`,
         user
       );
     })

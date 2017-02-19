@@ -31,7 +31,7 @@ const ctl = {
   },
 
   getAllMessageWithClinicID(req, res, next) {
-    const clinicID = req.params.id;
+    const clinicID = req.params['clinic_id'];
     db.any(`
       SELECT time, json_agg(
         json_build_object(

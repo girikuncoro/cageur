@@ -9,6 +9,7 @@ class User {
     this.name = args.name || '';
     this.password = args.password || '';
     this.role = args.role || '';
+    this.clinicID = args.clinicID || null;
 
     this.valid = args.email && args.password && args.role;
   }

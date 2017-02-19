@@ -46,6 +46,23 @@ const ctl = {
     .catch(err => next(err));
   },
 
+  getAllPatientByClinicID(req, res, next) {
+    const clinicID = req.params['clinic_id'];
+
+    db.any(`SELECT * FROM patient WHERE clinic_id = ${clinicID}`)
+    .then((data) => {
+      if (data.length === 0) {
+        throw abort(404, 'No patient data yet', 'Empty patient table');
+      }
+      return res.status(200).json({
+        status: 'success',
+        data,
+        message: 'Retrieved all patient data',
+      });
+    })
+    .catch(err => next(err));
+  },
+
   getSinglePatient(req, res, next) {
     const patientID = req.params.id;
 

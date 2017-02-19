@@ -48,14 +48,14 @@ app.use('/api/v1/patient_disease_group', authenticate(passport), require('./app/
 
 app.use('/api/v1/bank', authenticate(passport), require('./app/api/bank'));
 app.use('/api/v1/subscription', authenticate(passport), require('./app/api/subscription'));
-app.use('/api/v1/user', require('./app/api/user'));  // TODO: not protected to ease development
+app.use('/api/v1/user', authenticate(passport), require('./app/api/user'));
 app.use('/api/v1/auth', require('./app/api/auth'));
 
 app.use('/api/v1/template', authenticate(passport), require('./app/api/template'));
 app.use('/api/v1/message/send', authenticate(passport), require('./app/api/message/send'));
 app.use('/api/v1/message/sent', authenticate(passport), require('./app/api/message/sent'));
 app.use('/api/v1/message/schedule', authenticate(passport), require('./app/api/message/schedule'));
-app.use('/api/v1/message/incoming', require('./app/api/message/incoming'));  // TODO: auth from line API
+app.use('/api/v1/message/incoming', require('./app/api/message/incoming'));  // auth using user validator
 app.use('/api/v1/analytics/message', authenticate(passport), require('./app/api/analytics/message'));
 
 /**

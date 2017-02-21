@@ -43,13 +43,12 @@ class PatientInfoTable extends Component {
             disease_created = [],
             group = [];
 
-        if(disease_group.length > 0) {
+        if(disease_group) {
           disease_group.map(function(d,i) {
-            disease_created.push(moment(d["disease_created_at"]).locale("id").format("Do MMMM YY"));
-            group.push(toTitleCase(d["name"]));
+            disease_created.push(moment(d["disease"]["created_at"]).locale("id").format("Do MMMM YY"));
+            group.push(toTitleCase(d["disease"]["name"]));
           })
         }
-
 
         patients.push(
           {

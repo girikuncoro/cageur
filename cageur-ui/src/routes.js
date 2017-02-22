@@ -22,6 +22,10 @@ import PatientInfo from './routes/PatientInfo';
 // Analytics
 import Analytics from './routes/Analytics';
 
+// Login UI
+import Login from './routes/Login';
+import Signup from './routes/Signup';
+
 class App extends React.Component {
   render() {
     return (
@@ -43,7 +47,7 @@ class App extends React.Component {
   }
 }
 
-export default (
+const routes = (
   <Route path="/" component={App}>
     <Route path='mailbox/outbox' component={Outbox}>
         <Route path='sent' component={Sent} />
@@ -53,5 +57,29 @@ export default (
     <Route path="mailbox/compose" component={Compose} />
     <Route path="patient-information" component={PatientInfo} />
     <Route path="analytics" component={Analytics} />
+  </Route>
+);
+
+const basicRoutes = (
+  <Route>
+    <Route path='login' component={Login} />
+    <Route path='signup' component={Signup} />
+  </Route>
+);
+
+const combinedRoutes = (
+  <Route>
+    <Route>
+      {routes}
+    </Route>
+    <Route>
+      {basicRoutes}
+    </Route>
+  </Route>
+);
+
+export default (
+  <Route>
+      {combinedRoutes}
   </Route>
 );

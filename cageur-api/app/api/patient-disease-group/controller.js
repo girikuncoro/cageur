@@ -30,6 +30,7 @@ const ctl = {
 
   getAllPatientDiseaseGroup(req, res, next) {
     const sqlGetAllData = `
+
       SELECT json_build_object(
           'patient',    row_to_json(p.*),
           'disease_group', COALESCE(array_agg(json_build_object('pdg_id', pdg.id, 'disease', dg.*)) FILTER (WHERE pdg.id IS NOT NULL))) AS patient_disease_group
@@ -38,7 +39,8 @@ const ctl = {
         ON pdg.patient_id = p.id
       LEFT OUTER JOIN disease_group dg
         ON pdg.disease_group_id = dg.id
-      GROUP BY p.id`;
+      GROUP BY p.id
+      ORDER BY p.id`;
 
     db.any(sqlGetAllData)
     .then((data) => {

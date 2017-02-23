@@ -28,9 +28,6 @@ const ctl = {
     .catch(err => next(err));
   },
 
-  // array_agg('[' || friend_id || ',' || confirmed || ']')
-  // COALESCE(array_to_json(array_agg(row_to_json(t))), '[]')
-
   getAllPatientDiseaseGroup(req, res, next) {
     const sqlGetAllData = `
 

@@ -1,35 +1,36 @@
 const router = require('express').Router();
 const ctl = require('../user/controller');
+const { isAuthorized } = require('../../middleware');
 
 /**
 * Insert User data
 * POST /api/v1/user
 */
-router.post('/', ctl.createUser);
+router.post('/', isAuthorized.superAdmin, ctl.createUser);
 
 /**
 * Retrieve all User data
 * GET /api/v1/user
 */
-router.get('/', ctl.getAllUser);
+router.get('/', isAuthorized.superAdmin, ctl.getAllUser);
 
 /**
 * Retrieve single User data
 * GET /api/v1/user/:id
 */
-router.get('/:id', ctl.getSingleUser);
+router.get('/:id', isAuthorized.superAdmin, ctl.getSingleUser);
 
 /**
 * Update User data
 * PUT /api/v1/user/:id
 */
-router.put('/:id', ctl.updateUser);
+router.put('/:id', isAuthorized.superAdmin, ctl.updateUser);
 
 
 /**
 * Remove Users
 * DELETE /api/v1/user/:id
 */
-router.delete('/:id', ctl.removeUser);
+router.delete('/:id', isAuthorized.superAdmin, ctl.removeUser);
 
 module.exports = router;

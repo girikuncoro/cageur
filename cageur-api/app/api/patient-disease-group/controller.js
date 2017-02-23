@@ -60,7 +60,7 @@ const ctl = {
   },
 
   getAllPatientDiseaseGroupWithClinicID(req, res, next) {
-    const clinicID = req.params.id;
+    const clinicID = req.params['clinic_id'];
 
     const sqlGetAllDataWithClinicID = `
       SELECT json_build_object(

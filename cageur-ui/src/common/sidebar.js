@@ -26,16 +26,16 @@ class ApplicationSidebar extends React.Component {
                   {/* Mailbox */}
                   <SidebarNavItem glyph='icon-feather-mail' name={<span>Kotak Pesan <Label className='bg-darkgreen45 fg-white'></Label></span>}>
                     <SidebarNav>
-                      <SidebarNavItem glyph='icon-dripicons-message' name='Tulis Pesan' href={::this.getPath('mailbox/compose')} />
-                      <SidebarNavItem glyph='icon-dripicons-return' name='Pesan Keluar' href={::this.getPath('mailbox/outbox')} />
+                      <SidebarNavItem glyph='icon-dripicons-message' name='Tulis Pesan' href={::this.getPath('dashboard/mailbox/compose')} />
+                      <SidebarNavItem glyph='icon-dripicons-return' name='Pesan Keluar' href={::this.getPath('dashboard/mailbox/outbox')} />
                     </SidebarNav>
                   </SidebarNavItem>
 
                   {/* Patient Information */}
-                  <SidebarNavItem glyph='icon-simple-line-icons-users' name='Informasi Pasien' href='/patient-information' />
+                  <SidebarNavItem glyph='icon-simple-line-icons-users' name='Informasi Pasien' href={::this.getPath('dashboard/patient-information')}/>
 
                   {/* Analytics */}
-                  <SidebarNavItem glyph='icon-ikons-bar-chart-2 float-right-rtl' name='Analytics' href={::this.getPath('analytics')}/>
+                  <SidebarNavItem glyph='icon-ikons-bar-chart-2 float-right-rtl' name='Analytics' href={::this.getPath('dashboard/analytics')}/>
                 </SidebarNav>
               </div>
             </Col>

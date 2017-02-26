@@ -84,6 +84,7 @@ export default class Sent extends Component {
       })
       .catch((error) => {
         console.log('Error fetching and parsing data', error);
+        this.props.router.push("/login");
       })
     }
 

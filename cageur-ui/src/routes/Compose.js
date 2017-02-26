@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import Select from 'react-select';
 import 'whatwg-fetch';
 import {
@@ -14,6 +15,7 @@ import {compare, toTitleCase} from '../utilities/util';
 import {API_URL, API_HEADERS} from '../common/constant';
 require('moment/locale/id');
 
+@withRouter
 export default class Compose extends React.Component {
   constructor(props) {
     super(props);
@@ -57,6 +59,7 @@ export default class Compose extends React.Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
+      this.props.router.push("/login");
     })
   }
 

@@ -32,15 +32,22 @@ class OutboxNavItem extends Component {
 @withRouter
 export default class Outbox extends Component {
 
-    constructor(props) {
-        super(props);
+  constructor(props) {
+      super(props);
 
-        this.state = {
-            sentMessages: undefined,
-            selectedMessage: null,
-            checkedAll: false
-        };
+      this.state = {
+          sentMessages: undefined,
+          selectedMessage: null,
+          checkedAll: false
+      };
+  }
+
+  componentDidMount() {
+    // Redirect when no token found
+    if (localStorage.getItem('token') == '') {
+      this.props.router.push("/login");
     }
+  }
 
   handleClick(e) {
     e.preventDefault();
@@ -96,6 +103,7 @@ export default class Outbox extends Component {
             })
             .catch((error) => {
               console.log('Error fetching and parsing data', error);
+              this.props.router.push("/login");
             });
           }
       })
@@ -140,6 +148,7 @@ export default class Outbox extends Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
+      this.props.router.push("/login");
     })
   }
 

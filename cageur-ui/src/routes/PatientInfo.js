@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { withRouter } from 'react-router';
 import ReactDOM from 'react-dom';
 import {
   Row, Col, Grid, Panel, Table, PanelBody,
@@ -9,6 +10,7 @@ import {API_URL, API_HEADERS} from '../common/constant';
 import moment from 'moment';
 import {toTitleCase} from '../utilities/util';
 
+@withRouter
 class PatientInfoTable extends Component {
   constructor(props) {
     super(props);
@@ -75,6 +77,7 @@ class PatientInfoTable extends Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
+      this.props.router.push("/login");
     })
   }
 

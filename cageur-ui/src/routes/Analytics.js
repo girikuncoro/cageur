@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { withRouter } from 'react-router';
 import Select from 'react-select';
 import StackedBar from '../common/stacked-bar';
 import PieChart from '../common/pie-chart';
@@ -28,6 +29,7 @@ class ChartContainer extends React.Component {
   }
 }
 
+@withRouter
 export default class Analytics extends Component {
   constructor(props) {
     super(props);
@@ -91,6 +93,7 @@ export default class Analytics extends Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
+      this.props.router.push("/login");
     });
   }
 

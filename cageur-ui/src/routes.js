@@ -1,12 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import { IndexRoute, Route } from 'react-router';
-import { Grid, Row, Col, MainContainer } from '@sketchpixy/rubix';
 
-/* Common Components */
-import Footer from './common/footer';
-import Header from './common/header';
-import Sidebar from './common/sidebar';
+// App
+import App from './app';
 
 /* Pages */
 // Mailbox
@@ -24,31 +21,9 @@ import Analytics from './routes/Analytics';
 
 // Login UI
 import Login from './routes/Login';
-import Signup from './routes/Signup';
-
-class App extends React.Component {
-  render() {
-    return (
-      <MainContainer {...this.props}>
-        <Sidebar />
-        <Header />
-        <div id='body'>
-          <Grid>
-            <Row>
-              <Col xs={12}>
-                {this.props.children}
-              </Col>
-            </Row>
-          </Grid>
-        </div>
-        <Footer />
-      </MainContainer>
-    );
-  }
-}
 
 const routes = (
-  <Route path="/" component={App}>
+  <Route path="/dashboard" component={App}>
     <Route path='mailbox/outbox' component={Outbox}>
         <Route path='sent' component={Sent} />
         <Route path='scheduled' component={Scheduled} />
@@ -61,9 +36,9 @@ const routes = (
 );
 
 const basicRoutes = (
-  <Route>
+  <Route path='/'>
+    <IndexRoute component={Login}/>
     <Route path='login' component={Login} />
-    <Route path='signup' component={Signup} />
   </Route>
 );
 

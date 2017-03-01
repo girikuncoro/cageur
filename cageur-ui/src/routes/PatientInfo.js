@@ -6,7 +6,7 @@ import {
   PanelHeader, FormControl, PanelContainer
 } from '@sketchpixy/rubix';
 import Spinner from 'react-spinner';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 import moment from 'moment';
 import {toTitleCase} from '../utilities/util';
 
@@ -26,6 +26,13 @@ class PatientInfoTable extends Component {
     // Showing spinner while waiting response from DB
     this.setState({showSpinner: true});
 
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+                                    
     // Fetching Patient Information
     fetch(`${API_URL}/patient_disease_group/clinic/1`, {
       headers: API_HEADERS

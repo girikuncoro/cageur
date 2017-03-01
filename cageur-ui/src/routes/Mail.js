@@ -30,9 +30,9 @@ export default class Mail extends React.Component {
 
   handleBackClick(e) {
       if (this.props.params.origin === 'scheduled') {
-        this.props.router.push('/mailbox/outbox/scheduled');
+        this.props.router.push('/dashboard/mailbox/outbox/scheduled');
       } else {
-        this.props.router.push('/mailbox/outbox/sent');
+        this.props.router.push('/dashboard/mailbox/outbox/sent');
       }
   }
 

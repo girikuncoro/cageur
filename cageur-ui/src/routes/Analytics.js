@@ -8,7 +8,7 @@ import {
   PanelContainer
 } from '@sketchpixy/rubix';
 import Spinner from 'react-spinner';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 import _ from 'underscore';
 import 'whatwg-fetch';
 
@@ -48,6 +48,13 @@ export default class Analytics extends Component {
   componentDidMount() {
     // Showing spinner while waiting response from DB
     this.setState({showSpinner: true});
+
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
 
     // Fetching analytics data
     fetch(API_URL+'/analytics/message/clinic/1', {

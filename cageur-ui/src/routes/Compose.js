@@ -12,7 +12,7 @@ import Datetime from 'react-datetime';
 import moment from 'moment';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 require('moment/locale/id');
 
 @withRouter
@@ -44,6 +44,14 @@ export default class Compose extends React.Component {
   }
 
   componentDidMount() {
+
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+
     // Fetching Disease Group Data
     fetch(API_URL+'/disease_group', {
       headers: API_HEADERS
@@ -86,6 +94,13 @@ export default class Compose extends React.Component {
     if (selectedGroup !== null) {
       // Showing spinner while waiting response from DB
       this.setState({showSpinner: true});
+
+      // Append token to api headers
+      let API_HEADERS = {
+        'Content-Type': 'application/json',
+      }
+      API_HEADERS['Authorization'] = (localStorage) ?
+                                      (localStorage.getItem('token')) : '';
 
       // Fetching message template for selected disease group
       fetch(`${API_URL}/template/disease_group/${selectedGroup.id}`, {headers: API_HEADERS})
@@ -155,6 +170,13 @@ export default class Compose extends React.Component {
                             'daftar pesan terjadwal';
 
 
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+
     fetch(`${API_URL}${endpoint}`, {
       method: 'post',
       headers: API_HEADERS,
@@ -177,8 +199,8 @@ export default class Compose extends React.Component {
       let redirect = function () {
         clearInterval(showProgressBar);
         const route = (scheduleOption === 'none') ?
-                      self.props.router.push("/mailbox/outbox/sent") :
-                      self.props.router.push("/mailbox/outbox/scheduled");
+                      self.props.router.push("/dashboard/mailbox/outbox/sent") :
+                      self.props.router.push("/dashboard/mailbox/outbox/scheduled");
         return route
       }
 

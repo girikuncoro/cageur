@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { withRouter } from 'react-router';
 import {Badge} from '@sketchpixy/rubix';
 import Spinner from 'react-spinner';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 import {toTitleCase} from '../utilities/util';
 import moment from 'moment';
 
@@ -14,7 +14,7 @@ class ScheduledMessageItem extends Component {
 
     let {name,status,content,date} = this.props;
     let group_name = name;
-    this.props.router.push(`/mailbox/mail/${group_name}/${status}/${content}/${date}/scheduled`);
+    this.props.router.push(`/dashboard/mailbox/mail/${group_name}/${status}/${content}/${date}/scheduled`);
   }
 
   render() {
@@ -58,6 +58,13 @@ export default class Scheduled extends Component {
   }
 
   handleFetching() {
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+
     // Fetching Sent Messages Information
     fetch(`${API_URL}/message/schedule/clinic/1`, {
       headers: API_HEADERS

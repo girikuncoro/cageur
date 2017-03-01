@@ -3,7 +3,7 @@ import { withRouter } from 'react-router';
 import classNames from 'classnames';
 import Spinner from 'react-spinner';
 import {Badge} from '@sketchpixy/rubix';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 import {toTitleCase} from '../utilities/util';
 import moment from 'moment';
 
@@ -15,7 +15,7 @@ class SentMessageItem extends React.Component {
 
     let {name,status,content,date} = this.props;
     let group_name = name;
-    this.props.router.push(`/mailbox/mail/${group_name}/${status}/${content}/${date}/sent`);
+    this.props.router.push(`/dashboard/mailbox/mail/${group_name}/${status}/${content}/${date}/sent`);
   }
   render() {
     var classes = classNames({
@@ -24,7 +24,7 @@ class SentMessageItem extends React.Component {
     });
 
     var linkProps = {
-      href: '/mailbox/mail',
+      href: '/dashboard/mailbox/mail',
       onClick: ::this.handleClick,
       className: classes,
     };
@@ -58,6 +58,13 @@ export default class Sent extends Component {
     componentDidMount() {
       // Showing spinner while waiting response from DB
       this.setState({showSpinner: true});
+
+      // Append token to api headers
+      let API_HEADERS = {
+        'Content-Type': 'application/json',
+      }
+      API_HEADERS['Authorization'] = (localStorage) ?
+                                      (localStorage.getItem('token')) : '';
 
       // Fetching Sent Messages Information
       fetch(`${API_URL}/message/sent/clinic/1`, {

@@ -28,8 +28,8 @@ export default class Login extends Component {
     super(props);
 
     this.state = {
-      email: '',
-      password: ''
+      email: 'prihantoro.rudy@gmail.com',
+      password: 'C@geur123'
     };
   }
 
@@ -66,7 +66,7 @@ export default class Login extends Component {
         // Redirect to login page when response not ok
         this.props.router.push("/login");
 
-        localStorage.setItem('token', '');
+        localStorage.removeItem('token');
       }
     })
     .then((responseData) => {

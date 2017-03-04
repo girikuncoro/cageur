@@ -37,7 +37,8 @@ class HeaderNavigation extends React.Component {
   }
 
   handleLogout(e) {
-    this.props.router.push('/');
+    if(localStorage) {localStorage.removeItem('token');}
+    this.props.router.push('/login');
   }
 
   render() {

@@ -21,10 +21,9 @@ import Analytics from './routes/Analytics';
 
 // Login UI
 import Login from './routes/Login';
-import checkAuth from './utilities/check-auth';
 
 const routes = (
-  <Route path="/dashboard" component={App} onEnter={checkAuth}>
+  <Route path="/dashboard" component={App}>
     <Route path='mailbox/outbox' component={Outbox}>
         <Route path='sent' component={Sent} />
         <Route path='scheduled' component={Scheduled}/>

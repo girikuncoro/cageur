@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import classNames from 'classnames';
 import { Link, withRouter } from 'react-router';
 import {API_URL} from '../common/constant';
+import auth from '../utilities/auth';
 
 import {
   Row,
@@ -28,8 +29,9 @@ export default class Login extends Component {
     super(props);
 
     this.state = {
-      email: 'prihantoro.rudy@gmail.com',
-      password: 'C@geur123'
+      email: '',
+      password: '',
+      error: false
     };
   }
 
@@ -44,46 +46,20 @@ export default class Login extends Component {
   handleLogin(e) {
     e.preventDefault();
     e.stopPropagation();
-    const creds = {
-      email: this.state.email,
-      password: this.state.password
-    }
-    const endpoint = '/auth';
-    const body = {
-      email: creds.email,
-      password: creds.password
-    }
 
-    fetch(`${API_URL}${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify(body)
-    })
-    .then(function(response) {
-      if (response.ok) {
-        return response.json()
-      } else {
-        // Redirect to login page when response not ok
-        this.props.router.push("/login");
+    const email = this.state.email;
+    const pass = this.state.password;
 
-        localStorage.removeItem('token');
+    auth.login(email, pass, (loggedIn) => {
+      if (!loggedIn) {
+        return this.setState({
+          email: '',
+          password: '',
+          error: true
+        });
       }
-    })
-    .then((responseData) => {
-      console.log(responseData);
 
-      // If login was successful, set the token in local storage
-      localStorage.setItem('token', responseData.token);
-
-      // Redirect to dashboard
       this.props.router.push("/dashboard");
-    })
-    .catch((error) => {
-      console.log('Error fetching and parsing data', error);
-      this.setState({
-        email: '',
-        password: ''
-      });
     })
   }
 

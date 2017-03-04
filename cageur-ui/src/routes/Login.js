@@ -2,25 +2,13 @@ import React, {Component} from 'react';
 import classNames from 'classnames';
 import { Link, withRouter } from 'react-router';
 import {API_URL} from '../common/constant';
-import auth from '../utilities/auth';
+import {validateEmail} from '../utilities/util';
 
 import {
-  Row,
-  Col,
-  Icon,
-  Grid,
-  Form,
-  Badge,
-  Panel,
-  Button,
-  PanelBody,
-  FormGroup,
-  LoremIpsum,
-  InputGroup,
-  FormControl,
-  ButtonGroup,
-  ButtonToolbar,
-  PanelContainer,
+  Row, Col, Icon, Grid, Form, Badge,
+  Panel, Button, PanelBody, FormGroup,
+  InputGroup, FormControl, ButtonGroup,
+  ButtonToolbar, PanelContainer, Alert
 } from '@sketchpixy/rubix';
 
 @withRouter
@@ -31,16 +19,28 @@ export default class Login extends Component {
     this.state = {
       email: '',
       password: '',
-      error: false
+      error: false,
+      errorText: '',
     };
   }
 
   handleEmailInput(e) {
-    this.setState({ email: e.target.value });
+    this.setState({
+      email: e.target.value,
+      error: false
+    })
   }
 
   handlePasswordInput(e) {
-    this.setState({ password: e.target.value });
+    if(this.state.email.length !== 0 && !validateEmail(this.state.email)) {
+      this.setState({
+        error: true,
+        errorText: 'Alamat email tidak valid'
+      })
+    }
+    this.setState({
+      password: e.target.value
+    });
   }
 
   handleLogin(e) {
@@ -50,20 +50,69 @@ export default class Login extends Component {
     const email = this.state.email;
     const pass = this.state.password;
 
-    auth.login(email, pass, (loggedIn) => {
-      if (!loggedIn) {
-        return this.setState({
-          email: '',
-          password: '',
-          error: true
-        });
-      }
+    const endpoint = '/auth';
+    const body = {
+      email: email,
+      password: pass
+    }
+    fetch(`${API_URL}${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json()
+      } else {
+        response.text().then((error) =>{
+          switch(JSON.parse(error).message.toUpperCase()) {
+              case "AUTHENTICATION FAILED. USER NOT FOUND.":
+                this.setState({
+                  error: true,
+                  errorText: 'Klinik tidak ditemukan'
+                })
+                break;
+              case "AUTHENTICATION FAILED. EMAIL AND PASSWORD NOT MATCHED.":
+                this.setState({
+                  error: true,
+                  errorText: 'Email dan sandi tidak cocok'
+                })
+                break;
+              case `MISSING REQUIRED PARAMETERS "EMAIL" OR "PASSWORD"`:
+                this.setState({
+                  error: true,
+                  errorText: 'Email dan sandi harus diisi'
+                })
+                break;
 
+          }
+        })
+      }
+    })
+    .then((responseData) => {
+      // If login was successful, set the token in local storage
+      localStorage.setItem('token', responseData.token);
+
+      // Redirect to dashboard
       this.props.router.push("/dashboard");
+    })
+    .catch((error) => {
+      console.log('Error fetching and parsing data', error);
+    })
+  }
+
+  handleAlertDismiss() {
+    this.setState({
+      error: false,
+      errorText: ''
     })
   }
 
   render() {
+    let renderError = (this.state.error) ?
+    (<Alert bsStyle="danger" onDismiss={::this.handleAlertDismiss}>
+        <strong>{this.state.errorText} </strong>
+    </Alert>) : ""
     return (
       <div id='auth-container' className='login'>
         <div id='auth-row'>
@@ -79,6 +128,7 @@ export default class Login extends Component {
                         </div>
                         <div className='bg-hoverblue fg-black50 text-center' style={{padding: 12.5}}>
                           <div>Anda perlu masuk ke Cageur terlebih dahulu</div>
+                          {renderError}
                           <div style={{padding: 25, paddingTop: 0, paddingBottom: 0, margin: 'auto', marginBottom: 25, marginTop: 25}}>
                             <Form onSubmit={::this.handleLogin}>
                               <FormGroup controlId='emailaddress'>

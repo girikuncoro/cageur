@@ -125,7 +125,8 @@ export default class Outbox extends Component {
                                     (localStorage.getItem('token')) : '';
 
     // Fetching Sent Messages Information
-    fetch(`${API_URL}/message/schedule/clinic/1`, {
+    let clinic_id = localStorage.getItem('clinic_id');
+    fetch(`${API_URL}/message/schedule/clinic/${clinic_id}`, {
       headers: API_HEADERS
     })
     .then((response) => response.json())

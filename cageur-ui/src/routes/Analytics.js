@@ -57,7 +57,9 @@ export default class Analytics extends Component {
                                     (localStorage.getItem('token')) : '';
 
     // Fetching analytics data
-    fetch(API_URL+'/analytics/message/clinic/1', {
+    let clinic_id = localStorage.getItem('clinic_id');
+    let endpoint = `${API_URL}/analytics/message/clinic/${Number(clinic_id)}`;
+    fetch(endpoint, {
       headers: API_HEADERS
     })
     .then((response) => response.json())
@@ -100,7 +102,6 @@ export default class Analytics extends Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
-      this.props.router.push("/login");
     });
   }
 

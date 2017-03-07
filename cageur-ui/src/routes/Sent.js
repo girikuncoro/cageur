@@ -67,7 +67,8 @@ export default class Sent extends Component {
                                       (localStorage.getItem('token')) : '';
 
       // Fetching Sent Messages Information
-      fetch(`${API_URL}/message/sent/clinic/1`, {
+      let clinic_id = localStorage.getItem('clinic_id');
+      fetch(`${API_URL}/message/sent/clinic/${clinic_id}`, {
         headers: API_HEADERS
       })
       .then((response) => response.json())

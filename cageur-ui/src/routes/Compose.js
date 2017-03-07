@@ -148,17 +148,18 @@ export default class Compose extends React.Component {
     this.setState({showSendSpinner: true});
 
     // Fetching ...
+    let clinic_id = Number(localStorage.getItem('clinic_id'));
     const endpoint = (scheduleOption == 'none') ?
-                      '/message/send/clinic/1' :
-                      '/message/schedule/clinic/1';
+                      `/message/send/clinic/${clinic_id}` :
+                      `/message/schedule/clinic/${clinic_id}`;
 
     const message = (scheduleOption == 'none') ?
                 {
-                  diseaseGroup: selectedGroup.id,
+                  disease_group: selectedGroup.id,
                   body: text
                 } :
                 {
-                  clinic_id: 1,
+                  clinic_id: Number(localStorage.getItem('clinic_id')),
                   disease_group: selectedGroup.id,
                   body: text,
                   frequency: (scheduleOption === 'once') ? 'none' : scheduleOption,
@@ -176,6 +177,8 @@ export default class Compose extends React.Component {
     }
     API_HEADERS['Authorization'] = (localStorage) ?
                                     (localStorage.getItem('token')) : '';
+
+    console.log(JSON.stringify(message));
 
     fetch(`${API_URL}${endpoint}`, {
       method: 'post',

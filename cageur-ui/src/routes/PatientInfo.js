@@ -32,9 +32,10 @@ class PatientInfoTable extends Component {
     }
     API_HEADERS['Authorization'] = (localStorage) ?
                                     (localStorage.getItem('token')) : '';
-                                    
+
     // Fetching Patient Information
-    fetch(`${API_URL}/patient_disease_group/clinic/1`, {
+    let clinic_id = localStorage.getItem('clinic_id');
+    fetch(`${API_URL}/patient_disease_group/clinic/${clinic_id}`, {
       headers: API_HEADERS
     })
     .then((response) => response.json())

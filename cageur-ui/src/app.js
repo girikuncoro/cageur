@@ -19,11 +19,12 @@ export default class App extends Component {
                                     (localStorage.getItem('token')) : '';
 
     // Fetching Disease Group Data
-    fetch(API_URL+'/disease_group', {
+    fetch(API_URL+'/profile', {
       headers: API_HEADERS
     })
     .then((response) => response.json())
     .then((responseData) => {
+      localStorage.setItem('clinic_id', responseData.data.clinic_id);
       return true;
     })
     .catch((error) => {

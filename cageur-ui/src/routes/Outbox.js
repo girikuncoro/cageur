@@ -90,6 +90,7 @@ export default class Outbox extends Component {
       const {selectedMessage} = this.state;
       const self = this;
       const endpoint = `${'/message/schedule/'}`;
+      const clinic_id = localStorage.getItem('clinic_id');
 
       // Append token to api headers
       let API_HEADERS = {
@@ -100,7 +101,7 @@ export default class Outbox extends Component {
 
       Object.keys(selectedMessage).forEach(function(d,i) {
           if(selectedMessage[d]) {
-            fetch(`${API_URL}${endpoint}${d}`, {
+            fetch(`${API_URL}${endpoint}${d}/clinic/${clinic_id}`, {
               method: 'delete',
               headers: API_HEADERS
             })

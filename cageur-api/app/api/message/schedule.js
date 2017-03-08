@@ -6,7 +6,7 @@ const { isAuthorized } = require('../../middleware');
 * Scheduling message to be sent later
 * POST /api/v1/message/schedule/clinic/:id
 */
-router.post('/clinic/:id', isAuthorized.clinicSelf, ctl.scheduleMessage);
+router.post('/clinic/:clinic_id', isAuthorized.clinicSelf, ctl.scheduleMessage);
 
 /**
 * Fetch all scheduled messages

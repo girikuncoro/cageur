@@ -9,3 +9,5 @@ npm-debug.log
 venv
 .env
 cageur-ui/tmp/
+simkuring-ui/public/bower_components
+simkuring-ui/tmp

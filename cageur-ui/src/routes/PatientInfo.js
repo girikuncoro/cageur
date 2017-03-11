@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
+import { withRouter } from 'react-router';
 import ReactDOM from 'react-dom';
 import {
   Row, Col, Grid, Panel, Table, PanelBody,
   PanelHeader, FormControl, PanelContainer
 } from '@sketchpixy/rubix';
 import Spinner from 'react-spinner';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 import moment from 'moment';
 import {toTitleCase} from '../utilities/util';
 
+@withRouter
 class PatientInfoTable extends Component {
   constructor(props) {
     super(props);
@@ -24,8 +26,16 @@ class PatientInfoTable extends Component {
     // Showing spinner while waiting response from DB
     this.setState({showSpinner: true});
 
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+
     // Fetching Patient Information
-    fetch(`${API_URL}/patient_disease_group/clinic/1`, {
+    let clinic_id = localStorage.getItem('clinic_id');
+    fetch(`${API_URL}/patient_disease_group/clinic/${clinic_id}`, {
       headers: API_HEADERS
     })
     .then((response) => response.json())
@@ -75,6 +85,7 @@ class PatientInfoTable extends Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
+      this.props.router.push("/login");
     })
   }
 

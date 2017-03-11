@@ -5,7 +5,7 @@ import {
   Button, PanelLeft, PanelBody, ListGroup,
   ButtonToolbar, ListGroupItem, PanelContainer,
 } from '@sketchpixy/rubix';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 import {toTitleCase} from '../utilities/util';
 import moment from 'moment';
 import update from 'immutability-helper';
@@ -32,25 +32,32 @@ class OutboxNavItem extends Component {
 @withRouter
 export default class Outbox extends Component {
 
-    constructor(props) {
-        super(props);
+  constructor(props) {
+      super(props);
 
-        this.state = {
-            sentMessages: undefined,
-            selectedMessage: null,
-            checkedAll: false
-        };
+      this.state = {
+          sentMessages: undefined,
+          selectedMessage: null,
+          checkedAll: false
+      };
+  }
+
+  componentDidMount() {
+    // Redirect when no token found
+    if (localStorage.getItem('token') == '') {
+      this.props.router.push("/login");
     }
+  }
 
   handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    this.props.router.push('/mailbox/compose');
+    this.props.router.push('/dashboard/mailbox/compose');
   }
 
   handleClickNav(route) {
-    this.props.router.push(`/mailbox/outbox${route}`);
+    this.props.router.push(`/dashboard/mailbox/outbox${route}`);
   }
 
   setSelectedMessage(selectedMessage) {
@@ -83,10 +90,18 @@ export default class Outbox extends Component {
       const {selectedMessage} = this.state;
       const self = this;
       const endpoint = `${'/message/schedule/'}`;
+      const clinic_id = localStorage.getItem('clinic_id');
+
+      // Append token to api headers
+      let API_HEADERS = {
+        'Content-Type': 'application/json',
+      }
+      API_HEADERS['Authorization'] = (localStorage) ?
+                                      (localStorage.getItem('token')) : '';
 
       Object.keys(selectedMessage).forEach(function(d,i) {
           if(selectedMessage[d]) {
-            fetch(`${API_URL}${endpoint}${d}`, {
+            fetch(`${API_URL}${endpoint}${d}/clinic/${clinic_id}`, {
               method: 'delete',
               headers: API_HEADERS
             })
@@ -96,14 +111,23 @@ export default class Outbox extends Component {
             })
             .catch((error) => {
               console.log('Error fetching and parsing data', error);
+              this.props.router.push("/login");
             });
           }
       })
   }
 
   handleFetching() {
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+
     // Fetching Sent Messages Information
-    fetch(`${API_URL}/message/schedule/clinic/1`, {
+    let clinic_id = localStorage.getItem('clinic_id');
+    fetch(`${API_URL}/message/schedule/clinic/${clinic_id}`, {
       headers: API_HEADERS
     })
     .then((response) => response.json())
@@ -140,6 +164,7 @@ export default class Outbox extends Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
+      this.props.router.push("/login");
     })
   }
 
@@ -190,13 +215,13 @@ export default class Outbox extends Component {
                         <h6><small className='fg-darkgray'>KOTAK PESAN</small></h6>
                         <ListGroup className='list-bg-blue'>
                             <div onClick={this.handleClickNav.bind(this,'/sent')} style={{cursor: 'pointer'}}>
-                                <ListGroupItem active={(this.props.location.pathname === '/mailbox/outbox/sent')}>
+                                <ListGroupItem active={(this.props.location.pathname === '/dashboard/mailbox/outbox/sent')}>
                                   <OutboxNavItem glyph='icon-dripicons-return' title='Keluar' />
                                 </ListGroupItem>
                             </div>
 
                             <div onClick={this.handleClickNav.bind(this,'/scheduled')} style={{cursor: 'pointer'}}>
-                                <ListGroupItem active={(this.props.location.pathname === '/mailbox/outbox/scheduled')}>
+                                <ListGroupItem active={(this.props.location.pathname === '/dashboard/mailbox/outbox/scheduled')}>
                                   <OutboxNavItem glyph='icon-dripicons-calendar' title='Terjadwal' />
                                 </ListGroupItem>
                             </div>

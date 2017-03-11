@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { withRouter } from 'react-router';
 import Select from 'react-select';
 import StackedBar from '../common/stacked-bar';
 import PieChart from '../common/pie-chart';
@@ -7,7 +8,7 @@ import {
   PanelContainer
 } from '@sketchpixy/rubix';
 import Spinner from 'react-spinner';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 import _ from 'underscore';
 import 'whatwg-fetch';
 
@@ -28,6 +29,7 @@ class ChartContainer extends React.Component {
   }
 }
 
+@withRouter
 export default class Analytics extends Component {
   constructor(props) {
     super(props);
@@ -47,8 +49,17 @@ export default class Analytics extends Component {
     // Showing spinner while waiting response from DB
     this.setState({showSpinner: true});
 
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+
     // Fetching analytics data
-    fetch(API_URL+'/analytics/message/clinic/1', {
+    let clinic_id = localStorage.getItem('clinic_id');
+    let endpoint = `${API_URL}/analytics/message/clinic/${Number(clinic_id)}`;
+    fetch(endpoint, {
       headers: API_HEADERS
     })
     .then((response) => response.json())
@@ -91,6 +102,11 @@ export default class Analytics extends Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
+      this.setState({
+          data: {},
+          groupedByYear: {},
+          showSpinner: false,
+      })
     });
   }
 

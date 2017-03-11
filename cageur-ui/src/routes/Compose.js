@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import Select from 'react-select';
 import 'whatwg-fetch';
 import {
@@ -11,9 +12,10 @@ import Datetime from 'react-datetime';
 import moment from 'moment';
 import Template from '../common/template';
 import {compare, toTitleCase} from '../utilities/util';
-import {API_URL, API_HEADERS} from '../common/constant';
+import {API_URL} from '../common/constant';
 require('moment/locale/id');
 
+@withRouter
 export default class Compose extends React.Component {
   constructor(props) {
     super(props);
@@ -42,6 +44,14 @@ export default class Compose extends React.Component {
   }
 
   componentDidMount() {
+
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+
     // Fetching Disease Group Data
     fetch(API_URL+'/disease_group', {
       headers: API_HEADERS
@@ -57,6 +67,7 @@ export default class Compose extends React.Component {
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
+      this.props.router.push("/login");
     })
   }
 
@@ -83,6 +94,13 @@ export default class Compose extends React.Component {
     if (selectedGroup !== null) {
       // Showing spinner while waiting response from DB
       this.setState({showSpinner: true});
+
+      // Append token to api headers
+      let API_HEADERS = {
+        'Content-Type': 'application/json',
+      }
+      API_HEADERS['Authorization'] = (localStorage) ?
+                                      (localStorage.getItem('token')) : '';
 
       // Fetching message template for selected disease group
       fetch(`${API_URL}/template/disease_group/${selectedGroup.id}`, {headers: API_HEADERS})
@@ -130,17 +148,18 @@ export default class Compose extends React.Component {
     this.setState({showSendSpinner: true});
 
     // Fetching ...
+    let clinic_id = Number(localStorage.getItem('clinic_id'));
     const endpoint = (scheduleOption == 'none') ?
-                      '/message/send/clinic/1' :
-                      '/message/schedule/clinic/1';
+                      `/message/send/clinic/${clinic_id}` :
+                      `/message/schedule/clinic/${clinic_id}`;
 
     const message = (scheduleOption == 'none') ?
                 {
-                  diseaseGroup: selectedGroup.id,
+                  disease_group: selectedGroup.id,
                   body: text
                 } :
                 {
-                  clinic_id: 1,
+                  clinic_id: Number(localStorage.getItem('clinic_id')),
                   disease_group: selectedGroup.id,
                   body: text,
                   frequency: (scheduleOption === 'once') ? 'none' : scheduleOption,
@@ -151,6 +170,15 @@ export default class Compose extends React.Component {
                             'kotak keluar' :
                             'daftar pesan terjadwal';
 
+
+    // Append token to api headers
+    let API_HEADERS = {
+      'Content-Type': 'application/json',
+    }
+    API_HEADERS['Authorization'] = (localStorage) ?
+                                    (localStorage.getItem('token')) : '';
+
+    console.log(JSON.stringify(message));
 
     fetch(`${API_URL}${endpoint}`, {
       method: 'post',
@@ -174,8 +202,8 @@ export default class Compose extends React.Component {
       let redirect = function () {
         clearInterval(showProgressBar);
         const route = (scheduleOption === 'none') ?
-                      self.props.router.push("/mailbox/outbox/sent") :
-                      self.props.router.push("/mailbox/outbox/scheduled");
+                      self.props.router.push("/dashboard/mailbox/outbox/sent") :
+                      self.props.router.push("/dashboard/mailbox/outbox/scheduled");
         return route
       }
 

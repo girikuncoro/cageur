@@ -1,12 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import { IndexRoute, Route } from 'react-router';
-import { Grid, Row, Col, MainContainer } from '@sketchpixy/rubix';
 
-/* Common Components */
-import Footer from './common/footer';
-import Header from './common/header';
-import Sidebar from './common/sidebar';
+// App
+import App from './app';
 
 /* Pages */
 // Mailbox
@@ -22,36 +19,42 @@ import PatientInfo from './routes/PatientInfo';
 // Analytics
 import Analytics from './routes/Analytics';
 
-class App extends React.Component {
-  render() {
-    return (
-      <MainContainer {...this.props}>
-        <Sidebar />
-        <Header />
-        <div id='body'>
-          <Grid>
-            <Row>
-              <Col xs={12}>
-                {this.props.children}
-              </Col>
-            </Row>
-          </Grid>
-        </div>
-        <Footer />
-      </MainContainer>
-    );
-  }
-}
+// Login UI
+import Login from './routes/Login';
 
-export default (
-  <Route path="/" component={App}>
+const routes = (
+  <Route path="/dashboard" component={App}>
     <Route path='mailbox/outbox' component={Outbox}>
         <Route path='sent' component={Sent} />
-        <Route path='scheduled' component={Scheduled} />
+        <Route path='scheduled' component={Scheduled}/>
     </Route>
     <Route path='mailbox/mail/:group_name/:status/:content/:date/:origin' component={Mail} />
     <Route path="mailbox/compose" component={Compose} />
     <Route path="patient-information" component={PatientInfo} />
     <Route path="analytics" component={Analytics} />
+  </Route>
+);
+
+const basicRoutes = (
+  <Route path='/'>
+    <IndexRoute component={Login}/>
+    <Route path='login' component={Login} />
+  </Route>
+);
+
+const combinedRoutes = (
+  <Route>
+    <Route>
+      {routes}
+    </Route>
+    <Route>
+      {basicRoutes}
+    </Route>
+  </Route>
+);
+
+export default (
+  <Route>
+      {combinedRoutes}
   </Route>
 );

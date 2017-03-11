@@ -21,11 +21,18 @@ import {
 
 @withRouter
 export default class Mail extends React.Component {
+  componentDidMount() {
+    // Redirect when no token found
+    if (localStorage.getItem('token') == '') {
+      this.props.router.push("/login");
+    }
+  }
+
   handleBackClick(e) {
       if (this.props.params.origin === 'scheduled') {
-        this.props.router.push('/mailbox/outbox/scheduled');
+        this.props.router.push('/dashboard/mailbox/outbox/scheduled');
       } else {
-        this.props.router.push('/mailbox/outbox/sent');
+        this.props.router.push('/dashboard/mailbox/outbox/sent');
       }
   }
 

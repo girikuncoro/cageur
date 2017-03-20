@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport');
 const passportStrategy = require('./app/config/passport');
+const helmet = require('helmet');
 
 const debug = require('debug')('cageur');
 const morgan = require('morgan');
@@ -18,6 +19,7 @@ const { authenticate, isAuthorized } = require('./app/middleware');
 /**
 * Middleware
 */
+app.use(helmet());
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined'));
 }

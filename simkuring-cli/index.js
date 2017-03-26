@@ -35,7 +35,7 @@ program
          })
          .end(function (err, res) {
             if (!err && res.ok) {
-              console.log(chalk.bold.cyan(res));
+              console.log(chalk.bold.cyan(res.text));
               process.exit(0);
             }
 

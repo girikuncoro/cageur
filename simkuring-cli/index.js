@@ -20,7 +20,7 @@ console.log(
 
 program
   .arguments('<file>')
-  .option('-u, --username <username>', 'The user to authenticate as')
+  .option('-u, --email <email>', 'The user email to authenticate as')
   .option('-p, --password <password>', 'The user\'s password')
   .action(function(file) {
     co(function *() {

@@ -30,7 +30,7 @@ function getCageurCredentials(callback) {
       co(function *() {
         var email = yield prompt('email: ');
         var password = yield prompt.password('password: ');
-        callback();
+        callback(email, password);
       });
     })
     .parse(process.argv);
@@ -40,13 +40,13 @@ function getCageurToken(callback) {
   var prefs = new Preferences('cageur');
 
   if (prefs.cageur && prefs.cageur.token) {
+    console.log(chalk.green('Already signed in.'));
     return callback(null, prefs.cageur.token);
   }
 
-  getCageurCredentials(function(credentials) {
+  getCageurCredentials(function(email, password) {
     var status = new Spinner('Authenticating you, please wait...');
     status.start();
-
     request
        .post('http://localhost:5000/api/v1/auth')
        .set('Accept', 'application/json')
@@ -56,21 +56,19 @@ function getCageurToken(callback) {
        })
        .end(function (err, res) {
           if (!err && res.ok) {
-            console.log(chalk.bold.cyan(res.text));
             status.stop();
-            process.exit(0);
+            var token = JSON.parse(res.text).token;
+            console.log(token);
+            prefs.cageur = {
+              token : token
+            };
+            return callback(null, token);
           }
 
-          var errorMessage;
-          if (res && res.status === 401) {
-            errorMessage = "Authentication failed! Bad email/password?";
-          } else if (err) {
-            errorMessage = err;
-          } else {
-            errorMessage = res.text;
+          if (err) {
+            status.stop();
+            return callback(err);
           }
-          console.error(chalk.red(errorMessage));
-          process.exit(1);
         });
   })
 }
@@ -85,10 +83,11 @@ function cageurAuth(callback) {
 }
 
 cageurAuth(function(err, authed) {
+
   if (err) {
-    switch (err.code) {
+    switch (err.status) {
       case 401:
-        console.log(chalk.red('Couldn\'t log you in. Please try again.'));
+        console.log(chalk.red('Couldn\'t log you in. Bad email/password? Please try again.'));
         break;
       case 422:
         console.log(chalk.red('You already have an access token.'));
@@ -96,7 +95,7 @@ cageurAuth(function(err, authed) {
     }
   }
   if (authed) {
-    console.log(chalk.green('Sucessfully authenticated!'));
+    console.log(chalk.cyan('Sucessfully authenticated!'));
 
     // next step is below
   }

@@ -9,10 +9,9 @@ var Preferences = require('preferences');
 
 function getCageurCredentials(callback) {
   program
-    .arguments('<file>')
     .option('-u, --email <email>', 'The user email to authenticate as')
     .option('-p, --password <password>', 'The user\'s password')
-    .action(function(file) {
+    .action(function() {
       co(function *() {
         var email = yield prompt('email: ');
         var password = yield prompt.password('password: ');

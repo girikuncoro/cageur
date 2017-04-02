@@ -5,6 +5,7 @@
 var chalk       = require('chalk');
 var clear       = require('clear');
 var figlet      = require('figlet');
+var program     = require('commander');
 var files       = require('./lib/files');
 var auth        = require('./lib/auth');
 
@@ -15,21 +16,31 @@ console.log(
   )
 );
 
-auth.cageurAuth(function(err, authed) {
+program
+  .arguments('<file>')
+  .parse(process.argv);
 
-  if (err) {
-    switch (err.status) {
-      case 401:
-        console.log(chalk.red('Couldn\'t log you in. Bad email/password? Please try again.'));
-        break;
-      case 422:
-        console.log(chalk.red('You already have an access token.'));
-        break;
+if(!program.args.length) {
+    program.help();
+} else {
+  var fileName = program.args[0];
+
+  // Authenticating ....
+  auth.cageurAuth(function(err, authed) {
+
+    if (err) {
+      switch (err.status) {
+        case 401:
+          console.log(chalk.red('Couldn\'t log you in. Bad email/password? Please try again.'));
+          break;
+        case 422:
+          console.log(chalk.red('You already have an access token.'));
+          break;
+      }
     }
-  }
-  if (authed) {
-    console.log(chalk.cyan('Sucessfully authenticated!'));
-
-    // next step is below
-  }
-});
+    if (authed) {
+      console.log(chalk.cyan('Sucessfully authenticated!'));
+      files.fileExists(fileName);
+    }
+  });
+}

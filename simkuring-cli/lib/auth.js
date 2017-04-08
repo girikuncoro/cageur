@@ -25,11 +25,18 @@ function getCageurCredentials(callback) {
 }
 
 function getCageurToken(callback) {
-
   // Check for token in global prefs file
   if (prefs.cageur && prefs.cageur.token) {
-    console.log(chalk.green('Already signed in.'));
-    return callback(null, prefs.cageur.token);
+    var currentDate = new Date(),
+        prefsDate = new Date(prefs.cageur.createdAt),
+        diffTime = currentDate.getTime() - prefsDate.getTime(),
+        minutes = Math.round(((diffTime % 86400000) % 3600000) / 60000);
+
+    // Token expired in 30 minutes
+    if (minutes < 30) {
+      console.log(chalk.green('Already signed in.'));
+      return callback(null, prefs.cageur.token);
+    }
   }
 
   getCageurCredentials(function(email, password) {
@@ -47,7 +54,8 @@ function getCageurToken(callback) {
             status.stop();
             var token = JSON.parse(res.text).token;
             prefs.cageur = {
-              token : token
+              token : token,
+              createdAt: new Date()
             };
             return callback(null, token);
           }
@@ -62,12 +70,15 @@ function getCageurToken(callback) {
 
 module.exports = {
   cageurAuth: function cageurAuth(callback) {
-    getCageurToken(function(err, token) {
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, token);
-    });
-  },
-  prefs: prefs
+                getCageurToken(function(err, token) {
+                  if (err) {
+                    return callback(err);
+                  }
+                  return callback(null, token);
+                });
+              },
+  getToken: function getToken() {
+              var token = (prefs.cageur && prefs.cageur.token) ? prefs.cageur.token : null;
+              return token;
+            }
 }

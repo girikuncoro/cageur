@@ -7,6 +7,9 @@ var CLI         = require('clui');
 var Spinner     = CLI.Spinner;
 var Preferences = require('preferences');
 
+// Init preference file
+var prefs = new Preferences('cageur');
+
 function getCageurCredentials(callback) {
   program
     .option('-u, --email <email>', 'The user email to authenticate as')
@@ -22,8 +25,8 @@ function getCageurCredentials(callback) {
 }
 
 function getCageurToken(callback) {
-  var prefs = new Preferences('cageur');
 
+  // Check for token in global prefs file
   if (prefs.cageur && prefs.cageur.token) {
     console.log(chalk.green('Already signed in.'));
     return callback(null, prefs.cageur.token);
@@ -43,7 +46,6 @@ function getCageurToken(callback) {
           if (!err && res.ok) {
             status.stop();
             var token = JSON.parse(res.text).token;
-            console.log(token);
             prefs.cageur = {
               token : token
             };
@@ -66,5 +68,6 @@ module.exports = {
       }
       return callback(null, token);
     });
-  }
+  },
+  prefs: prefs
 }

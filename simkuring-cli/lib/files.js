@@ -1,7 +1,7 @@
 var fs      = require('fs');
 var path    = require('path');
 var chalk   = require('chalk');
-var Excel   = require('exceljs');
+var XLSX    = require('xlsx');
 
 module.exports = {
   getCurrentDirectoryBase : function() {
@@ -10,25 +10,26 @@ module.exports = {
 
   fileExists : function(fileName) {
     try {
-      return fs.stat(fileName, function(err, status) {
-        if(err == null) {
-            console.log(chalk.green('==> File exists'));
-
-            // Readfile ...
-            var workbook = new Excel.Workbook();
-            workbook.csv.readFile(fileName)
-                .then(function(worksheet) {
-                  console.log(worksheet);
-                    // use workbook or worksheet
-                });
-        } else if(err.code == 'ENOENT') {
-            console.log(chalk.red('==> File not exists!'));
-        } else {
-            console.log(chalk.red('==> Some other error: '), err.code);
-        }
-      })
+      if (fs.existsSync(fileName)) {
+        console.log(chalk.green('==> File exists'));
+        return true;
+      } else {
+        console.log(chalk.red('==> File not exists!'));
+        return false;
+      }
     } catch (err) {
       return false;
     }
+  },
+
+  readFile: function(fileName) {
+    var workbook = XLSX.readFile(fileName);
+    var first_sheet_name = workbook.SheetNames[0];
+    var address_of_cell = 'A1';
+
+    /* Get worksheet */
+    var worksheet = workbook.Sheets[first_sheet_name];
+
+    return XLSX.utils.sheet_to_json(worksheet);
   }
 };

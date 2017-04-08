@@ -18,9 +18,10 @@
     "co": "4.6.0",
     "co-prompt": "1.0.0",
     "commander": "2.9.0",
-    "exceljs": "0.4.2",
     "figlet": "1.2.0",
+    "node-fetch": "1.6.3",
     "preferences": "0.2.1",
-    "superagent": "3.5.2"
+    "superagent": "3.5.2",
+    "xlsx": "0.9.9"
   }
 }

@@ -8,6 +8,7 @@ var figlet      = require('figlet');
 var program     = require('commander');
 var files       = require('./lib/files');
 var auth        = require('./lib/auth');
+var patient     = require('./commands/patient');
 
 clear();
 console.log(
@@ -40,7 +41,12 @@ if(!program.args.length) {
     }
     if (authed) {
       console.log(chalk.cyan('Sucessfully authenticated!'));
-      files.fileExists(fileName);
+      if (files.fileExists(fileName)) {
+        var data = files.readFile(fileName);
+        patient.insertPatient(data);
+      } else {
+        process.exit(0);
+      }
     }
   });
 }

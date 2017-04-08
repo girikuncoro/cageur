@@ -31,9 +31,9 @@ $ npm install -g
 $ npm link
 ```
 
-- Test on random file (file.txt)
+- Test on file (e.g .csv, .xlsx) at any directory that containing the files
 ```
-$ simkuring file.txt
+$ simkuring data.csv
 ```
 
 - Help

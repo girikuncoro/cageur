@@ -50,6 +50,11 @@ export default class PieChart extends Component {
                     `${monthName} ${this.props.year}`:
                     `${this.props.year}`;
 
+    // If there is no data, no subtitle
+    if (subtitle) {
+      subtitle = '';
+    }
+
     this.chart = c3.generate({
         bindto: `#${this.props.id}`,
         title: {
@@ -57,7 +62,8 @@ export default class PieChart extends Component {
         },
         data: {
             columns: pieData,
-            type : 'donut'
+            type : 'donut',
+            empty: { label: { text: "Tidak ada data" }   }
         },
         tooltip: {
             position: function(data, width, height, element) {

@@ -7,12 +7,12 @@ class ClinicAction extends Action {
     super(client, config, { from: 'clinic', url: '/clinic' });
   }
 
-  go(option) {
+  go(cmd) {
     if (!this.client.isValid()) {
       console.log('Token or API target not set');
       process.exit();
     }
-    if (option === 'get') {
+    if (cmd === 'get') {
       super.get();
     }
   }
@@ -20,8 +20,6 @@ class ClinicAction extends Action {
 
 class ClinicCommand {
   static factory(Program, Action) {
-    console.log('StoredConfig in Clinic: ', config);
-
     const client = new CageurClient({
       targetUrl: config.url,
       token: config.token,
@@ -30,9 +28,9 @@ class ClinicCommand {
     const action = new Action(client, config);
 
     const cmd = new Command(Program, {
-      object: 'clinic <option>',
-      description: 'foo',
-      action: (option) => action.go(option),
+      object: 'clinic <cmd>',
+      description: 'Registered clinic information',
+      action: (cmd) => action.go(cmd),
     });
 
     return cmd.execute();

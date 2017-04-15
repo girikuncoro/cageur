@@ -1,7 +1,11 @@
-#!/usr/bin/env node
+const Program = require('commander');
+const { TargetCommand, TargetAction } = require('./command/target');
+const { ClinicCommand, ClinicAction } = require('./command/clinic');
 
-"use strict";
+TargetCommand.factory(Program, TargetAction);
+ClinicCommand.factory(Program, ClinicAction);
 
+<<<<<<< f5da812f7805ff8c0610d7119f1446476d73cc3f
 var chalk       = require('chalk');
 var clear       = require('clear');
 var figlet      = require('figlet');
@@ -50,3 +54,5 @@ if(!program.args.length) {
     }
   });
 }
+
+Program.parse(process.argv);

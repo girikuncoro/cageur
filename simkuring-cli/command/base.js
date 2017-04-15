@@ -1,3 +1,5 @@
+// Base class for command abstraction
+// This class is a thin wrapper on top of commander library
 class Command {
   constructor(commander, options) {
     this.commander = commander;
@@ -19,6 +21,8 @@ class Command {
   }
 }
 
+// Base class for action abstraction
+// This class interfaces for specific command action
 class Action {
   constructor(client, config, options) {
     this.client = client || {};
@@ -31,7 +35,7 @@ class Action {
     this.client.get(this.url)
     .then(
       (res) => {
-        console.log('calling cageur api %s\n%s', this.url, JSON.stringify(res.data, null, 4));
+        console.log(JSON.stringify(res.data, null, 4));
       },
       (err) => console.error(err)
     );

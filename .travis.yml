@@ -5,3 +5,11 @@ install:
   - npm install --prefix ./cageur-api
 script:
   - cd cageur-api && npm run test && npm run lint
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8

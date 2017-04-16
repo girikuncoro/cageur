@@ -1,6 +1,18 @@
 language: node_js
 node_js:
   - "6"
+env:
+  - CXX=g++-4.8
+  - POSTGRES_URL=postgres://travis:@localhost:5432/cageur_db
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+services:
+  - postgresql
+  - rabbitmq
 install:
   - npm install --prefix ./cageur-api
 script:

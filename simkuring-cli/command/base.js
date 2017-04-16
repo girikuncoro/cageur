@@ -35,10 +35,9 @@ class Action {
   get() {
     this.client.get(this.url).then(
       (res) => {
-        console.log(res);
-        print.default(JSON.stringify(res.data, null, 4));
+        print.table(res.data);
       },
-      (err) => { console.log(err); print.danger(err) }
+      (err) => { print.danger(err) }
     );
   }
 

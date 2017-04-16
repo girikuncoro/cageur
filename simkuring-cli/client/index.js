@@ -29,7 +29,7 @@ class CageurClient {
             return resolve(res.json());
           }
           res.text().then((err) => {
-            return reject(JSON.parse(err).message);
+            return reject(err);
           });
         },
         (err) => reject(err)
@@ -51,7 +51,7 @@ class CageurClient {
             return resolve(res.json());
           }
           res.text().then((err) => {
-            return reject(JSON.parse(err).message);
+            return reject(err);
           });
         },
         (err) => reject(err)

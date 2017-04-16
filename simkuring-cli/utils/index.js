@@ -2,10 +2,15 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const xlsx = require('xlsx');
+const prettyjson = require('prettyjson');
+const table = require('console.table');
 
 const print = {
+  table(text) {
+    console.table(text);
+  },
   default(text) {
-    console.log(text);
+    console.log(prettyjson.render(text));
   },
   success(text) {
     console.log(chalk.cyan(text));

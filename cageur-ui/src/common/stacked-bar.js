@@ -6,7 +6,6 @@ export default class StackedBar extends Component {
 
   componentDidMount() {
     let data;
-
     data = this.dataAggregation();
     this.renderChart(data['failed'], data['pending'], data['delivered']);
   }
@@ -118,7 +117,8 @@ export default class StackedBar extends Component {
         groups: [
           ['terkirim', 'tunda','gagal']
         ],
-        order: false
+        order: false,
+        empty: { label: { text: "Tidak ada data" }   }
       },
       axis: {
           x: {

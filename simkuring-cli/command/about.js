@@ -9,6 +9,7 @@ class AboutAction extends Action {
 
   go() {
     print.warning(figlet.textSync('Simkuring', { horizontalLayout: 'full' }));
+    print.warning('Simkuring CLI version: 0.1.0');
   }
 }
 

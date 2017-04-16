@@ -1,16 +1,17 @@
 const { Command, Action } = require('../command/base');
 const CageurClient = require('../client');
 const config = require('../config');
+const { print } = require('../utils');
 
 class ClinicAction extends Action {
   constructor(client, config) {
-    super(client, config, { from: 'clinic', url: '/clinic' });
+    super(client, config, { url: '/clinic' });
   }
 
   go(cmd) {
     if (!this.client.isValid()) {
-      console.log('Token or API target not set');
-      process.exit();
+      print.warning('Token or API target not set');
+      return process.exit();
     }
     if (cmd === 'get') {
       super.get();

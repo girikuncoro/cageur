@@ -1,21 +1,30 @@
 const { Command, Action } = require('../command/base');
 const CageurClient = require('../client');
 const config = require('../config');
+const { print } = require('../utils');
 
 class TargetAction extends Action {
   constructor(client, config) {
-    super(client, config, {});
+    super(client, config);
   }
 
   go(cmd, param, option) {
-    if (cmd == 'set') {
+    if (cmd === 'set') {
       const url = param;
       this.config.url = url;
     }
 
-    if (cmd == 'login') {
+    if (cmd === 'show') {
+      print.default(config);
+    }
+
+    if (cmd === 'login') {
       if (!option.email || !option.password) {
-        console.log('Please specify user and password');
+        print.warning('Please specify user and password');
+        return process.exit();
+      }
+      if (!this.config.url) {
+        print.warning('Please set target API url');
         return process.exit();
       }
       this.client.post('/auth', {
@@ -23,8 +32,12 @@ class TargetAction extends Action {
         password: option.password,
       })
       .then(
-        (res) => { this.config.token = res.token; }, 
-        (err) => console.log(err)
+        (res) => { 
+          this.config.token = res.token; 
+          print.success('Login successful, token is stored');
+          print.default(res.token);          
+        }, 
+        (err) => print.danger(err)
       );
     }
   }
@@ -32,9 +45,12 @@ class TargetAction extends Action {
 
 class TargetCommand {
   static factory(Program, Action) {
-    const client = new CageurClient({});
+    const client = new CageurClient({
+      targetUrl: config.url,
+      token: config.token,
+    });
     const action = new Action(client, config);
-
+    
     const cmd = new Command(Program, {
       object: 'target <cmd> [param]',
       description: 'Set API target endpoint',

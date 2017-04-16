@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 
 class CageurClient {
-  constructor(options) {
+  constructor(options={}) {
     this.targetUrl = options.targetUrl || 'http://localhost:5000';
     this.baseUrl = this.targetUrl + '/api/v1';
     this.token = options.token || '';
@@ -9,6 +9,7 @@ class CageurClient {
       'Content-Type': 'application/json',
       'Authorization': this.token,
     };
+    console.log('url: ', this.targetUrl);
   }
 
   isValid() {
@@ -58,7 +59,6 @@ class CageurClient {
       );
     });
   }
-
 }
 
 module.exports = CageurClient;

@@ -20,7 +20,7 @@ $ cd simkuring-cli
 $ npm install
 ```
 
-## Common Development Task
+## CLI Workflow
 - Install cli globally
 ```
 $ npm install -g
@@ -31,9 +31,22 @@ $ npm install -g
 $ npm link
 ```
 
-- Test on file (e.g .csv, .xlsx) at any directory that containing the files
+- Set Cageur API target
 ```
-$ simkuring data.csv
+$ simkuring target set http://localhost:5000
+```
+
+- Login with username and password
+```
+$ simkuring target login -u rudi@cageur.com -p Cageur@123!
+```
+
+- Perform various actions with format: `simkuring <object> <command> [flags]`
+```
+$ simkuring patient get
+$ simkuring patient import -f data.csv
+$ simkuring clinic get
+$ simkuring about
 ```
 
 - Help

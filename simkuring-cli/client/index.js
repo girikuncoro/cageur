@@ -9,7 +9,6 @@ class CageurClient {
       'Content-Type': 'application/json',
       'Authorization': this.token,
     };
-    console.log('url: ', this.targetUrl);
   }
 
   isValid() {

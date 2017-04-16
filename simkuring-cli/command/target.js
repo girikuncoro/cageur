@@ -49,8 +49,9 @@ class TargetCommand {
       targetUrl: config.url,
       token: config.token,
     });
-    const action = new Action(client, config);
     
+    const action = new Action(client, config);
+
     const cmd = new Command(Program, {
       object: 'target <cmd> [param]',
       description: 'Set API target endpoint',

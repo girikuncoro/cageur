@@ -32,20 +32,31 @@ class Action {
     this.url = options.url || '';
   }
 
-  get() {
+  get(printOption={}) {
+    if (!this.client.isValid()) {
+      print.warning('Token or API target not set');
+      return process.exit();
+    }
     this.client.get(this.url).then(
       (res) => {
-        print.table(res.data);
+        if (printOption.default === true) {
+          return print.default(res.data);
+        }
+        return print.table(res.data);
       },
-      (err) => { print.danger(err) }
+      (err) => print.danger(err)
     );
   }
 
   // Import is for bulk inserting from csv/xlsx file
   import(inputfile) {
+    if (!this.client.isValid()) {
+      print.warning('Token or API target not set');
+      return process.exit();
+    }
     if(!file.exist(inputfile)) {
       print.danger(`${inputfile} not exist`);
-      process.exit();
+      return process.exit();
     }
     const data = file.read(inputfile);
     data.map((d, i) => {

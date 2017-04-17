@@ -9,10 +9,6 @@ class SubscriptionAction extends Action {
   }
 
   go(cmd) {
-    if (!this.client.isValid()) {
-      print.warning('Token or API target not set');
-      return process.exit();
-    }
     if (cmd === 'get') {
       super.get();
     }

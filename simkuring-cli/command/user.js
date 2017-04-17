@@ -3,9 +3,9 @@ const CageurClient = require('../client');
 const config = require('../config');
 const { print } = require('../utils');
 
-class ClinicAction extends Action {
+class UserAction extends Action {
   constructor(client, config) {
-    super(client, config, { url: '/clinic' });
+    super(client, config, { url: '/user' });
   }
 
   go(cmd) {
@@ -15,7 +15,7 @@ class ClinicAction extends Action {
   }
 }
 
-class ClinicCommand {
+class UserCommand {
   static factory(Program, Action) {
     const client = new CageurClient({
       targetUrl: config.url,
@@ -25,8 +25,8 @@ class ClinicCommand {
     const action = new Action(client, config);
 
     const cmd = new Command(Program, {
-      object: 'clinic <cmd>',
-      description: 'Registered clinic information',
+      object: 'user <cmd>',
+      description: 'User accounts that could access Cageur system',
       action: (cmd) => action.go(cmd),
     });
 
@@ -34,4 +34,4 @@ class ClinicCommand {
   }
 }
 
-module.exports = { ClinicAction, ClinicCommand };
+module.exports = { UserAction, UserCommand };

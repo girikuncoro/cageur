@@ -9,10 +9,6 @@ class PatientAction extends Action {
   }
 
   go(cmd, option) {
-    if (!this.client.isValid()) {
-      print.warning('Token or API target not set');
-      return process.exit();
-    }
     if (cmd === 'get') {
       super.get();
     }

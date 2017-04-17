@@ -11,6 +11,11 @@ class PatientDiseaseGroupAction extends Action {
   // Because of weird json output of patient disease group API,
   // print table doesn't work out in base class, so we have to tweak
   go(cmd) {
+    if (!this.client.isValid()) {
+      print.warning('Token or API target not set');
+      return process.exit();
+    }
+    
     if (cmd === 'get') {
       this.client.get(this.url).then(
         (res) => {

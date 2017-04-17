@@ -5,8 +5,10 @@ const { BankCommand, BankAction } = require('./command/bank');
 const { ClinicCommand, ClinicAction } = require('./command/clinic');
 const { DiseaseGroupCommand, DiseaseGroupAction } = require('./command/disease-group');
 const { PatientCommand, PatientAction } = require('./command/patient');
+const { SubscriptionCommand, SubscriptionAction } = require('./command/subscription');
 const { TargetCommand, TargetAction } = require('./command/target');
 const { TemplateCommand, TemplateAction } = require('./command/template');
+const { UserCommand, UserAction } = require('./command/user');
 
 const Spinner = require('clui').Spinner;
 const loading = new Spinner('Loading Simkuring CLI action ...');
@@ -18,8 +20,12 @@ BankCommand.factory(Program, BankAction);
 ClinicCommand.factory(Program, ClinicAction);
 DiseaseGroupCommand.factory(Program, DiseaseGroupAction);
 PatientCommand.factory(Program, PatientAction);
+SubscriptionCommand.factory(Program, SubscriptionAction);
 TargetCommand.factory(Program, TargetAction);
 TemplateCommand.factory(Program, TemplateAction);
+UserCommand.factory(Program, UserAction);
+
+// TODO: display help if all commands are passed
 
 Program.parse(process.argv);
 loading.stop();

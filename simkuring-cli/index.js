@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 const Program = require('commander');
 const { AboutCommand, AboutAction } = require('./command/about');
+const { BankCommand, BankAction } = require('./command/bank');
 const { ClinicCommand, ClinicAction } = require('./command/clinic');
 const { DiseaseGroupCommand, DiseaseGroupAction } = require('./command/disease-group');
 const { PatientCommand, PatientAction } = require('./command/patient');
@@ -13,6 +14,7 @@ loading.start();
 
 // List of command factory
 AboutCommand.factory(Program, AboutAction);
+BankCommand.factory(Program, BankAction);
 ClinicCommand.factory(Program, ClinicAction);
 DiseaseGroupCommand.factory(Program, DiseaseGroupAction);
 PatientCommand.factory(Program, PatientAction);

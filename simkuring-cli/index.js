@@ -12,10 +12,6 @@ const { TargetCommand, TargetAction } = require('./command/target');
 const { TemplateCommand, TemplateAction } = require('./command/template');
 const { UserCommand, UserAction } = require('./command/user');
 
-const Spinner = require('clui').Spinner;
-const loading = new Spinner('Loading Simkuring CLI action ...');
-loading.start();
-
 // List of command factory
 AboutCommand.factory(Program, AboutAction);
 BankCommand.factory(Program, BankAction);
@@ -32,4 +28,3 @@ UserCommand.factory(Program, UserAction);
 // TODO: display help if all commands are passed
 
 Program.parse(process.argv);
-loading.stop();

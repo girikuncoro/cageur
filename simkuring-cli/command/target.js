@@ -12,10 +12,11 @@ class TargetAction extends Action {
     if (cmd === 'set') {
       const url = param;
       this.config.url = url;
+      print.default(this.config);
     }
 
     if (cmd === 'show') {
-      print.default(config);
+      print.default(this.config);
     }
 
     if (cmd === 'login') {
@@ -39,6 +40,12 @@ class TargetAction extends Action {
         }, 
         (err) => print.danger(err)
       );
+    }
+
+    if (cmd === 'clear') {
+      this.config.url = '';
+      this.config.token = '';
+      print.default('Target has been cleared out');
     }
   }
 }

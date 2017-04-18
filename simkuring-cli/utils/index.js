@@ -33,4 +33,8 @@ const file = {
   }
 };
 
-module.exports = { print, file };
+const generatePassword = () => {
+  return Math.random().toString(36).slice(-8);
+};
+
+module.exports = { print, file, generatePassword };

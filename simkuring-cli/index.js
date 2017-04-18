@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 const Program = require('commander');
 const { AboutCommand, AboutAction } = require('./command/about');
 const { BankCommand, BankAction } = require('./command/bank');

@@ -32,11 +32,16 @@ class Action {
     this.url = options.url || '';
   }
 
-  get(printOption={}) {
+  validate() {
     if (!this.client.isValid()) {
       print.warning('Token or API target not set');
       return process.exit();
     }
+    return true;
+  }
+
+  get(printOption={}) {
+    this.validate();
     this.client.get(this.url).then(
       (res) => {
         if (printOption.default === true) {
@@ -50,10 +55,7 @@ class Action {
 
   // Import is for bulk inserting from csv/xlsx file
   import(inputfile) {
-    if (!this.client.isValid()) {
-      print.warning('Token or API target not set');
-      return process.exit();
-    }
+    this.validate();
     if(!file.exist(inputfile)) {
       print.danger(`${inputfile} not exist`);
       return process.exit();

@@ -34,7 +34,10 @@ const file = {
 };
 
 const generatePassword = () => {
-  return Math.random().toString(36).slice(-8);
+  const SPECIAL_CHARS = ['@', '!', '$', '#'];
+  return Math.random().toString(36).slice(-8) +
+    SPECIAL_CHARS[Math.floor(Math.random() * SPECIAL_CHARS.length)] +
+    Math.random().toString(36).slice(-2).toUpperCase();
 };
 
 module.exports = { print, file, generatePassword };

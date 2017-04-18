@@ -4,6 +4,7 @@ const config = require('../config');
 const { print, generatePassword } = require('../utils');
 const prompt = require('prompt');
 
+const NAME_REGEX = /^[A-Z][a-z0-9_-]{3,19}$/;
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 class UserAction extends Action {
@@ -11,6 +12,11 @@ class UserAction extends Action {
     super(client, config, { url: '/user' });
     this.userCreate = {
       properties: {
+        name: {
+          pattern: NAME_REGEX,
+          message: 'Name of clinic user is required, first letter must be uppercase',
+          required: true,
+        },
         email: {
           pattern: EMAIL_REGEX,
           message: 'Email must be in proper format',
@@ -21,6 +27,7 @@ class UserAction extends Action {
   }
 
   go(cmd) {
+    this.validate();
     if (cmd === 'get') {
       super.get();
     }
@@ -28,15 +35,19 @@ class UserAction extends Action {
       prompt.start();
       prompt.get(this.userCreate, (err, res) => {
         // Should only create user for clinic, creating superadmin is dangerous
+        const randomPassword = generatePassword();
         this.client.post('/user', {
-          email: option.email,
-          password: option.password,
+          name: res.name,
+          email: res.email,
+          password: randomPassword,
+          role: 'clinic',
+          clinic_id: null, // TODO: should register clinic info first
         })
         .then(
           (res) => { 
-            this.config.token = res.token; 
-            print.success('Login successful, token is stored');
-            print.default(res.token);          
+            print.success('User has been created');
+            print.default(res);
+            print.warning(`password: ${randomPassword} (treat carefully)`);
           }, 
           (err) => print.danger(err)
         );

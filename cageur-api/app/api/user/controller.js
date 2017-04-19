@@ -42,7 +42,7 @@ const ctl = {
         message: 'user data succesfully added to db',
       });
     })
-    .catch(err => next(abort(400, 'Email address exist', err)));
+    .catch(err => next(abort(400, 'Email address exist or invalid clinicID', err)));
   },
 
   getAllUser(req, res, next) {

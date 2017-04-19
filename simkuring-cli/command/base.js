@@ -1,4 +1,5 @@
 const { print, file } = require('../utils');
+const prompt = require('prompt');
 
 // Base class for command abstraction
 // This class is a thin wrapper on top of commander library
@@ -38,6 +39,34 @@ class Action {
       return process.exit();
     }
     return true;
+  }
+
+  confirm(data) {
+    const schema = {
+      properties: {
+        confirm: {
+          pattern: /^(yes|no|y|n)$/gi,
+          description: 'Are you sure? [y/n]',
+          message: 'Type y/n or yes/no only',
+          required: true,
+          default: 'n',
+        },
+      }
+    };
+
+    return new Promise((resolve, reject) => {
+      prompt.get(schema, (err, res) => {
+        const ans = res.confirm.toLowerCase();
+        if (ans !== 'y' && ans !== 'yes') {
+          print.danger('abort');
+          return process.exit();
+        }
+        if (err) {
+          return reject(err);
+        }
+        return resolve(data);
+      });
+    });
   }
 
   get(printOption={}) {

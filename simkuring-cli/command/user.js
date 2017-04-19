@@ -4,13 +4,14 @@ const config = require('../config');
 const { print, generatePassword } = require('../utils');
 const prompt = require('prompt');
 
-const NAME_REGEX = /^[A-Z][a-z0-9_-]{3,19}$/;
+const NAME_REGEX = /^[A-Z][a-z0-9_-]{2,19}$/;
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const NUMBER_REGEX = /^\d+$/;
 
 class UserAction extends Action {
   constructor(client, config) {
     super(client, config, { url: '/user' });
-    this.userCreate = {
+    this.userPrompt = {
       properties: {
         name: {
           pattern: NAME_REGEX,
@@ -20,6 +21,11 @@ class UserAction extends Action {
         email: {
           pattern: EMAIL_REGEX,
           message: 'Email must be in proper format',
+          required: true,
+        },
+        clinicID: {
+          pattern: NUMBER_REGEX,
+          message: 'Must be valid clinic id',
           required: true,
         },
       }
@@ -32,27 +38,33 @@ class UserAction extends Action {
       super.get();
     }
     if (cmd === 'create') {
-      prompt.start();
-      prompt.get(this.userCreate, (err, res) => {
-        // Should only create user for clinic, creating superadmin is dangerous
-        const randomPassword = generatePassword();
-        this.client.post('/user', {
-          name: res.name,
-          email: res.email,
+      this.createUser();
+    };
+  }
+
+  createUser() {
+    prompt.start();
+    prompt.get(this.userPrompt, (err, res) => {
+      let randomPassword;
+      super.confirm(res).then(data => {
+        randomPassword = generatePassword();
+        return this.client.post('/user', {
+          name: data.name,
+          email: data.email,
           password: randomPassword,
           role: 'clinic',
-          clinic_id: null, // TODO: should register clinic info first
+          clinic_id: data.clinicID,
         })
-        .then(
-          (res) => { 
-            print.success('User has been created');
-            print.default(res);
-            print.warning(`password: ${randomPassword} (treat carefully)`);
-          }, 
-          (err) => print.danger(err)
-        );
-      });
-    }
+      })
+      .then(
+        (res) => {
+          print.success('User has been created');
+          print.default(res);
+          print.warning(`password: ${randomPassword} (treat carefully)`);
+        },
+        (err) => print.danger(err)
+      )
+    });
   }
 }
 

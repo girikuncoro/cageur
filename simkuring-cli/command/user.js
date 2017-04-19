@@ -4,9 +4,7 @@ const config = require('../config');
 const { print, generatePassword } = require('../utils');
 const prompt = require('prompt');
 
-const NAME_REGEX = /^[A-Z][a-z0-9_-]{2,19}$/;
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const NUMBER_REGEX = /^\d+$/;
 
 class UserAction extends Action {
   constructor(client, config) {
@@ -14,8 +12,8 @@ class UserAction extends Action {
     this.userPrompt = {
       properties: {
         name: {
-          pattern: NAME_REGEX,
-          message: 'Name of clinic user is required, first letter must be uppercase',
+          pattern: /^[\w\-\s]+$/,
+          message: 'Name of clinic user is required',
           required: true,
         },
         email: {
@@ -24,7 +22,7 @@ class UserAction extends Action {
           required: true,
         },
         clinicID: {
-          pattern: NUMBER_REGEX,
+          pattern: /^\d+$/,
           message: 'Must be valid clinic id',
           required: true,
         },

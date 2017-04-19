@@ -1,4 +1,5 @@
 const { print, file } = require('../utils');
+const prompt = require('prompt');
 
 // Base class for command abstraction
 // This class is a thin wrapper on top of commander library
@@ -32,11 +33,44 @@ class Action {
     this.url = options.url || '';
   }
 
-  get(printOption={}) {
+  validate() {
     if (!this.client.isValid()) {
       print.warning('Token or API target not set');
       return process.exit();
     }
+    return true;
+  }
+
+  confirm(data) {
+    const schema = {
+      properties: {
+        confirm: {
+          pattern: /^(yes|no|y|n)$/gi,
+          description: 'Are you sure? [y/n]',
+          message: 'Type y/n or yes/no only',
+          required: true,
+          default: 'n',
+        },
+      }
+    };
+
+    return new Promise((resolve, reject) => {
+      prompt.get(schema, (err, res) => {
+        const ans = res.confirm.toLowerCase();
+        if (ans !== 'y' && ans !== 'yes') {
+          print.danger('abort');
+          return process.exit();
+        }
+        if (err) {
+          return reject(err);
+        }
+        return resolve(data);
+      });
+    });
+  }
+
+  get(printOption={}) {
+    this.validate();
     this.client.get(this.url).then(
       (res) => {
         if (printOption.default === true) {
@@ -50,10 +84,7 @@ class Action {
 
   // Import is for bulk inserting from csv/xlsx file
   import(inputfile) {
-    if (!this.client.isValid()) {
-      print.warning('Token or API target not set');
-      return process.exit();
-    }
+    this.validate();
     if(!file.exist(inputfile)) {
       print.danger(`${inputfile} not exist`);
       return process.exit();

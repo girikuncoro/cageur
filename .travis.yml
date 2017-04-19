@@ -2,8 +2,7 @@ language: node_js
 node_js:
   - "6"
 env:
-  - CXX=g++-4.8
-  - POSTGRES_URL=postgres://travis:@localhost:5432/cageur_db
+  - CXX=g++-4.8 POSTGRES_URL=postgres://travis:@localhost:5432/cageur_db
 addons:
   apt:
     sources:

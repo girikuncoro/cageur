@@ -11,14 +11,9 @@ class MessageAction extends Action {
   // For message sent and scheduled, we can't use the get method
   // from super class since it has nested response on disease_group
   go(object, cmd) {
-    if (!this.client.isValid()) {
-      print.warning('Token or API target not set');
-      return process.exit();
-    }
-
+    this.validate();
     if (object === 'sent') {
-      this.url = '/message/sent';
-      this.client.get(this.url).then(
+      this.client.get('/message/sent').then(
         (res) => {
           return print.table(res.data.map(d => {
             d.disease_group = d.disease_group.name;
@@ -30,8 +25,7 @@ class MessageAction extends Action {
     }
 
     if (object === 'scheduled') {
-      this.url = '/message/schedule';
-      this.client.get(this.url).then(
+      this.client.get('/message/schedule').then(
         (res) => {
           return print.table(res.data.map(d => {
             d.disease_group = d.disease_group.name;

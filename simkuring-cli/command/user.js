@@ -1,17 +1,70 @@
 const { Command, Action } = require('../command/base');
 const CageurClient = require('../client');
 const config = require('../config');
-const { print } = require('../utils');
+const { print, generatePassword } = require('../utils');
+const prompt = require('prompt');
+
+const NAME_REGEX = /^[A-Z][a-z0-9_-]{2,19}$/;
+const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const NUMBER_REGEX = /^\d+$/;
 
 class UserAction extends Action {
   constructor(client, config) {
     super(client, config, { url: '/user' });
+    this.userPrompt = {
+      properties: {
+        name: {
+          pattern: NAME_REGEX,
+          message: 'Name of clinic user is required, first letter must be uppercase',
+          required: true,
+        },
+        email: {
+          pattern: EMAIL_REGEX,
+          message: 'Email must be in proper format',
+          required: true,
+        },
+        clinicID: {
+          pattern: NUMBER_REGEX,
+          message: 'Must be valid clinic id',
+          required: true,
+        },
+      }
+    };
   }
 
   go(cmd) {
+    this.validate();
     if (cmd === 'get') {
       super.get();
     }
+    if (cmd === 'create') {
+      this.createUser();
+    };
+  }
+
+  createUser() {
+    prompt.start();
+    prompt.get(this.userPrompt, (err, res) => {
+      let randomPassword;
+      super.confirm(res).then(data => {
+        randomPassword = generatePassword();
+        return this.client.post('/user', {
+          name: data.name,
+          email: data.email,
+          password: randomPassword,
+          role: 'clinic',
+          clinic_id: data.clinicID,
+        })
+      })
+      .then(
+        (res) => {
+          print.success('User has been created');
+          print.default(res);
+          print.warning(`password: ${randomPassword} (treat carefully)`);
+        },
+        (err) => print.danger(err)
+      )
+    });
   }
 }
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
 * This is a seed to create the first superadmin in DB
 */
@@ -5,8 +6,12 @@
 const db = require('../config/db');
 const User = require('../model/user');
 
-const ADMIN_EMAIL = ''; // fill with unique email
-const ADMIN_PASSWORD = ''; // fill with proper password
+if (process.argv.length < 4) {
+  console.error('Email and password must be specified');
+  return process.exit(1);
+}
+const ADMIN_EMAIL = process.argv[2] || '';
+const ADMIN_PASSWORD = process.argv[3] || '';
 
 const user = new User({
   name: 'Super Ultra Admin',
@@ -36,5 +41,6 @@ user.encryptPassword()
 })
 .then((data) => {
   console.log('Superadmin seed succeeded', data);
+  return process.exit(0);
 })
 .catch(err => console.log('Superadmin seed error', err));

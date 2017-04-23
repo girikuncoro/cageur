@@ -8,4 +8,10 @@ const { isAuthorized } = require('../../middleware');
 */
 router.get('/', ctl.getSelfProfile);
 
+/**
+* Change self password
+* PUT /api/v1/profile/password
+*/
+router.put('/password', ctl.updateSelfPassword);
+
 module.exports = router;

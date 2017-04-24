@@ -15,7 +15,7 @@ module.exports = (passport) => {
     .then(
       user => {
         // check if password changed
-        if(user['last_login_at'] < user['last_password_changed_at']) {
+        if (user['last_login_at'] < user['last_password_changed_at']) {
           const err = { 
             status: 403,
             message: 'password changed, must relogin' 

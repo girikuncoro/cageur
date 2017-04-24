@@ -13,6 +13,10 @@ const ctl = {
         email: user.email,
         role: user.role,
         clinic_id: user['clinic_id'],
+        is_new: user['is_new'],
+        is_active: user['is_active'],
+        last_login_at: user['last_login_at'],
+        last_password_changed_at: user['last_password_changed_at'],
       },
       message: 'Retrieved user own profile',
     });
@@ -54,7 +58,7 @@ const ctl = {
       const now = moment().utc().format('YYYY-MM-DD HH:mm:ss');
       return db.any(`
         UPDATE cageur_user
-        SET password = $(password), last_password_changed_at = '${now}'
+        SET password = $(password), last_password_changed_at = '${now}', is_new = false
         WHERE id = $(id)
         RETURNING id, email, last_login_at, last_password_changed_at, created_at, updated_at`, user
       );

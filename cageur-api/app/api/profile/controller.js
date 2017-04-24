@@ -1,6 +1,7 @@
 const db = require('../../config/db');
 const abort = require('../../util/abort');
 const User = require('../../model/user');
+const moment = require('moment');
 
 const ctl = {
   getSelfProfile(req, res, next) {
@@ -21,11 +22,13 @@ const ctl = {
   updateSelfPassword(req, res, next) {
     let user = new User(req.user);
     const password = {
+      stored: user.password,
       old: req.body.oldPassword,
       new: req.body.newPassword,
       confirm: req.body.confirmPassword,
     };
     user.password = password.new;
+    User.comparePassword(password.old, password.stored).then(res => console.log(res));
 
     if (!password.old || !password.new || !password.confirm) {
       throw abort(400, 'Missing required parameters "oldPassword" or "newPassword" or "confirmPassword"');
@@ -40,13 +43,20 @@ const ctl = {
       throw abort(400, 'New password must be matched');
     }
 
-    user.encryptPassword()
+    User.comparePassword(password.old, password.stored)
+    .then((isMatch) => {
+      if (!isMatch) {
+        throw abort(400, 'Old password not matched')
+      }
+      return user.encryptPassword();
+    })
     .then(() => {
+      const now = moment().utc().format('YYYY-MM-DD HH:mm:ss');
       return db.any(`
         UPDATE cageur_user
-        SET password = $(password)
+        SET password = $(password), last_password_changed_at = '${now}'
         WHERE id = $(id)
-        RETURNING id, email, created_at, updated_at`, user
+        RETURNING id, email, last_login_at, last_password_changed_at, created_at, updated_at`, user
       );
     })
     .then((data) => {

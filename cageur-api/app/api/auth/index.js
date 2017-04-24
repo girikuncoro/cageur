@@ -18,6 +18,7 @@ const db = require('../../config/db');
 const { jwtSecret, jwtExpiresIn } = require('../../config');
 const abort = require('../../util/abort');
 const User = require('../../model/user');
+const moment = require('moment');
 
 /*
 * POST /api/v1/auth
@@ -30,7 +31,7 @@ router.post('/', (req, res, next) => {
     throw abort(400, 'Missing required parameters "email" or "password"');
   }
 
-  let userFound;
+  let userFound, token;
   User.findOneByEmail(db, email)
   .then(
     (user) => {
@@ -44,9 +45,17 @@ router.post('/', (req, res, next) => {
       throw abort(401, 'Authentication failed. Email and password not matched.', `${email} wrong password`);
     }
     // generate token if password matched
-    const token = jwt.sign(userFound, jwtSecret, {
+    token = jwt.sign(userFound, jwtSecret, {
       expiresIn: jwtExpiresIn,
     });
+    const now = moment().utc().format('YYYY-MM-DD HH:mm:ss');
+    return db.any(`
+      UPDATE cageur_user
+      SET last_login_at = '${now}'
+      WHERE id = ${userFound.id}`
+    );
+  })
+  .then((_) => {
     return res.status(200).json({
       status: 'success',
       token: `JWT ${token}`,

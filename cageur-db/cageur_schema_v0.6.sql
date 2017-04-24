@@ -173,6 +173,8 @@ CREATE TABLE cageur_user (
   clinic_id INT,
   is_new BOOLEAN DEFAULT TRUE,
   is_active BOOLEAN DEFAULT TRUE,
+  last_login_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  last_password_changed_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   created_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   updated_at TIMESTAMP DEFAULT (now() at time zone 'utc'),
   PRIMARY KEY (id),

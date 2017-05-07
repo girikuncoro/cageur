@@ -2,6 +2,7 @@ const { Command, Action } = require('../command/base');
 const CageurClient = require('../client');
 const config = require('../config');
 const { print, file } = require('../utils');
+const prompt = require('prompt');
 
 class TemplateAction extends Action {
   constructor(client, config) {
@@ -18,6 +19,35 @@ class TemplateAction extends Action {
         return process.exit();
       }
       super.import(option.inputfile);
+    }
+    if (cmd === 'create') {
+      const schema = {
+        properties: {
+          disease_group: {
+            required: true,
+            type: 'number',
+            description: 'Type disease group id',
+            message: 'disease group must be number'
+          },
+          title: {
+            required: true,
+            type: 'string',
+            description: 'Type template title',
+            message: 'title must exist'
+          },
+          content: {
+            required: true,
+            type: 'string',
+            description: 'Type template content',
+            message: 'content must exist'
+          } 
+        }
+      }
+
+      prompt.start();
+      prompt.get(schema, (err, data) => {
+        super.create(data);
+      });
     }
   }
 }

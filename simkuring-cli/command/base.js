@@ -100,7 +100,17 @@ class Action {
     });
   }
 
-  // TODO: implement create
+  // Create is for insert by prompting information from user
+  create(data) {
+    this.validate();
+    this.client.post(this.url, data).then(
+      (res) => {
+        print.success('Template successfully created');
+      },
+      (err) => print.danger(err)
+    );
+  }
+
 }
 
 module.exports = { Command, Action };

@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const { print } = require('../utils');
 
 class CageurClient {
   constructor(options={}) {
@@ -51,6 +52,7 @@ class CageurClient {
             return resolve(res.json());
           }
           res.text().then((err) => {
+            print.danger(JSON.parse(err).status + ' : ' + JSON.parse(err).message);
             return reject(err);
           });
         },

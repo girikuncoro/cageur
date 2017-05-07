@@ -2,6 +2,7 @@ const { Command, Action } = require('../command/base');
 const CageurClient = require('../client');
 const config = require('../config');
 const { print, file } = require('../utils');
+const prompt = require('prompt');
 
 class DiseaseGroupAction extends Action {
   constructor(client, config) {
@@ -18,6 +19,23 @@ class DiseaseGroupAction extends Action {
         return process.exit();
       }
       super.import(option.inputfile);
+    }
+    if (cmd === 'create') {
+      const schema = {
+        properties: {
+          name: {
+            required: true,
+            type: 'string',
+            description: 'Type new disease group name',
+            message: 'disease group name must exist'
+          }
+        }
+      }
+
+      prompt.start();
+      prompt.get(schema, (err, data) => {
+        super.create(data);
+      });
     }
   }
 }

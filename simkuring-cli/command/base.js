@@ -105,7 +105,7 @@ class Action {
     this.validate();
     this.client.post(this.url, data).then(
       (res) => {
-        print.success('Template successfully created');
+        print.success('Data successfully created');
       },
       (err) => print.danger(err)
     );

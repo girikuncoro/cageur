@@ -1,16 +1,23 @@
 const { Command, Action } = require('../command/base');
 const CageurClient = require('../client');
 const config = require('../config');
-const { print } = require('../utils');
+const { print, file } = require('../utils');
 
 class TemplateAction extends Action {
   constructor(client, config) {
     super(client, config, { url: '/template' });
   }
 
-  go(cmd) {
+  go(cmd, option) {
     if (cmd === 'get') {
       super.get();
+    }
+    if (cmd === 'import') {
+      if (!option.inputfile) {
+        print.warning('Please specify csv/xlsx file for import and make sure it exists');
+        return process.exit();
+      }
+      super.import(option.inputfile);
     }
   }
 }
@@ -27,9 +34,9 @@ class TemplateCommand {
     const cmd = new Command(Program, {
       object: 'template <cmd>',
       description: 'High quality reminder template from doctors',
-      action: (cmd) => action.go(cmd),
+      action: (cmd, option) => action.go(cmd, option),
     });
-
+    cmd.addOption('-f, --inputfile <inputfile>', 'CSV/XLSX file to import and bulk insert patient info');
     return cmd.execute();
   }
 }

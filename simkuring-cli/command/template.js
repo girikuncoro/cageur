@@ -49,6 +49,13 @@ class TemplateAction extends Action {
         super.create(data);
       });
     }
+    if (cmd === 'delete') {
+      if (!option.id) {
+        print.warning('Please specify id to delete');
+        return process.exit();
+      }
+      super.delete(option.id);
+    }  
   }
 }
 
@@ -66,7 +73,8 @@ class TemplateCommand {
       description: 'High quality reminder template from doctors',
       action: (cmd, option) => action.go(cmd, option),
     });
-    cmd.addOption('-f, --inputfile <inputfile>', 'CSV/XLSX file to import and bulk insert patient info');
+    cmd.addOption('-f, --inputfile <inputfile>', 'CSV/XLSX file to import and bulk insert template info');
+    cmd.addOption('-i, --id <id>', 'id for entry');
     return cmd.execute();
   }
 }

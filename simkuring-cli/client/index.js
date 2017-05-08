@@ -60,6 +60,27 @@ class CageurClient {
       );
     });
   }
+
+  delete(endpoint, id) {
+    return new Promise((resolve, reject) => {
+      const url = this.baseUrl + endpoint + '/' + id;
+      fetch(url, {
+        method: 'DELETE',
+        headers: this.headers,
+      })
+      .then(
+        (res) => {
+          if (res.ok) {
+            return resolve(res.json());
+          }
+          res.text().then((err) => {
+            return reject(err);
+          });
+        },
+        (err) => reject(err)
+      );
+    });
+  }
 }
 
 module.exports = CageurClient;

@@ -111,6 +111,17 @@ class Action {
     );
   }
 
+  // Delete is for delete by using option -i <id>
+  delete(id) {
+    this.validate();
+    this.client.delete(this.url, id).then(
+      (res) => {
+        print.success('Data successfully deleted');
+      },
+      (err) => print.danger(err)
+    );
+  }
+
 }
 
 module.exports = { Command, Action };

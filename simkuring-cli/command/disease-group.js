@@ -61,7 +61,7 @@ class DiseaseGroupCommand {
       description: 'Disease group information',
       action: (cmd, option) => action.go(cmd, option),
     });
-    cmd.addOption('-f, --inputfile <inputfile>', 'CSV/XLSX file to import and bulk insert patient info');
+    cmd.addOption('-f, --inputfile <inputfile>', 'CSV/XLSX file to import and bulk insert disease group info');
     cmd.addOption('-i, --id <id>', 'id for entry');
     return cmd.execute();
   }

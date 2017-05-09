@@ -83,7 +83,7 @@ class Action {
   }
 
   // Import is for bulk inserting from csv/xlsx file
-  import(inputfile) {
+  import(inputfile) {    
     this.validate();
     if(!file.exist(inputfile)) {
       print.danger(`${inputfile} not exist`);
@@ -94,10 +94,10 @@ class Action {
       this.client.post(this.url, d).then(
         (res) => {}, (err) => { print.danger(d, err) }
       );
-      if (i === data.length-1) {
-        print.success('File successfully imported');
-      }
-    });
+      // if (i === data.length-1) {
+      //   print.success('File successfully imported');
+      // }
+    });    
   }
 
   // Create is for insert by prompting information from user

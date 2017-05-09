@@ -1,7 +1,7 @@
 const { Command, Action } = require('../command/base');
 const CageurClient = require('../client');
 const config = require('../config');
-const { print } = require('../utils');
+const { print, file } = require('../utils');
 
 class PatientDiseaseGroupAction extends Action {
   constructor(client, config) {
@@ -10,11 +10,11 @@ class PatientDiseaseGroupAction extends Action {
 
   // Because of weird json output of patient disease group API,
   // print table doesn't work out in base class, so we have to tweak
-  go(cmd) {
+  go(cmd, option) {
     this.validate();
     if (cmd === 'get') {
       this.client.get(this.url).then(
-        (res) => {
+        (res) => {     
           return print.table(res.data.map(d => {
             const res = d.patient_disease_group;
             res.patient = JSON.stringify(res.patient);
@@ -24,6 +24,13 @@ class PatientDiseaseGroupAction extends Action {
         },
         (err) => print.danger(err)
       );
+    }
+    if (cmd === 'import') {
+      if (!option.inputfile) {
+        print.warning('Please specify csv/xlsx file for import and make sure it exists');
+        return process.exit();
+      }
+      super.import(option.inputfile);
     }
   }
 }
@@ -40,9 +47,9 @@ class PatientDiseaseGroupCommand {
     const cmd = new Command(Program, {
       object: 'patient-disease <cmd>',
       description: 'Patient with disease group information',
-      action: (cmd) => action.go(cmd),
+      action: (cmd, option) => action.go(cmd, option),
     });
-
+    cmd.addOption('-f, --inputfile <inputfile>', 'CSV/XLSX file to import and bulk insert patient disease group info');
     return cmd.execute();
   }
 }

@@ -20,8 +20,8 @@ const ctl = {
       }
       return db.any(`
         SELECT *
-        FROM template
-        WHERE disease_group_id = $1`, template.diseaseGroup
+        FROM disease_group
+        WHERE id = $1`, template.diseaseGroup
       )
       .then((data) => {
         if (data.length === 0) {

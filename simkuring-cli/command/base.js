@@ -83,7 +83,7 @@ class Action {
   }
 
   // Import is for bulk inserting from csv/xlsx file
-  import(inputfile) {
+  import(inputfile) {    
     this.validate();
     if(!file.exist(inputfile)) {
       print.danger(`${inputfile} not exist`);
@@ -94,13 +94,34 @@ class Action {
       this.client.post(this.url, d).then(
         (res) => {}, (err) => { print.danger(d, err) }
       );
-      if (i === data.length-1) {
-        print.success('File successfully imported');
-      }
-    });
+      // if (i === data.length-1) {
+      //   print.success('File successfully imported');
+      // }
+    });    
   }
 
-  // TODO: implement create
+  // Create is for insert by prompting information from user
+  create(data) {
+    this.validate();
+    this.client.post(this.url, data).then(
+      (res) => {
+        print.success('Data successfully created');
+      },
+      (err) => print.danger(err)
+    );
+  }
+
+  // Delete is for delete by using option -i <id>
+  delete(id) {
+    this.validate();
+    this.client.delete(this.url, id).then(
+      (res) => {
+        print.success('Data successfully deleted');
+      },
+      (err) => print.danger(err)
+    );
+  }
+
 }
 
 module.exports = { Command, Action };

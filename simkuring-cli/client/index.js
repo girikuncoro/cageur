@@ -1,4 +1,6 @@
 const fetch = require('node-fetch');
+const { print } = require('../utils');
+const ora = require('ora');
 
 class CageurClient {
   constructor(options={}) {
@@ -39,11 +41,35 @@ class CageurClient {
 
   post(endpoint, data) {
     return new Promise((resolve, reject) => {
+      const spinner = ora('Importing data...').start();    
       const url = this.baseUrl + endpoint;
       fetch(url, {
         method: 'POST',
         headers: this.headers,
         body: JSON.stringify(data),
+      })
+      .then(
+        (res) => {
+          if (res.ok) {
+            spinner.succeed('ok');
+            return resolve(res.json());
+          }
+          res.text().then((err) => {
+            spinner.fail(JSON.parse(err).status + ' : ' + JSON.parse(err).message);
+            return reject(err);
+          });
+        },
+        (err) => reject(err)
+      );
+    });
+  }
+
+  delete(endpoint, id) {
+    return new Promise((resolve, reject) => {
+      const url = this.baseUrl + endpoint + '/' + id;
+      fetch(url, {
+        method: 'DELETE',
+        headers: this.headers,
       })
       .then(
         (res) => {

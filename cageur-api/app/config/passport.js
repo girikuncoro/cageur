@@ -22,6 +22,14 @@ module.exports = (passport) => {
           };
           done(err, false);
         }
+        // check if user is not active
+        if (!user['is_active']) {
+          const err = {
+            status: 403,
+            message: 'user is not active, must renew subscription',
+          };
+          done(err, false);
+        }
         done(null, user);
       },
       err => done(err, false)

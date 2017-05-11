@@ -32,7 +32,7 @@ const ctl = {
       return db.any(`
         INSERT INTO cageur_user(role, name, email, password, clinic_id)
         VALUES($(role), $(name), $(email), $(password), $(clinicID))
-        RETURNING id, role, name, email, clinic_id, created_at, updated_at`, user
+        RETURNING id, role, name, email, clinic_id, last_password_changed_at, created_at, updated_at`, user
       );
     })
     .then((data) => {

@@ -5,6 +5,7 @@ const ROLES = ['superadmin', 'clinic'];
 
 class User {
   constructor(args) {
+    this.id = args.id || null;
     this.email = args.email || '';
     this.name = args.name || '';
     this.password = args.password || '';

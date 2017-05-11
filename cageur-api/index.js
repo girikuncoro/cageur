@@ -42,7 +42,6 @@ app.use('/', require('./app/api'));
 app.use('/api/v1/restricted/clinic', authenticate(passport), isAuthorized.clinicAny, require('./app/api/restricted'));
 app.use('/api/v1/restricted/superadmin', authenticate(passport), isAuthorized.superAdmin, require('./app/api/restricted'));
 
-// TODO: each GET, POST, PUT, DELETE should have separate auth group/role
 app.use('/api/v1/clinic', authenticate(passport), require('./app/api/clinic'));
 app.use('/api/v1/disease_group', authenticate(passport), require('./app/api/disease-group'));
 app.use('/api/v1/patient', authenticate(passport), require('./app/api/patient'));

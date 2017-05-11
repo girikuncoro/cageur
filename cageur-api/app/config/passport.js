@@ -13,7 +13,25 @@ module.exports = (passport) => {
   passport.use(new JwtStrategy(params, (payload, done) => {
     User.findOneByID(db, payload.id)
     .then(
-      user => done(null, user),
+      user => {
+        // check if password changed
+        if (user['last_login_at'] < user['last_password_changed_at']) {
+          const err = { 
+            status: 403,
+            message: 'password changed, must relogin' 
+          };
+          done(err, false);
+        }
+        // check if user is not active
+        if (!user['is_active']) {
+          const err = {
+            status: 403,
+            message: 'user is not active, must renew subscription',
+          };
+          done(err, false);
+        }
+        done(null, user);
+      },
       err => done(err, false)
     );
   }));

@@ -22,6 +22,9 @@ import Analytics from './routes/Analytics';
 // Login UI
 import Login from './routes/Login';
 
+// User Profile
+import Profile from './routes/Profile';
+
 const routes = (
   <Route path="/dashboard" component={App}>
     <Route path='mailbox/outbox' component={Outbox}>
@@ -32,6 +35,7 @@ const routes = (
     <Route path="mailbox/compose" component={Compose} />
     <Route path="patient-information" component={PatientInfo} />
     <Route path="analytics" component={Analytics} />
+    <Route path="profile" component={Profile} />
   </Route>
 );
 

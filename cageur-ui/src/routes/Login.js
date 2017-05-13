@@ -62,7 +62,7 @@ export default class Login extends Component {
     })
     .then((response) => {
       if (response.ok) {
-        return response.json()
+        return response.json();
       } else {
         response.text().then((error) =>{
           switch(JSON.parse(error).message.toUpperCase()) {
@@ -84,20 +84,52 @@ export default class Login extends Component {
                   errorText: 'Email dan sandi harus diisi'
                 })
                 break;
-
           }
+          return false;
         })
       }
     })
     .then((responseData) => {
-      // If login was successful, set the token in local storage
-      localStorage.setItem('token', responseData.token);
+      if (responseData) {
+        // If login was successful, set the token in local storage
+        localStorage.setItem('token', responseData.token);
 
-      // Redirect to dashboard
-      this.props.router.push("/dashboard");
+        this.handleFirstTime();
+      }
     })
     .catch((error) => {
-      console.log('Error fetching and parsing data', error);
+      console.log('Error login', error);
+    })
+  }
+
+  handleFirstTime() {
+    const endpoint = '/profile';
+    const token = (localStorage) ? (localStorage.getItem('token')) : '';
+    const email = this.state.email;
+    
+    fetch(`${API_URL}${endpoint}`, {
+      method: 'GET',
+      headers: { 
+        'Content-Type':'application/json',
+        'Authorization' : token,
+      },
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json()
+      }
+    })
+    .then((responseData) => {
+      if(responseData.data.is_new) {
+        localStorage.setItem('email', email);
+        this.props.router.push("/dashboard/profile");
+      } else {
+        // Redirect to dashboard
+        this.props.router.push("/dashboard");
+      }
+    })
+    .catch((error) => {
+      console.log('Error fetching and parsing user profile data', error);
     })
   }
 
@@ -112,7 +144,7 @@ export default class Login extends Component {
     let renderError = (this.state.error) ?
     (<Alert bsStyle="danger" onDismiss={::this.handleAlertDismiss}>
         <strong>{this.state.errorText} </strong>
-    </Alert>) : ""
+    </Alert>) : "";
     return (
       <div id='auth-container' className='login'>
         <div id='auth-row'>

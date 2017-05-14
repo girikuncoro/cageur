@@ -9,6 +9,7 @@ import {
   Icon,
   Form,
   Panel,
+  Alert,
   Button,
   PanelBody,
   FormGroup,
@@ -27,7 +28,10 @@ export default class Profile extends React.Component {
     this.state = {
         oldPassword: '',
         newPassword: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        error: false,
+        errorText: '',
+        success: false,
     };
   }
 
@@ -57,6 +61,14 @@ export default class Profile extends React.Component {
     const newPassword = this.state.newPassword;
     const confirmPassword = this.state.confirmPassword;
 
+    if (newPassword !== confirmPassword) {
+      this.setState({
+        error: true,
+        errorText: 'Pastikan sandi baru sudah sama dan sesuai'
+      })
+      return;
+    }
+
     const endpoint = '/profile/password';
     const token = (localStorage) ? (localStorage.getItem('token')) : '';
     const email = (localStorage) ? (localStorage.getItem('email')) : '';
@@ -68,7 +80,6 @@ export default class Profile extends React.Component {
       confirmPassword: confirmPassword
     }
 
-    console.log(body);
     fetch(`${API_URL}${endpoint}`, {
       method: 'PUT',
       headers: { 
@@ -80,25 +91,57 @@ export default class Profile extends React.Component {
     .then((response) => {
       if (response.ok) {
         return response.json()
-      } 
+      } else {
+        response.text().then((error) => {
+          this.setState({
+            error: true,
+            errorText: JSON.parse(error).message
+          })
+        })
+
+        return false;
+      }
     })
     .then((responseData) => {
-        this.props.router.push("/login");
+      if (responseData) {
+        this.setState({
+          success: true
+        })
+        let redirect = () => this.props.router.push("/login");
+        setTimeout(redirect, 2000);
+      }
     })
     .catch((error) => {
       console.log('Error fetching and parsing data', error);
     })
   }
 
+  handleAlertDismiss() {
+    this.setState({
+      error: false,
+      errorText: ''
+    })
+  }
+
   render() {
+      let renderError = (this.state.error) ?
+      (<Alert bsStyle="danger" onDismiss={::this.handleAlertDismiss}>
+        <strong>{this.state.errorText} </strong>
+      </Alert>) : "";
+
+      let renderSuccess = (this.state.success) ?
+      (<Alert bsStyle="success">
+        <strong> Ubah sandi berhasil, silahkan masuk kembali. Mengarahkan ke halaman masuk ... </strong>
+      </Alert>) : "";
+
       return (
-        <PanelContainer>
+        <PanelContainer controls={false}>
             <Panel>
             <PanelHeader className='bg-green fg-white'>
                 <Grid>
                 <Row>
                     <Col xs={12}>
-                    <h3>Ubah Password</h3>
+                    <h3>Ubah Sandi</h3>
                     </Col>
                 </Row>
                 </Grid>
@@ -108,6 +151,8 @@ export default class Profile extends React.Component {
                 <Grid>
                     <Row>
                         <Col xs={12}>
+                            {renderError}
+                            {renderSuccess}
                             <Form onSubmit={::this.handleChangePassword}>
                                <FormGroup>
                                     <ControlLabel>Sandi Lama</ControlLabel>

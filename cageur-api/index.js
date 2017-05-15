@@ -14,15 +14,19 @@ const debug = require('debug')('cageur');
 const morgan = require('morgan');
 
 const { port } = require('./app/config');
-const { authenticate, isAuthorized } = require('./app/middleware');
+const { authenticate, isAuthorized, forceSsl } = require('./app/middleware');
 
 /**
 * Middleware
 */
-app.use(helmet());
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined'));
 }
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet());
+  app.use(forceSsl);
+}
+ 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({
   verify(req, res, buf) {

@@ -14,7 +14,7 @@ const debug = require('debug')('cageur');
 const morgan = require('morgan');
 
 const { port } = require('./app/config');
-const { authenticate, isAuthorized, forceSsl } = require('./app/middleware');
+const { authenticate, isAuthorized } = require('./app/middleware');
 
 /**
 * Middleware
@@ -24,7 +24,6 @@ if (process.env.NODE_ENV !== 'test') {
 }
 if (process.env.NODE_ENV === 'production') {
   app.use(helmet());
-  app.use(forceSsl);
 }
  
 app.use(bodyParser.urlencoded({ extended: true }));

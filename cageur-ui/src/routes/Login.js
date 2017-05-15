@@ -249,9 +249,12 @@ export default class Login extends Component {
             <FormGroup>
               <Grid>
                 <Row>
+                  {/* This element is for forget password feature, further implementation on backend needed*/}
+                  {/*
                   <Col xs={2} collapseLeft collapseRight style={{paddingTop: 10}}>
                     <a onClick={::this.handleForgetPasswordClik} style={{cursor: 'pointer'}}>Lupa Sandi</a>
                   </Col>
+                  */}
                   <Col xs={6} collapseLeft collapseRight className='text-right'>
                     <Button outlined lg type='submit' bsStyle='blue' onClick={::this.handleLogin}>Masuk</Button>
                   </Col>

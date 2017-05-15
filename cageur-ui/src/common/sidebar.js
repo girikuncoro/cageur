@@ -48,10 +48,13 @@ class ApplicationSidebar extends React.Component {
 
 @withRouter
 export default class SidebarContainer extends React.Component {
+  handleProfile() {
+    this.props.router.push("/dashboard/profile");
+  }
   render() {
     return (
       <div id='sidebar'>
-        <div id='avatar'>
+        <div id='avatar' onClick={::this.handleProfile} style={{cursor: 'pointer'}}>
           <Grid>
             <Row className='fg-white'>
               <Col xs={4} collapseRight>

@@ -74,21 +74,30 @@ export default class Sent extends Component {
       .then((response) => response.json())
       .then((responseData) => {
         let sentMessages = [];
-        responseData.data.map(function(d,i) {
-          sentMessages.push(
-            {
-              group_name: toTitleCase(d["disease_group"]["name"]),
-              title: d["title"],
-              status: d["processed"],
-              content: d["content"],
-              date: moment(d["updated_at"]).locale("id").format("Do MMMM YY, HH:mm")
-            }
-          );
-        })
-        this.setState({
-            sentMessages: sentMessages,
-            showSpinner: false,
-        });
+
+        if (responseData.data !== undefined) {
+            responseData.data.map(function(d,i) {
+              sentMessages.push(
+                {
+                  group_name: toTitleCase(d["disease_group"]["name"]),
+                  title: d["title"],
+                  status: d["processed"],
+                  content: d["content"],
+                  date: moment(d["updated_at"]).locale("id").format("Do MMMM YY, HH:mm")
+                }
+              );
+            });
+
+            this.setState({
+              sentMessages: sentMessages,
+              showSpinner: false,
+            });
+        } else {
+            this.setState({
+              sentMessages: sentMessages,
+              showSpinner: false,
+            });
+        }
       })
       .catch((error) => {
         console.log('Error fetching and parsing data', error);
@@ -99,10 +108,8 @@ export default class Sent extends Component {
     render() {
         let {sentMessages, showSpinner} = this.state;
 
-        return (
-            <div>
-                {(showSpinner) ? <Spinner/> : ""}
-                {sentMessages.map(function(d,i) {
+        const renderSentMessage = (
+          sentMessages.map(function(d,i) {
                   let labelValue, labelColor;
                   switch(d.status) {
                     case "delivered":
@@ -129,7 +136,24 @@ export default class Sent extends Component {
                                 content={d.content}
                                 date={d.date} />
                   )
-                })}
+          })
+        )
+
+      const emptyMessage = (<div className='inbox-avatar-name'
+                        style={{
+                          'width': '100%',
+                          'height': '100%',
+                          'display': 'inline-block',
+                          'paddingBottom': '10px',
+                          'paddingTop': '70px',
+                          'textAlign': 'center',
+                        }}>
+                        Tidak ada pesan terjadwal
+                    </div>)
+        return (
+            <div>
+                {(showSpinner) ? <Spinner/> : ""}
+                {(sentMessages.length !== 0 || showSpinner) ? renderSentMessage : emptyMessage}
             </div>
         );
     }

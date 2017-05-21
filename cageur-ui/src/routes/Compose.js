@@ -107,16 +107,27 @@ export default class Compose extends React.Component {
       .then((response) => response.json())
       .then((responseData) => {
         let template = [];
-        responseData.data.map(function(d,i) {
-          template.push({id: d.id, disease_group: d.disease_group, title: d.title, content: d.content});
-        })
-        this.setState({
-            template: template,
-            showSpinner: false
-        });
+        if (responseData !== undefined) {
+          if (responseData.data !== undefined) {
+            responseData.data.map(function(d,i) {
+              template.push({id: d.id, disease_group: d.disease_group, title: d.title, content: d.content});
+            })
+          }
+          this.setState({
+              template: template,
+              showSpinner: false
+          });
+        } else {
+          this.setState({
+              template: template,
+          });
+        }
       })
       .catch((error) => {
-        console.log('Error fetching and parsing data', error);
+        console.log('Error fetching and parsing template data', error);
+        this.setState({
+            showSpinner: false
+        });
       });
     }
   }

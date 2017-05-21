@@ -16,15 +16,20 @@ export default class Template extends React.Component {
     let {showModal, handleHide, template, group, handleUse, showSpinner} = this.props;
     let self = this;
 
-    return (
-      <Modal show={showModal} onHide={handleHide} bsSize="lg">
-        <Modal.Header closeButton>
-           <Modal.Title>{`Template Pesan Untuk Grup Penyakit ${toTitleCase(group)}`}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Accordion defaultActiveKey='1'>
-          {(showSpinner) ? <Spinner style={{marginBottom: "50px"}}/> : ""}
-          {template.map(function (d,i) {
+    const emptyTemplate = (<div className='inbox-avatar-name'
+                              style={{
+                                'width': '100%',
+                                'height': '100%',
+                                'display': 'inline-block',
+                                'paddingBottom': '10px',
+                                'paddingTop': '70px',
+                                'textAlign': 'center',
+                              }}>
+                              Template tidak tersedia
+                          </div>)
+
+    const renderTemplate = (template.length !== 0) ?
+      (template.map(function (d,i) {
             let title = (d.title.length > 50) ?
                         `${d.title.substr(0,50)} ...` :
                         d.title;
@@ -36,7 +41,17 @@ export default class Template extends React.Component {
                 <Button bsStyle="primary" onClick={self.handleUseClick.bind(self,fullTittle,content)}>Gunakan Template</Button>
               </BPanel>
             )
-          })}
+          })
+      ) : emptyTemplate;
+
+    return (
+      <Modal show={showModal} onHide={handleHide} bsSize="lg">
+        <Modal.Header closeButton>
+           <Modal.Title>{`Template Pesan Untuk Grup Penyakit ${toTitleCase(group)}`}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Accordion defaultActiveKey='1'>
+          {(showSpinner) ? <Spinner style={{marginBottom: "50px"}}/> : renderTemplate}
           </Accordion>
         </Modal.Body>
         <Modal.Footer>

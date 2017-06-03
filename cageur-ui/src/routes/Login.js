@@ -121,6 +121,11 @@ export default class Login extends Component {
       }
     })
     .then((responseData) => {
+      var profile = responseData.data;
+
+      // Set profile information to local storage
+      localStorage.setItem('profile', JSON.stringify(profile));
+
       if(responseData.data.is_new) {
         localStorage.setItem('email', email);
         this.props.router.push("/dashboard/profile");

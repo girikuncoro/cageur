@@ -48,10 +48,19 @@ class ApplicationSidebar extends React.Component {
 
 @withRouter
 export default class SidebarContainer extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      profile: JSON.parse(localStorage.getItem('profile'))
+    };
+  }
   handleProfile() {
     this.props.router.push("/dashboard/profile");
   }
   render() {
+    const {name, role} = this.state.profile;
+
     return (
       <div id='sidebar'>
         <div id='avatar' onClick={::this.handleProfile} style={{cursor: 'pointer'}}>
@@ -61,7 +70,7 @@ export default class SidebarContainer extends React.Component {
                 <img src='/imgs/app/avatars/avatar0.png' width='40' height='40' />
               </Col>
               <Col xs={8} collapseLeft id='avatar-col'>
-                <div style={{top: 23, fontSize: 16, lineHeight: 1, position: 'relative'}}>Teteh Cageur</div>
+                <div style={{top: 23, fontSize: 16, lineHeight: 1, position: 'relative'}}>{name + ' (' + role +')'}</div>
                 <div>
                   <Progress id='demo-progress' value={30} color='#ffffff'/>
                   <a href='#'>
